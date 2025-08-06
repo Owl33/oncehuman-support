@@ -5,8 +5,9 @@ import { DataTableHeader } from "./data-table-header";
 import { DataTableBody } from "./data-table-body";
 import { DataTablePagination } from "./data-table-pagination";
 import { FloatingActionBar } from "./floating-action-bar";
-import { useDataTableContext } from "../context/data-table-context";
+import { useDataTableContext } from "../contexts/data-table-context";
 import { useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 interface DataTableContentProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -16,11 +17,11 @@ interface DataTableContentProps<TData, TValue> {
   className?: string;
 }
 
-export const DataTableContent = <TData, TValue>({
+export function DataTableContent<TData, TValue>({
   showPagination = true,
   customHeaderContent,
   className,
-}: DataTableContentProps<TData, TValue>) => {
+}: DataTableContentProps<TData, TValue>) {
   const { cancelEdit } = useDataTableContext<TData>();
 
   // ESC key handler
@@ -36,15 +37,19 @@ export const DataTableContent = <TData, TValue>({
   }, [cancelEdit]);
 
   return (
-    <div className={className}>
+    <div className={cn("space-y-4", className)}>
       <DataTableHeader customHeaderContent={customHeaderContent} />
-      <FloatingActionBar />
-      <DataTableBody />
+      
+      <div className="relative">
+        <DataTableBody />
+        <FloatingActionBar />
+      </div>
+      
       {showPagination && (
-        <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="border-t pt-4">
           <DataTablePagination />
         </div>
       )}
     </div>
   );
-};
+}

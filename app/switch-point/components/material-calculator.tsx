@@ -1,7 +1,7 @@
 // app/switchpoint/components/material-calculator.tsx
 "use client";
 
-import { CalculatedMaterial } from "../types/switchpoint";
+import { CalculatedMaterial } from "@/types/switchpoint";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/base/card";
 import { Input } from "@/components/base/input";
 import { Badge } from "@/components/base/badge";

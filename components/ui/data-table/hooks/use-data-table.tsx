@@ -31,16 +31,16 @@ interface TableOnlyState {
 interface SavedTableState extends TableOnlyState {
   filterState: {
     activeColumns: string[];
-    mode: "global" | "individual";
+    mode: 'global' | 'individual';
     values: Record<string, string>;
   };
 }
 
-export const useDataTable = <TData, TValue>({
+export function useDataTable<TData, TValue>({
   columns,
   data,
   tableId,
-}: UseDataTableProps<TData, TValue>) => {
+}: UseDataTableProps<TData, TValue>) {
   // Load saved state with proper typing
   const savedState = useMemo(
     (): Partial<SavedTableState> => sessionStorageUtils.getJSON<SavedTableState>(tableId) || {},
@@ -50,7 +50,9 @@ export const useDataTable = <TData, TValue>({
   // Merge saved state with initial state from props
   const initialState = savedState;
   // Initialize states
-  const [sorting, setSorting] = useState<SortingState>(initialState.sorting || []);
+  const [sorting, setSorting] = useState<SortingState>(
+    initialState.sorting || []
+  );
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     initialState.columnFilters || []
   );
@@ -58,16 +60,18 @@ export const useDataTable = <TData, TValue>({
     initialState.columnVisibility || {}
   );
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
-  const [globalFilter, setGlobalFilter] = useState(initialState.filterState?.values?.global || "");
+  const [globalFilter, setGlobalFilter] = useState(
+    initialState.filterState?.values?.global || ""
+  );
 
   // Create global filter function
   const globalFilterFn = useCallback(
     (row: any, columnId: string, filterValue: string) => {
       if (!filterValue) return true;
-
+      
       const searchTerm = String(filterValue).toLowerCase();
       const filterColumns = savedState.filterState?.activeColumns || DEFAULT_FILTER_COLUMNS;
-
+      
       return filterColumns.some((colId) => {
         const cellValue = row.getValue(colId);
         return cellValue != null && String(cellValue).toLowerCase().includes(searchTerm);
@@ -102,14 +106,11 @@ export const useDataTable = <TData, TValue>({
 
   // Save table state (sorting, filters, visibility) to sessionStorage
   // filterState는 Context에서 저장하므로 여기서는 제외
-  const tableStateToSave = useMemo(
-    () => ({
-      sorting,
-      columnFilters,
-      columnVisibility,
-    }),
-    [sorting, columnFilters, columnVisibility]
-  );
+  const tableStateToSave = useMemo(() => ({
+    sorting,
+    columnFilters,
+    columnVisibility,
+  }), [sorting, columnFilters, columnVisibility]);
 
   useDebouncedSave(tableId, tableStateToSave, { delay: 300, merge: true });
 
@@ -117,4 +118,4 @@ export const useDataTable = <TData, TValue>({
     table,
     savedState: savedState as SavedTableState,
   };
-};
+}

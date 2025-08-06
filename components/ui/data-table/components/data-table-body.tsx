@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/base/table";
 import { flexRender } from "@tanstack/react-table";
-import { useDataTableContext } from "../context/data-table-context";
+import { useDataTableContext } from "../contexts/data-table-context";
 import { EditableCell } from "./editable-cell";
 import { cn } from "@/lib/utils";
 import { SYSTEM_COLUMN_IDS, EDITABLE_CELL_HEIGHT } from "../constants";
@@ -20,7 +20,7 @@ export const DataTableBody = () => {
   if (!table) return null;
 
   const { tempRowId, editingData } = editState;
-  const isAddMode = editState.editMode === 'add';
+  const isAddMode = editState.editMode === "add";
 
   // Get all rows including temp row for add mode
   const renderRows = () => {
@@ -60,7 +60,9 @@ export const DataTableBody = () => {
                 const isSystemColumn = SYSTEM_COLUMN_IDS.includes(header.column.id as any);
 
                 return (
-                  <TableHead key={header.id} style={{ width: `${header.getSize()}px` }}>
+                  <TableHead
+                    key={header.id}
+                    style={{ width: `${header.getSize()}px` }}>
                     {header.isPlaceholder ? null : (
                       <>
                         {isSystemColumn ? (
@@ -86,8 +88,7 @@ export const DataTableBody = () => {
             <TableRow>
               <TableCell
                 colSpan={table.getAllColumns().length}
-                className="h-24 text-center text-muted-foreground"
-              >
+                className="h-24 text-center text-muted-foreground">
                 검색 결과가 없습니다.
               </TableCell>
             </TableRow>
@@ -115,8 +116,7 @@ export const DataTableBody = () => {
                     "hover:bg-muted/50 transition-colors",
                     isEditing && "bg-muted/30",
                     isNewRow && "bg-green-50 dark:bg-green-950/20"
-                  )}
-                >
+                  )}>
                   {cells.map((cell) => (
                     <TableCell key={cell.id}>
                       <EditableCell
@@ -135,4 +135,4 @@ export const DataTableBody = () => {
       </Table>
     </div>
   );
-}
+};

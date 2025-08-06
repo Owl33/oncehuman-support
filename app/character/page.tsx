@@ -4,101 +4,39 @@
 import { columns } from "./table/columns";
 import { DataTable } from "@/components/ui";
 import { Button } from "@/components/base/button";
-import { Plus } from "lucide-react";
+import { Plus, Download, Upload, RotateCcw } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { DataTableRef } from "@/components/ui/data-table"; // 기존 타입 사용
+import { DataTableRef } from "@/components/ui/data-table";
+import { characterStorage } from "@/lib/storage/character-storage";
+import { CharacterData } from "@/types/character";
 
-export type Payment = {
-  id: string;
-  scenario: string;
-  server: string;
-  name: string;
-  job: string;
-  desc?: string;
-};
-
-// 알림 타입 정의
-type NotificationType = "success" | "error" | "warning";
-
-interface NotificationOptions {
-  type: NotificationType;
-  title?: string;
-  message: string;
-  duration?: number;
-}
-
-// 실제 api 통신을 통해 가져올 데이터, 현재는 local로 작성함 추후 변경 예정
-async function getData(): Promise<Payment[]> {
-  return [
-    {
-      id: "7258ed412352f",
-      scenario: "무한한 꿈",
-      server: "X-0011",
-      name: "Owl33",
-      job: "메타 휴먼",
-      desc: "본캐",
-    },
-    {
-      id: "7258ed412353g",
-      scenario: "터치 오브 스카이",
-      server: "X-0091",
-      name: "Owlasqqq213",
-      job: "공예사",
-      desc: "부캐",
-    },
-    {
-      id: "7258ed412354h",
-      scenario: "무한한 꿈",
-      server: "X-0011",
-      name: "Ozxc22",
-      job: "요리사",
-      desc: "농사용",
-    },
-    {
-      id: "7258ed412355i",
-      scenario: "터치 오브 스카이",
-      server: "X-0091",
-      name: "Owvbnl3",
-      job: "공예사",
-      desc: "부캐",
-    },
-    {
-      id: "7258ed412356j",
-      scenario: "무한한 꿈",
-      server: "X-0011",
-      name: "O2xcv2",
-      job: "요리사",
-      desc: "농사용",
-    },
-    {
-      id: "7258ed412357k",
-      scenario: "무한한 꿈",
-      server: "X-0011",
-      name: "Owhgfl33",
-      job: "조련사",
-      desc: "스더광 영지",
-    },
-    // ... 나머지 데이터들
-  ];
-}
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/base/alert-dialog";
+import { toast } from "sonner";
 
 export default function CharacterPage() {
-  const [data, setData] = useState<Payment[]>([]);
+  const [data, setData] = useState<CharacterData[]>([]);
   const [loading, setLoading] = useState(true);
-  const tableRef = useRef<DataTableRef<Payment>>(null);
-
+  const [showClearDialog, setShowClearDialog] = useState(false);
+  const tableRef = useRef<DataTableRef<CharacterData>>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  // 데이터 로드
   const loadData = async () => {
     try {
       setLoading(true);
-      const result = await getData();
-      setData(result);
+      const characters = await characterStorage.getCharacters();
+      setData(characters);
     } catch (error) {
       console.error("Failed to load data:", error);
-      showNotification({
-        type: "error",
-        title: "데이터 로드 실패",
-        message: "캐릭터 데이터를 불러오는데 실패했습니다.",
-      });
+      toast.error("캐릭터 데이터를 불러오는데 실패했습니다.");
     } finally {
       setLoading(false);
     }
@@ -108,24 +46,11 @@ export default function CharacterPage() {
     loadData();
   }, []);
 
-  // 알림 표시 함수 (현재는 alert, 추후 toast/floating으로 교체)
-  const showNotification = (options: NotificationOptions) => {
-    // 현재는 alert 사용
-    const message = options.title ? `${options.title}\n${options.message}` : options.message;
-
-    alert(message);
-
-    // TODO: 추후 toast/floating notification으로 교체
-    // toast({
-    //   variant: options.type === 'error' ? 'destructive' : 'default',
-    //   title: options.title,
-    //   description: options.message,
-    //   duration: options.duration || 5000,
-    // });
-  };
-
   // 유효성 검사 함수
-  const validateCharacterData = (saveData: { updatedRows: Payment[]; newRow: Payment | null }) => {
+  const validateCharacterData = (saveData: {
+    updatedRows: CharacterData[];
+    newRow: CharacterData | null;
+  }) => {
     const errors: string[] = [];
 
     // 새로운 행 검증
@@ -135,7 +60,7 @@ export default function CharacterPage() {
       if (!saveData.newRow.server?.trim()) errors.push("• 서버는 필수입니다");
       if (!saveData.newRow.job?.trim()) errors.push("• 직업은 필수입니다");
 
-      // 중복 이름 검사 - 기존 데이터와 중복되는지 확인
+      // 중복 이름 검사
       if (
         saveData.newRow.name?.trim() &&
         data.some((existing) => existing.name === saveData.newRow?.name?.trim())
@@ -157,44 +82,31 @@ export default function CharacterPage() {
   };
 
   // 저장 핸들러
-  const handleSave = async (saveData: { updatedRows: Payment[]; newRow: Payment | null }) => {
-    console.log("Save data:", saveData);
-
+  const handleSave = async (saveData: {
+    updatedRows: CharacterData[];
+    newRow: CharacterData | null;
+  }) => {
     // 유효성 검사
     const errors = validateCharacterData(saveData);
     if (errors.length > 0) {
-      showNotification({
-        type: "warning",
-        title: "입력 정보를 확인해주세요",
-        message: errors.join("\n"),
+      toast.error("입력 정보를 확인해주세요", {
+        description: errors.join("\n"),
       });
-      return; // 편집 모드 유지 - completeSave() 호출하지 않음
+      return;
     }
 
     try {
       // 업데이트된 행들 처리
       if (saveData.updatedRows.length > 0) {
-        console.log("Updated rows:", saveData.updatedRows);
-        // await updateCharacters(saveData.updatedRows);
-
-        showNotification({
-          type: "success",
-          message: `${saveData.updatedRows.length}개의 캐릭터가 수정되었습니다.`,
-        });
+        await characterStorage.updateCharacters(saveData.updatedRows);
+        toast.success(`${saveData.updatedRows.length}개의 캐릭터가 수정되었습니다.`);
       }
 
       // 새로 추가된 행 처리
       if (saveData.newRow) {
-        console.log("New row:", saveData.newRow);
-        // await createCharacter(saveData.newRow);
-
-        showNotification({
-          type: "success",
-          message: `새 캐릭터 '${saveData.newRow.name}'가 추가되었습니다.`,
-        });
+        await characterStorage.createCharacter(saveData.newRow);
+        toast.success(`새 캐릭터 '${saveData.newRow.name}'가 추가되었습니다.`);
       }
-
-      console.log("✅ Save completed successfully");
 
       // 성공시에만 편집 모드 종료
       tableRef.current?.completeSave();
@@ -202,21 +114,13 @@ export default function CharacterPage() {
       // 데이터 새로고침
       await loadData();
     } catch (error) {
-      console.error("❌ Save failed:", error);
-      showNotification({
-        type: "error",
-        title: "저장 실패",
-        message: "캐릭터 정보 저장에 실패했습니다. 다시 시도해주세요.",
-      });
-      // 편집 모드 유지됨 - completeSave() 호출하지 않음
+      console.error("Save failed:", error);
+      toast.error("캐릭터 정보 저장에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
   // 삭제 핸들러
-  const handleDelete = async (deleteData: Payment[]) => {
-    console.log("Delete rows:", deleteData);
-
-    // 삭제 확인
+  const handleDelete = async (deleteData: CharacterData[]) => {
     const confirmMessage =
       deleteData.length === 1
         ? `'${deleteData[0].name}' 캐릭터를 삭제하시겠습니까?`
@@ -227,34 +131,69 @@ export default function CharacterPage() {
     }
 
     try {
-      // await deleteCharacters(deleteData.map(item => item.id));
-
-      console.log("✅ Delete completed successfully");
-
-      showNotification({
-        type: "success",
-        message: `${deleteData.length}개의 캐릭터가 삭제되었습니다.`,
-      });
-
+      await characterStorage.deleteCharacters(deleteData.map((item) => item.id));
+      toast.success(`${deleteData.length}개의 캐릭터가 삭제되었습니다.`);
       await loadData();
     } catch (error) {
-      console.error("❌ Delete failed:", error);
-      showNotification({
-        type: "error",
-        title: "삭제 실패",
-        message: "캐릭터 삭제에 실패했습니다. 다시 시도해주세요.",
-      });
+      console.error("Delete failed:", error);
+      toast.error("캐릭터 삭제에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
-  // 캐릭터 추가 버튼 핸들러
-  const handleAddCharacter = () => {
-    tableRef.current?.startAdd();
+  // 데이터 내보내기
+  const handleExport = async () => {
+    try {
+      const jsonData = await characterStorage.exportData();
+      const blob = new Blob([jsonData], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `characters_${new Date().toISOString().split("T")[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      toast.success("캐릭터 데이터를 내보냈습니다.");
+    } catch (error) {
+      console.error("Export failed:", error);
+      toast.error("데이터 내보내기에 실패했습니다.");
+    }
   };
 
-  // 현재 편집 상태 확인
-  const isInEditMode = tableRef.current?.isInEditMode || false;
-  const isAddMode = tableRef.current?.isAddMode || false;
+  // 데이터 가져오기
+  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      await characterStorage.importData(text);
+      await loadData();
+
+      toast.success("캐릭터 데이터를 가져왔습니다.");
+    } catch (error) {
+      console.error("Import failed:", error);
+      toast.error("올바른 형식의 파일이 아닙니다.");
+    }
+
+    // 파일 입력 초기화
+    if (event.target) {
+      event.target.value = "";
+    }
+  };
+
+  // 전체 데이터 초기화
+  const handleClearAll = async () => {
+    try {
+      await characterStorage.clearAll();
+      await loadData();
+      setShowClearDialog(false);
+
+      toast.success("모든 캐릭터 데이터가 삭제되었습니다.");
+    } catch (error) {
+      console.error("Clear failed:", error);
+      toast.error("데이터 초기화에 실패했습니다.");
+    }
+  };
 
   if (loading) {
     return (
@@ -270,29 +209,60 @@ export default function CharacterPage() {
   }
 
   return (
-    <div className=" mx-auto ">
+    <div className="mx-auto">
       <div className="border-b">
-        <div className=" mx-auto py-4">
+        <div className="mx-auto py-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold">캐릭터 관리</h1>
               <p className="text-sm text-muted-foreground mt-1">
-                캐릭터를 관리합니다. 현재 버전에서는 브라우저의 데이터를 초기화하면 데이터가
-                사라집니다.
+                캐릭터를 관리합니다. 데이터는 브라우저에 저장됩니다.
               </p>
             </div>
 
             <div className="flex items-center gap-2">
-              {/* 뷰 모드 전환 */}
+              {/* 데이터 관리 버튼들 */}
               <Button
-                variant="default"
-                onClick={handleAddCharacter}
-                disabled={isInEditMode}>
-                <Plus className="h-4 w-4 mr-2" />
-                {isAddMode ? "추가 중..." : "캐릭터 추가"}
+                variant="outline"
+                size="sm"
+                onClick={handleExport}>
+                <Download className="h-4 w-4 mr-2" />
+                내보내기
               </Button>
 
-              {/* 편집 중일 때 취소 버튼 표시 (선택사항) */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}>
+                <Upload className="h-4 w-4 mr-2" />
+                가져오기
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json"
+                onChange={handleImport}
+                className="hidden"
+              />
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowClearDialog(true)}>
+                <RotateCcw className="h-4 w-4 mr-2" />
+                초기화
+              </Button>
+
+              <div className="w-px h-6 bg-border mx-2" />
+
+              {/* 캐릭터 추가 버튼 */}
+              <Button
+                variant="default"
+                onClick={() => tableRef.current?.startAdd()}
+                disabled={tableRef.current?.isInEditMode}>
+                <Plus className="h-4 w-4 mr-2" />
+                캐릭터 추가
+              </Button>
             </div>
           </div>
         </div>
@@ -305,6 +275,28 @@ export default function CharacterPage() {
         onSave={handleSave}
         onDelete={handleDelete}
       />
+
+      {/* 초기화 확인 다이얼로그 */}
+      <AlertDialog
+        open={showClearDialog}
+        onOpenChange={setShowClearDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>모든 데이터를 삭제하시겠습니까?</AlertDialogTitle>
+            <AlertDialogDescription>
+              저장된 모든 캐릭터 데이터가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleClearAll}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              삭제
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

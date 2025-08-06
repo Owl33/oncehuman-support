@@ -6,7 +6,7 @@ import { Badge } from "@/components/base/badge";
 import { Button } from "@/components/base/button";
 import { Progress } from "@/components/base/progress";
 import { ArrowRight, Package, AlertCircle } from "lucide-react";
-import { CharacterData } from "../types/switchpoint";
+import { CharacterData } from "@/types/character";
 
 interface CharacterDashboardProps {
   characterSummaries: Array<

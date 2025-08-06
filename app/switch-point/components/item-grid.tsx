@@ -1,7 +1,7 @@
 // app/switchpoint/components/item-grid.tsx
 "use client";
 
-import { Item } from "../types/switchpoint";
+import { Item } from "@/types/switchpoint";
 import { Card, CardContent } from "@/components/base/card";
 import { Button } from "@/components/base/button";
 import { Input } from "@/components/base/input";

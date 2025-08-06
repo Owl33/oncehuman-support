@@ -1,17 +1,21 @@
-// types/switchpoint.ts
+//@/types/switchpoints.ts
 
 // 카테고리 정의
 export type ItemCategory =
   | "storage"
-  | "production_processing"
+  | "production"
+  | "processing"
   | "functional"
+  | "vehicle"
   | "weapon"
   | "infection";
 
 export const CATEGORY_LABELS: Record<ItemCategory, string> = {
   storage: "저장 시설",
-  production_processing: "생산 가공",
+  production: "생산 시설",
+  processing: "가공 시설",
   functional: "기능 시설",
+  vehicle: "차량",
   weapon: "무기",
   infection: "감염물",
 };
@@ -19,7 +23,9 @@ export const CATEGORY_LABELS: Record<ItemCategory, string> = {
 // JSON에서 사용하는 카테고리와 매핑
 export const JSON_CATEGORY_MAP: Record<string, ItemCategory> = {
   storage: "storage",
-  production_processing: "production_processing",
+  production: "production",
+  processing: "processing",
+  vehicle: "vehicle",
   functional: "functional",
   weapon: "weapon",
   infection: "infection",
@@ -48,13 +54,6 @@ export interface Item {
 }
 
 // 캐릭터 데이터
-export interface CharacterData {
-  id: string;
-  name: string;
-  selectedItems: Record<string, number>; // itemId -> 제작 개수
-  ownedMaterials: Record<string, number>; // materialId -> 보유 개수
-  lastUpdated: string;
-}
 
 // 계산된 재료 정보
 export interface CalculatedMaterial {

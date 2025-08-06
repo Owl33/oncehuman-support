@@ -1,7 +1,7 @@
 // app/switchpoint/components/character-selector.tsx
 "use client";
 
-import { CharacterData } from '../types/switchpoint';
+import { CharacterData } from "@/types/character";
 import { cn } from '@/lib/utils';
 import { User } from 'lucide-react';
 

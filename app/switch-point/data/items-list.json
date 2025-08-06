@@ -1,6 +1,6 @@
 [
   {
-    "category": "production_processing",
+    "category": "production",
     "id": "growing_box",
     "name": "재배상자",
     "requiment": [
@@ -24,7 +24,7 @@
   },
 
   {
-    "category": "production_processing",
+    "category": "production",
 
     "id": "water_pump",
     "name": "워터펌프",
@@ -52,7 +52,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "production",
 
     "id": "large_refinery_facility",
     "name": "대형 정유 시설",
@@ -80,7 +80,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "processing",
 
     "id": "electric_Furnace",
     "name": "전기난로",
@@ -124,7 +124,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "processing",
 
     "id": "compact_water_filter",
     "name": "소형 정수기",
@@ -148,7 +148,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "production",
     "id": "large_water_filter",
     "name": "대형 정수기",
     "requiment": [
@@ -179,7 +179,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "vehicle",
     "id": "compact_garage",
     "name": "소형 차고",
     "requiment": [
@@ -194,7 +194,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "vehicle",
     "id": "motorcycle",
     "name": "오토바이",
     "requiment": [
@@ -225,7 +225,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "vehicle",
     "id": "bicycle",
     "name": "자전거",
     "requiment": [
@@ -275,7 +275,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "processing",
     "id": "furnace",
     "name": "용광로",
     "requiment": [
@@ -290,7 +290,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "processing",
     "id": "disassembly_Bench",
     "name": "분해작업대",
     "requiment": [
@@ -305,7 +305,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "processing",
     "id": "supplies_workbench",
     "name": "초급 제작대",
     "requiment": [
@@ -320,7 +320,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "processing",
     "id": "intermediate_supplies_workbench",
     "name": "중급 제작대",
     "requiment": [
@@ -347,7 +347,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "processing",
     "id": "gear_workbench",
     "name": "초급 장비 제작대",
     "requiment": [
@@ -370,7 +370,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "processing",
     "id": "intermediate_gear_workbench",
     "name": "중급 장비 제작대",
     "requiment": [
@@ -405,7 +405,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "processing",
     "id": "stove",
     "name": "스토브",
     "requiment": [
@@ -428,7 +428,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "processing",
     "id": "advanced_Stove",
     "name": "중급 스토브 (전기레인지)",
     "requiment": [
@@ -506,7 +506,7 @@
     ]
   },
   {
-    "category": "production_processing",
+    "category": "production",
     "id": "mining_operation_platform",
     "name": "채광 작업대",
     "requiment": [

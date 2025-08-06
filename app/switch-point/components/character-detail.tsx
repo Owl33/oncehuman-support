@@ -1,13 +1,8 @@
 // app/switchpoint/components/character-detail.tsx
 "use client";
+import { CharacterData } from "@/types/character";
 
-import {
-  CharacterData,
-  Item,
-  Material,
-  ItemCategory,
-  CalculationResult,
-} from "../types/switchpoint";
+import { Item, Material, ItemCategory, CalculationResult } from "@/types/switchpoint";
 import { CharacterSelector } from "./character-selector";
 import { CategoryTabs } from "./category-tabs";
 import { ItemGrid } from "./item-grid";

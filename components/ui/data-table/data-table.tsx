@@ -2,12 +2,12 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { useDataTable } from "./hooks/use-data-table";
-import { DataTableProvider } from "./context/data-table-context";
+import { DataTableProvider } from "./contexts/data-table-context";
 import { DataTableContent } from "./components/data-table-content";
 import { forwardRef, useMemo, useRef, useImperativeHandle } from "react";
 import { createSelectionColumn } from "./utils/selection-column";
 import { createActionsColumn, ActionItem } from "./utils/actions-column";
-import { useDataTableContext } from "./context/data-table-context";
+import { useDataTableContext } from "./contexts/data-table-context";
 import "./types/table-types"; // 타입 확장 import
 
 interface DataTableProps<TData, TValue> {

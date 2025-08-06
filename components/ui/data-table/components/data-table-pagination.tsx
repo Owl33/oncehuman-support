@@ -8,9 +8,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/base/select";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
-import { useDataTableContext } from "../context/data-table-context";
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  ChevronsLeft, 
+  ChevronsRight,
+  MoreHorizontal 
+} from "lucide-react";
+import { useDataTableContext } from "../contexts/data-table-context";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "../constants";
+import { Badge } from "@/components/base/badge";
+import { cn } from "@/lib/utils";
 
 interface DataTablePaginationProps {
   pageSizeOptions?: number[];
@@ -18,88 +26,195 @@ interface DataTablePaginationProps {
   showPageInfo?: boolean;
 }
 
-export const DataTablePagination = ({
+export function DataTablePagination({
   pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS as unknown as number[],
   showPageSizeSelector = true,
   showPageInfo = true,
-}: DataTablePaginationProps = {}) => {
+}: DataTablePaginationProps = {}) {
   const { table } = useDataTableContext();
 
   if (!table) return null;
 
+  const pageCount = table.getPageCount();
+  const currentPage = table.getState().pagination.pageIndex + 1;
+
+  // Generate page numbers to show
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    const maxVisible = 7;
+    
+    if (pageCount <= maxVisible) {
+      // Show all pages
+      for (let i = 1; i <= pageCount; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Show first, last, and pages around current
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 5; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(pageCount);
+      } else if (currentPage >= pageCount - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = pageCount - 4; i <= pageCount; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(pageCount);
+      }
+    }
+    
+    return pages;
+  };
+
   return (
-    <div className="flex items-center justify-between px-2">
+    <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+      {/* Page info */}
       {showPageInfo && (
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+        <div className="text-sm text-muted-foreground order-2 sm:order-1">
+          <span className="font-medium text-foreground">
+            {table.getFilteredSelectedRowModel().rows.length}
+          </span>
+          {" / "}
+          <span className="font-medium text-foreground">
+            {table.getFilteredRowModel().rows.length}
+          </span>
+          {" 개 선택"}
         </div>
       )}
 
-      <div className="flex items-center space-x-6 lg:space-x-8">
+      {/* Center controls */}
+      <div className="flex items-center gap-4 order-1 sm:order-2 flex-1 justify-center">
+        {/* Page size selector */}
         {showPageSizeSelector && (
-          <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium">Rows per page</p>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground hidden sm:inline">
+              페이지당
+            </span>
             <Select
               value={`${table.getState().pagination.pageSize}`}
               onValueChange={(value) => {
                 table.setPageSize(Number(value));
-              }}>
-              <SelectTrigger className="h-8 w-[70px]">
+              }}
+            >
+              <SelectTrigger className="h-9 w-[70px]">
                 <SelectValue placeholder={table.getState().pagination.pageSize} />
               </SelectTrigger>
               <SelectContent side="top">
                 {pageSizeOptions.map((pageSize) => (
-                  <SelectItem
-                    key={pageSize}
-                    value={`${pageSize}`}>
+                  <SelectItem key={pageSize} value={`${pageSize}`}>
                     {pageSize}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            <span className="text-sm text-muted-foreground hidden sm:inline">
+              개
+            </span>
           </div>
         )}
 
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-        </div>
-
-        <div className="flex items-center space-x-2">
+        {/* Page navigation */}
+        <div className="flex items-center">
+          {/* First page */}
           <Button
-            variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9"
             onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}>
-            <span className="sr-only">Go to first page</span>
+            disabled={!table.getCanPreviousPage()}
+          >
             <ChevronsLeft className="h-4 w-4" />
+            <span className="sr-only">첫 페이지</span>
           </Button>
+
+          {/* Previous page */}
           <Button
-            variant="outline"
-            className="h-8 w-8 p-0"
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9"
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}>
-            <span className="sr-only">Go to previous page</span>
+            disabled={!table.getCanPreviousPage()}
+          >
             <ChevronLeft className="h-4 w-4" />
+            <span className="sr-only">이전 페이지</span>
           </Button>
+
+          {/* Page numbers */}
+          <div className="flex items-center gap-1 mx-2">
+            {getPageNumbers().map((page, index) => {
+              if (page === '...') {
+                return (
+                  <div
+                    key={`ellipsis-${index}`}
+                    className="flex items-center justify-center w-9 h-9"
+                  >
+                    <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                );
+              }
+
+              const pageNumber = page as number;
+              const isActive = pageNumber === currentPage;
+
+              return (
+                <Button
+                  key={pageNumber}
+                  variant={isActive ? "default" : "ghost"}
+                  size="icon"
+                  className={cn(
+                    "h-9 w-9",
+                    isActive && "pointer-events-none"
+                  )}
+                  onClick={() => table.setPageIndex(pageNumber - 1)}
+                >
+                  {pageNumber}
+                </Button>
+              );
+            })}
+          </div>
+
+          {/* Next page */}
           <Button
-            variant="outline"
-            className="h-8 w-8 p-0"
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9"
             onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}>
-            <span className="sr-only">Go to next page</span>
+            disabled={!table.getCanNextPage()}
+          >
             <ChevronRight className="h-4 w-4" />
+            <span className="sr-only">다음 페이지</span>
           </Button>
+
+          {/* Last page */}
           <Button
-            variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9"
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}>
-            <span className="sr-only">Go to last page</span>
+            disabled={!table.getCanNextPage()}
+          >
             <ChevronsRight className="h-4 w-4" />
+            <span className="sr-only">마지막 페이지</span>
           </Button>
         </div>
       </div>
+
+      {/* Total pages badge */}
+      <div className="order-3 hidden lg:block">
+        <Badge variant="secondary" className="font-mono">
+          {currentPage} / {pageCount}
+        </Badge>
+      </div>
     </div>
   );
-};
+}

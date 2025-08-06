@@ -2,9 +2,18 @@
 "use client";
 import { flexRender, Table as ReactTable } from "@tanstack/react-table";
 import { Input } from "@/components/base/input";
-import { useDataTableContext } from "../context/data-table-context";
+import { Textarea } from "@/components/base/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/base/select";
+import { useDataTableContext } from "../contexts/data-table-context";
 import { cn } from "@/lib/utils";
 import { SYSTEM_COLUMN_IDS, EDITABLE_CELL_HEIGHT } from "../constants";
+import { Badge } from "@/components/base/badge";
 
 interface EditableCellProps<TData> {
   row: any;
@@ -13,7 +22,7 @@ interface EditableCellProps<TData> {
   table: ReactTable<TData>;
 }
 
-export const EditableCell = <TData,>({ row, column, value, table }: EditableCellProps<TData>) => {
+export function EditableCell<TData>({ row, column, value, table }: EditableCellProps<TData>) {
   const { isRowEditing, editState, updateCell } = useDataTableContext<TData>();
 
   const meta = column.columnDef.meta;
@@ -36,12 +45,16 @@ export const EditableCell = <TData,>({ row, column, value, table }: EditableCell
           renderValue: () => value,
           cell: { getValue: () => value },
         };
-        return flexRender(column.columnDef.cell, cellContext);
+        return (
+          <div className="flex items-center justify-center">
+            {flexRender(column.columnDef.cell, cellContext)}
+          </div>
+        );
       }
-      return value || "-";
+      return <div className="text-center">{value || "-"}</div>;
     }
 
-    // Regular columns wrapped for consistent height
+    // Regular columns with better styling
     const displayContent = (() => {
       if (column.columnDef.cell) {
         const cellContext = {
@@ -54,12 +67,12 @@ export const EditableCell = <TData,>({ row, column, value, table }: EditableCell
         };
         return flexRender(column.columnDef.cell, cellContext);
       }
-      return value || "-";
+      return value || <span className="text-muted-foreground">-</span>;
     })();
 
     return (
-      <div className={cn(EDITABLE_CELL_HEIGHT, "flex items-center px-3 py-1")}>
-        <span className="py-1">{displayContent}</span>
+      <div className={cn(EDITABLE_CELL_HEIGHT, "flex items-center px-3")}>
+        <div className="w-full truncate">{displayContent}</div>
       </div>
     );
   }
@@ -75,7 +88,6 @@ export const EditableCell = <TData,>({ row, column, value, table }: EditableCell
   };
 
   const isFirstEditCell = isEditing && column.id === getFirstEditableColumnId();
-  const commonClasses = "w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent";
 
   const handleUpdate = (newValue: any) => {
     updateCell(row.id, column.id, newValue);
@@ -84,11 +96,14 @@ export const EditableCell = <TData,>({ row, column, value, table }: EditableCell
   switch (meta.editType) {
     case "textarea":
       return (
-        <div className="py-1">
-          <textarea
+        <div className="py-2 px-3">
+          <Textarea
             value={currentValue || ""}
             onChange={(e) => handleUpdate(e.target.value)}
-            className={cn(commonClasses, "p-2 border rounded min-h-[60px] resize-none")}
+            className={cn(
+              "min-h-[80px] resize-none",
+              "focus:ring-2 focus:ring-primary/20"
+            )}
             placeholder={placeholder}
             autoFocus={isFirstEditCell}
           />
@@ -99,39 +114,54 @@ export const EditableCell = <TData,>({ row, column, value, table }: EditableCell
       if (!meta.editOptions || meta.editOptions.length === 0) {
         console.warn(`No options provided for select column: ${column.id}`);
         return (
-          <div className="flex items-center px-3 py-1">
-            <span className="text-red-500">No options available</span>
+          <div className="flex items-center px-3 py-2">
+            <Badge variant="destructive" className="text-xs">
+              No options available
+            </Badge>
           </div>
         );
       }
 
       return (
-        <div className="py-1">
-          <select
+        <div className="py-1 px-3">
+          <Select
             value={currentValue || ""}
-            onChange={(e) => handleUpdate(e.target.value)}
-            className={cn(commonClasses, "px-3 border rounded bg-white dark:bg-gray-800")}
-            autoFocus={isFirstEditCell}
+            onValueChange={handleUpdate}
           >
-            <option value="">선택하세요</option>
-            {meta.editOptions.map((option: any) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger 
+              className={cn(
+                "h-9",
+                "focus:ring-2 focus:ring-primary/20",
+                isFirstEditCell && "ring-2 ring-primary/20"
+              )}
+            >
+              <SelectValue placeholder={`${placeholder} 선택`} />
+            </SelectTrigger>
+            <SelectContent>
+              {meta.editOptions.map((option: any) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       );
 
     case "number":
       return (
-        <div className="py-1">
+        <div className="py-1 px-3">
           <Input
             type="number"
             value={currentValue || ""}
             onChange={(e) => handleUpdate(e.target.value)}
             placeholder={placeholder}
             autoFocus={isFirstEditCell}
+            className={cn(
+              "h-9",
+              "focus:ring-2 focus:ring-primary/20",
+              "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            )}
           />
         </div>
       );
@@ -139,12 +169,16 @@ export const EditableCell = <TData,>({ row, column, value, table }: EditableCell
     case "text":
     default:
       return (
-        <div className="py-1">
+        <div className="py-1 px-3">
           <Input
             value={currentValue || ""}
             onChange={(e) => handleUpdate(e.target.value)}
             placeholder={placeholder}
             autoFocus={isFirstEditCell}
+            className={cn(
+              "h-9",
+              "focus:ring-2 focus:ring-primary/20"
+            )}
           />
         </div>
       );

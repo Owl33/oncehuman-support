@@ -1,76 +1,31 @@
 // hooks/use-switchpoint.ts
 import { useState, useEffect, useCallback, useMemo } from "react";
-// import { storage } from '@/lib/storage/switchpoint-storage';
+import { unifiedStorage } from "@/lib/storage/character-storage";
 import { calculateMaterials, calculateCharacterSummary } from "../lib/switchpoint/calculations";
+import { CharacterData } from "@/types/character";
+
 import {
-  CharacterData,
   Item,
   Material,
   ViewMode,
   UserSettings,
   ItemCategory,
   JSON_CATEGORY_MAP,
-} from "../types/switchpoint";
+} from "@/types/switchpoint";
 import itemsData from "../data/items-list.json";
 import materialsData from "../data/materials-list.json";
-
-// 테스트용 로컬 데이터
-const LOCAL_TEST_DATA: CharacterData[] = [
-  {
-    id: `character_1`,
-    name: `캐릭터 1`,
-    selectedItems: {
-      water_pump: 2,
-      growing_box: 5,
-    },
-    ownedMaterials: {
-      steel_ingot: 10,
-      log: 50,
-      gravel: 100,
-    },
-    lastUpdated: new Date().toISOString(),
-  },
-  {
-    id: `character_2`,
-    name: `캐릭터 2`,
-    selectedItems: {
-      water_pump: 2,
-      growing_box: 5,
-    },
-    ownedMaterials: {
-      steel_ingot: 10,
-      log: 50,
-      gravel: 100,
-    },
-    lastUpdated: new Date().toISOString(),
-  },
-  {
-    id: `character_3`,
-    name: `캐릭터 3`,
-    selectedItems: {
-      water_pump: 2,
-      growing_box: 5,
-    },
-    ownedMaterials: {
-      steel_ingot: 10,
-      log: 50,
-      gravel: 100,
-    },
-    lastUpdated: new Date().toISOString(),
-  },
-];
 
 export function useSwitchPoint() {
   // 데이터
   const items = useMemo(() => itemsData as Item[], []);
   const materials = useMemo(() => materialsData as Material[], []);
 
-  // 상태 - 로컬 테스트 데이터 사용
-  const [characters, setCharacters] = useState<CharacterData[]>(LOCAL_TEST_DATA);
-  const [selectedCharacterId, setSelectedCharacterId] = useState<string>("character_1");
+  // 상태
+  const [characters, setCharacters] = useState<CharacterData[]>([]);
+  const [selectedCharacterId, setSelectedCharacterId] = useState<string>("");
   const [viewMode, setViewMode] = useState<ViewMode>("dashboard");
   const [settings, setSettings] = useState<UserSettings>({ defaultView: "dashboard" });
-  const [loading, setLoading] = useState(false); // 테스트용이므로 false
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<ItemCategory>("storage");
 
   // 현재 선택된 캐릭터
@@ -83,15 +38,16 @@ export function useSwitchPoint() {
   const itemsByCategory = useMemo(() => {
     const categorized: Record<ItemCategory, Item[]> = {
       storage: [],
-      production_processing: [],
+      production: [],
+      processing: [],
       functional: [],
-
+      vehicle: [],
       weapon: [],
       infection: [],
     };
 
     items.forEach((item) => {
-      const mappedCategory = JSON_CATEGORY_MAP[item.category] || "facility";
+      const mappedCategory = JSON_CATEGORY_MAP[item.category] || "functional";
       if (categorized[mappedCategory as ItemCategory]) {
         categorized[mappedCategory as ItemCategory].push(item);
       }
@@ -108,8 +64,8 @@ export function useSwitchPoint() {
     if (!currentCharacter) return { materials: [], totalPoints: 0 };
 
     return calculateMaterials(
-      currentCharacter.selectedItems,
-      currentCharacter.ownedMaterials,
+      currentCharacter.selectedItems || {},
+      currentCharacter.ownedMaterials || {},
       items,
       materials
     );
@@ -123,70 +79,88 @@ export function useSwitchPoint() {
     }));
   }, [characters, items, materials]);
 
-  // 초기 로드 - 실제 구현 시 주석 해제
-  // useEffect(() => {
-  //   const loadData = async () => {
-  //     try {
-  //       setLoading(true);
-  //
-  //       // 캐릭터 목록 로드
-  //       let loadedCharacters = await storage.getCharacterList();
-  //       if (loadedCharacters.length === 0) {
-  //         // 기본 캐릭터 생성
-  //         for (const char of DEFAULT_CHARACTERS) {
-  //           await storage.saveCharacterData(char.id, char);
-  //         }
-  //         loadedCharacters = DEFAULT_CHARACTERS;
-  //       }
-  //       setCharacters(loadedCharacters);
-  //
-  //       // 설정 로드
-  //       const loadedSettings = await storage.getUserSettings();
-  //       setSettings(loadedSettings);
-  //       setViewMode(loadedSettings.defaultView);
-  //
-  //       // 마지막 선택 캐릭터 설정
-  //       if (loadedSettings.lastSelectedCharacter) {
-  //         setSelectedCharacterId(loadedSettings.lastSelectedCharacter);
-  //       } else if (loadedCharacters.length > 0) {
-  //         setSelectedCharacterId(loadedCharacters[0].id);
-  //       }
-  //     } catch (error) {
-  //       console.error('Failed to load data:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //
-  //   loadData();
-  // }, []);
+  // 초기 로드
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+
+        // 캐릭터 목록 로드
+        const loadedCharacters = await unifiedStorage.getCharacterList();
+        setCharacters(loadedCharacters);
+
+        // 설정 로드
+        const loadedSettings = await unifiedStorage.getUserSettings();
+        setSettings(loadedSettings);
+        setViewMode(loadedSettings.defaultView);
+
+        // 마지막 선택 캐릭터 설정
+        if (
+          loadedSettings.lastSelectedCharacter &&
+          loadedCharacters.some((c) => c.id === loadedSettings.lastSelectedCharacter)
+        ) {
+          setSelectedCharacterId(loadedSettings.lastSelectedCharacter);
+        } else if (loadedCharacters.length > 0) {
+          setSelectedCharacterId(loadedCharacters[0].id);
+        }
+      } catch (error) {
+        console.error("Failed to load data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  // 캐릭터 목록 새로고침 (character 페이지에서 캐릭터 추가/수정 후)
+  const refreshCharacters = useCallback(async () => {
+    try {
+      const loadedCharacters = await unifiedStorage.getCharacterList();
+      setCharacters(loadedCharacters);
+
+      // 현재 선택된 캐릭터가 삭제된 경우 처리
+      if (selectedCharacterId && !loadedCharacters.some((c) => c.id === selectedCharacterId)) {
+        if (loadedCharacters.length > 0) {
+          setSelectedCharacterId(loadedCharacters[0].id);
+        } else {
+          setSelectedCharacterId("");
+        }
+      }
+    } catch (error) {
+      console.error("Failed to refresh characters:", error);
+    }
+  }, [selectedCharacterId]);
 
   // 아이템 수량 업데이트
   const updateItemQuantity = useCallback(
     async (itemId: string, quantity: number) => {
       if (!currentCharacter) return;
 
-      const updatedCharacter = {
-        ...currentCharacter,
-        selectedItems: {
-          ...currentCharacter.selectedItems,
-          [itemId]: Math.max(0, quantity),
-        },
-        lastUpdated: new Date().toISOString(),
-      };
+      try {
+        const updatedCharacter = {
+          ...currentCharacter,
+          selectedItems: {
+            ...currentCharacter.selectedItems,
+            [itemId]: Math.max(0, quantity),
+          },
+          lastUpdated: new Date().toISOString(),
+        };
 
-      // 0이면 제거
-      if (quantity <= 0) {
-        delete updatedCharacter.selectedItems[itemId];
+        // 0이면 제거
+        if (quantity <= 0) {
+          delete updatedCharacter.selectedItems[itemId];
+        }
+
+        await unifiedStorage.saveCharacterData(currentCharacter.id, updatedCharacter);
+
+        // 로컬 상태 업데이트
+        setCharacters((prev) =>
+          prev.map((c) => (c.id === currentCharacter.id ? updatedCharacter : c))
+        );
+      } catch (error) {
+        console.error("Failed to update item quantity:", error);
       }
-
-      // 실제 저장 - 주석 처리
-      // await storage.saveCharacterData(currentCharacter.id, updatedCharacter);
-
-      // 로컬 상태만 업데이트
-      setCharacters((prev) =>
-        prev.map((c) => (c.id === currentCharacter.id ? updatedCharacter : c))
-      );
     },
     [currentCharacter]
   );
@@ -196,22 +170,30 @@ export function useSwitchPoint() {
     async (materialId: string, quantity: number) => {
       if (!currentCharacter) return;
 
-      const updatedCharacter = {
-        ...currentCharacter,
-        ownedMaterials: {
-          ...currentCharacter.ownedMaterials,
-          [materialId]: Math.max(0, quantity),
-        },
-        lastUpdated: new Date().toISOString(),
-      };
+      try {
+        const updatedCharacter = {
+          ...currentCharacter,
+          ownedMaterials: {
+            ...currentCharacter.ownedMaterials,
+            [materialId]: Math.max(0, quantity),
+          },
+          lastUpdated: new Date().toISOString(),
+        };
 
-      // 실제 저장 - 주석 처리
-      // await storage.saveCharacterData(currentCharacter.id, updatedCharacter);
+        // 0이면 제거
+        if (quantity <= 0) {
+          delete updatedCharacter.ownedMaterials[materialId];
+        }
 
-      // 로컬 상태만 업데이트
-      setCharacters((prev) =>
-        prev.map((c) => (c.id === currentCharacter.id ? updatedCharacter : c))
-      );
+        await unifiedStorage.saveCharacterData(currentCharacter.id, updatedCharacter);
+
+        // 로컬 상태 업데이트
+        setCharacters((prev) =>
+          prev.map((c) => (c.id === currentCharacter.id ? updatedCharacter : c))
+        );
+      } catch (error) {
+        console.error("Failed to update material owned:", error);
+      }
     },
     [currentCharacter]
   );
@@ -219,15 +201,19 @@ export function useSwitchPoint() {
   // 캐릭터 선택
   const selectCharacter = useCallback(
     async (characterId: string) => {
-      setSelectedCharacterId(characterId);
+      try {
+        setSelectedCharacterId(characterId);
 
-      // 설정 업데이트 - 주석 처리
-      // const updatedSettings = {
-      //   ...settings,
-      //   lastSelectedCharacter: characterId,
-      // };
-      // await storage.saveUserSettings(updatedSettings);
-      // setSettings(updatedSettings);
+        // 설정 업데이트
+        const updatedSettings = {
+          ...settings,
+          lastSelectedCharacter: characterId,
+        };
+        await unifiedStorage.saveUserSettings(updatedSettings);
+        setSettings(updatedSettings);
+      } catch (error) {
+        console.error("Failed to select character:", error);
+      }
     },
     [settings]
   );
@@ -235,15 +221,18 @@ export function useSwitchPoint() {
   // 뷰 모드 변경
   const changeViewMode = useCallback(
     async (mode: ViewMode) => {
-      setViewMode(mode);
+      try {
+        setViewMode(mode);
 
-      // 설정 업데이트 - 주석 처리
-      // const updatedSettings = {
-      //   ...settings,
-      //   defaultView: mode,
-      // };
-      // await storage.saveUserSettings(updatedSettings);
-      // setSettings(updatedSettings);
+        const updatedSettings = {
+          ...settings,
+          defaultView: mode,
+        };
+        await unifiedStorage.saveUserSettings(updatedSettings);
+        setSettings(updatedSettings);
+      } catch (error) {
+        console.error("Failed to change view mode:", error);
+      }
     },
     [settings]
   );
@@ -252,61 +241,69 @@ export function useSwitchPoint() {
   const resetAllItems = useCallback(async () => {
     if (!currentCharacter) return;
 
-    const updatedCharacter = {
-      ...currentCharacter,
-      selectedItems: {},
-      lastUpdated: new Date().toISOString(),
-    };
+    try {
+      const updatedCharacter = {
+        ...currentCharacter,
+        selectedItems: {},
+        lastUpdated: new Date().toISOString(),
+      };
 
-    // 실제 저장 - 주석 처리
-    // await storage.saveCharacterData(currentCharacter.id, updatedCharacter);
+      await unifiedStorage.saveCharacterData(currentCharacter.id, updatedCharacter);
 
-    // 로컬 상태만 업데이트
-    setCharacters((prev) => prev.map((c) => (c.id === currentCharacter.id ? updatedCharacter : c)));
+      // 로컬 상태 업데이트
+      setCharacters((prev) =>
+        prev.map((c) => (c.id === currentCharacter.id ? updatedCharacter : c))
+      );
+    } catch (error) {
+      console.error("Failed to reset all items:", error);
+    }
   }, [currentCharacter]);
 
   // 모든 재료 초기화
   const resetAllMaterials = useCallback(async () => {
     if (!currentCharacter) return;
 
-    const updatedCharacter = {
-      ...currentCharacter,
-      ownedMaterials: {},
-      lastUpdated: new Date().toISOString(),
-    };
+    try {
+      const updatedCharacter = {
+        ...currentCharacter,
+        ownedMaterials: {},
+        lastUpdated: new Date().toISOString(),
+      };
 
-    // 실제 저장 - 주석 처리
-    // await storage.saveCharacterData(currentCharacter.id, updatedCharacter);
+      await unifiedStorage.saveCharacterData(currentCharacter.id, updatedCharacter);
 
-    // 로컬 상태만 업데이트
-    setCharacters((prev) => prev.map((c) => (c.id === currentCharacter.id ? updatedCharacter : c)));
+      // 로컬 상태 업데이트
+      setCharacters((prev) =>
+        prev.map((c) => (c.id === currentCharacter.id ? updatedCharacter : c))
+      );
+    } catch (error) {
+      console.error("Failed to reset all materials:", error);
+    }
   }, [currentCharacter]);
 
-  // 테스트용 export/import 함수
-  const exportData = async () => {
-    const exportData = {
-      version: "1.0.0",
-      exportDate: new Date().toISOString(),
-      characters,
-      settings,
-    };
-    return JSON.stringify(exportData, null, 2);
-  };
-
-  const importData = async (jsonData: string) => {
+  // 데이터 내보내기
+  const exportData = useCallback(async () => {
     try {
-      const data = JSON.parse(jsonData);
-      if (data.characters) {
-        setCharacters(data.characters);
-      }
-      if (data.settings) {
-        setSettings(data.settings);
-      }
+      return await unifiedStorage.exportData();
     } catch (error) {
-      console.error("Failed to import data:", error);
+      console.error("Failed to export data:", error);
       throw error;
     }
-  };
+  }, []);
+
+  // 데이터 가져오기
+  const importData = useCallback(
+    async (jsonData: string) => {
+      try {
+        await unifiedStorage.importData(jsonData);
+        await refreshCharacters(); // 캐릭터 목록 새로고침
+      } catch (error) {
+        console.error("Failed to import data:", error);
+        throw error;
+      }
+    },
+    [refreshCharacters]
+  );
 
   return {
     // 데이터
@@ -331,6 +328,7 @@ export function useSwitchPoint() {
     resetAllItems,
     resetAllMaterials,
     setSelectedCategory,
+    refreshCharacters,
 
     // 스토리지 액션
     exportData,

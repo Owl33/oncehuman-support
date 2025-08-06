@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Languages, Sun } from "lucide-react";
 import { Button } from "@/components/ui";
 import Link from "next/link";
+import { Toaster } from "sonner";
 
 import "../styles/globals.css";
 
@@ -29,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable}   ${geistMono.variable} antialiased`}>
+        <Toaster richColors></Toaster>
         <header className="py-4 flex container mx-auto">
           <div className="flex space-x-2">
             <Button
