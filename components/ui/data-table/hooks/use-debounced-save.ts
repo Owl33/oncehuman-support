@@ -7,11 +7,11 @@ interface UseDebouncedSaveOptions {
   merge?: boolean; // 기존 데이터와 병합할지 여부
 }
 
-export function useDebouncedSave<T>(
+export const useDebouncedSave = <T>(
   key: string,
   value: T,
   options: UseDebouncedSaveOptions = {}
-) {
+) =>{
   const { delay = 300, merge = true } = options;
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   

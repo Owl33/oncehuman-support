@@ -18,7 +18,7 @@ export type Payment = {
 };
 
 // 알림 타입 정의
-type NotificationType = 'success' | 'error' | 'warning';
+type NotificationType = "success" | "error" | "warning";
 
 interface NotificationOptions {
   type: NotificationType;
@@ -95,9 +95,9 @@ export default function CharacterPage() {
     } catch (error) {
       console.error("Failed to load data:", error);
       showNotification({
-        type: 'error',
-        title: '데이터 로드 실패',
-        message: '캐릭터 데이터를 불러오는데 실패했습니다.'
+        type: "error",
+        title: "데이터 로드 실패",
+        message: "캐릭터 데이터를 불러오는데 실패했습니다.",
       });
     } finally {
       setLoading(false);
@@ -111,12 +111,10 @@ export default function CharacterPage() {
   // 알림 표시 함수 (현재는 alert, 추후 toast/floating으로 교체)
   const showNotification = (options: NotificationOptions) => {
     // 현재는 alert 사용
-    const message = options.title 
-      ? `${options.title}\n${options.message}`
-      : options.message;
-    
+    const message = options.title ? `${options.title}\n${options.message}` : options.message;
+
     alert(message);
-    
+
     // TODO: 추후 toast/floating notification으로 교체
     // toast({
     //   variant: options.type === 'error' ? 'destructive' : 'default',
@@ -136,10 +134,12 @@ export default function CharacterPage() {
       if (!saveData.newRow.scenario?.trim()) errors.push("• 시나리오는 필수입니다");
       if (!saveData.newRow.server?.trim()) errors.push("• 서버는 필수입니다");
       if (!saveData.newRow.job?.trim()) errors.push("• 직업은 필수입니다");
-      
+
       // 중복 이름 검사 - 기존 데이터와 중복되는지 확인
-      if (saveData.newRow.name?.trim() && 
-          data.some(existing => existing.name === saveData.newRow?.name?.trim())) {
+      if (
+        saveData.newRow.name?.trim() &&
+        data.some((existing) => existing.name === saveData.newRow?.name?.trim())
+      ) {
         errors.push("• 이미 존재하는 캐릭터 이름입니다");
       }
     }
@@ -164,9 +164,9 @@ export default function CharacterPage() {
     const errors = validateCharacterData(saveData);
     if (errors.length > 0) {
       showNotification({
-        type: 'warning',
-        title: '입력 정보를 확인해주세요',
-        message: errors.join('\n')
+        type: "warning",
+        title: "입력 정보를 확인해주세요",
+        message: errors.join("\n"),
       });
       return; // 편집 모드 유지 - completeSave() 호출하지 않음
     }
@@ -176,10 +176,10 @@ export default function CharacterPage() {
       if (saveData.updatedRows.length > 0) {
         console.log("Updated rows:", saveData.updatedRows);
         // await updateCharacters(saveData.updatedRows);
-        
+
         showNotification({
-          type: 'success',
-          message: `${saveData.updatedRows.length}개의 캐릭터가 수정되었습니다.`
+          type: "success",
+          message: `${saveData.updatedRows.length}개의 캐릭터가 수정되었습니다.`,
         });
       }
 
@@ -187,27 +187,26 @@ export default function CharacterPage() {
       if (saveData.newRow) {
         console.log("New row:", saveData.newRow);
         // await createCharacter(saveData.newRow);
-        
+
         showNotification({
-          type: 'success',
-          message: `새 캐릭터 '${saveData.newRow.name}'가 추가되었습니다.`
+          type: "success",
+          message: `새 캐릭터 '${saveData.newRow.name}'가 추가되었습니다.`,
         });
       }
 
       console.log("✅ Save completed successfully");
-      
+
       // 성공시에만 편집 모드 종료
       tableRef.current?.completeSave();
-      
+
       // 데이터 새로고침
       await loadData();
-      
     } catch (error) {
       console.error("❌ Save failed:", error);
       showNotification({
-        type: 'error',
-        title: '저장 실패',
-        message: '캐릭터 정보 저장에 실패했습니다. 다시 시도해주세요.'
+        type: "error",
+        title: "저장 실패",
+        message: "캐릭터 정보 저장에 실패했습니다. 다시 시도해주세요.",
       });
       // 편집 모드 유지됨 - completeSave() 호출하지 않음
     }
@@ -216,34 +215,34 @@ export default function CharacterPage() {
   // 삭제 핸들러
   const handleDelete = async (deleteData: Payment[]) => {
     console.log("Delete rows:", deleteData);
-    
+
     // 삭제 확인
-    const confirmMessage = deleteData.length === 1 
-      ? `'${deleteData[0].name}' 캐릭터를 삭제하시겠습니까?`
-      : `선택된 ${deleteData.length}개의 캐릭터를 삭제하시겠습니까?`;
-    
+    const confirmMessage =
+      deleteData.length === 1
+        ? `'${deleteData[0].name}' 캐릭터를 삭제하시겠습니까?`
+        : `선택된 ${deleteData.length}개의 캐릭터를 삭제하시겠습니까?`;
+
     if (!confirm(confirmMessage)) {
       return;
     }
 
     try {
       // await deleteCharacters(deleteData.map(item => item.id));
-      
+
       console.log("✅ Delete completed successfully");
-      
+
       showNotification({
-        type: 'success',
-        message: `${deleteData.length}개의 캐릭터가 삭제되었습니다.`
+        type: "success",
+        message: `${deleteData.length}개의 캐릭터가 삭제되었습니다.`,
       });
-      
+
       await loadData();
-      
     } catch (error) {
       console.error("❌ Delete failed:", error);
       showNotification({
-        type: 'error',
-        title: '삭제 실패',
-        message: '캐릭터 삭제에 실패했습니다. 다시 시도해주세요.'
+        type: "error",
+        title: "삭제 실패",
+        message: "캐릭터 삭제에 실패했습니다. 다시 시도해주세요.",
       });
     }
   };
@@ -271,40 +270,41 @@ export default function CharacterPage() {
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <div>
-        <div className="py-4 flex align-center items-center">
-          <h3 className="text-lg font-semibold">캐릭터 관리</h3>
-          <div className="ml-auto flex gap-2">
-            <Button
-              variant="default"
-              onClick={handleAddCharacter}
-              disabled={isInEditMode}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              {isAddMode ? "추가 중..." : "캐릭터 추가"}
-            </Button>
-            
-            {/* 편집 중일 때 취소 버튼 표시 (선택사항) */}
-            {isInEditMode && (
+    <div className=" mx-auto ">
+      <div className="border-b">
+        <div className=" mx-auto py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold">캐릭터 관리</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                캐릭터를 관리합니다. 현재 버전에서는 브라우저의 데이터를 초기화하면 데이터가
+                사라집니다.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {/* 뷰 모드 전환 */}
               <Button
-                variant="outline"
-                onClick={() => tableRef.current?.cancelAll()}
-              >
-                취소
+                variant="default"
+                onClick={handleAddCharacter}
+                disabled={isInEditMode}>
+                <Plus className="h-4 w-4 mr-2" />
+                {isAddMode ? "추가 중..." : "캐릭터 추가"}
               </Button>
-            )}
+
+              {/* 편집 중일 때 취소 버튼 표시 (선택사항) */}
+            </div>
           </div>
         </div>
-
-        <DataTable
-          ref={tableRef}
-          columns={columns}
-          data={data}
-          onSave={handleSave}
-          onDelete={handleDelete}
-        />
       </div>
+
+      <DataTable
+        ref={tableRef}
+        columns={columns}
+        data={data}
+        onSave={handleSave}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }

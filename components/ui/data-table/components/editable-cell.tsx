@@ -13,7 +13,7 @@ interface EditableCellProps<TData> {
   table: ReactTable<TData>;
 }
 
-export function EditableCell<TData>({ row, column, value, table }: EditableCellProps<TData>) {
+export const EditableCell = <TData,>({ row, column, value, table }: EditableCellProps<TData>) => {
   const { isRowEditing, editState, updateCell } = useDataTableContext<TData>();
 
   const meta = column.columnDef.meta;

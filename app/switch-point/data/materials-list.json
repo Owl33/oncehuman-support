@@ -1,0 +1,316 @@
+[
+  {
+    "id": "gravel",
+    "name": "자갈",
+    "point": 1
+  },
+  {
+    "id": "sulfur",
+    "name": "유황",
+    "point": 0
+  },
+  {
+    "id": "copper_ore",
+    "name": "구리 광석",
+    "point": 10
+  },
+  {
+    "id": "tungsten_ore",
+    "name": "텅스텐 광석",
+    "point": 0
+  },
+  {
+    "id": "aluminium_ore",
+    "name": "알루미늄 광석",
+    "point": 0
+  },
+  {
+    "id": "silver_ore",
+    "name": "은 광석",
+    "point": 5
+  },
+  {
+    "id": "titanium_ore",
+    "name": "티타늄 광석",
+    "point": 0
+  },
+  {
+    "id": "iron_ore",
+    "name": "철 광석",
+    "point": 3
+  },
+  {
+    "id": "tin_ore",
+    "name": "주석 광석",
+    "point": 0
+  },
+  {
+    "id": "gold_ore",
+    "name": "금 광석",
+    "point": 0
+  },
+
+  {
+    "id": "log",
+    "name": "나무",
+    "point": 1
+  },
+  {
+    "id": "spoiled_food",
+    "name": "상한 음식",
+    "point": 1
+  },
+  {
+    "id": "bolid_water",
+    "name": "끓인 물",
+    "point": 2
+  },
+  {
+    "id": "raw_meat",
+    "name": "생고기",
+    "point": 0
+  },
+
+  {
+    "id": "chop",
+    "name": "정육",
+    "point": 0
+  },
+  {
+    "id": "hide",
+    "name": "가죽",
+    "point": 0
+  },
+  {
+    "id": "masala",
+    "name": "마살라",
+    "point": 0
+  },
+  {
+    "id": "sage",
+    "name": "세이지",
+    "point": 0
+  },
+  {
+    "id": "saffron",
+    "name": "사프란",
+    "point": 0
+  },
+  {
+    "id": "wheat",
+    "name": "밀",
+    "point": 0
+  },
+  {
+    "id": "charcoal",
+    "name": "목탄",
+    "point": 3
+  },
+  {
+    "id": "sintered_brick",
+    "name": "소결 벽돌",
+    "point": 20
+  },
+
+  {
+    "id": "tungsten_ingot",
+    "name": "텅스텐 잉곳",
+    "point": 80
+  },
+  {
+    "id": "aluminum_ingot",
+    "name": "알루미늄 잉곳",
+    "point": 60
+  },
+  {
+    "id": "steel_ingot",
+    "name": "강철 잉곳",
+    "point": 50
+  },
+  {
+    "id": "bronze_ingot",
+    "name": "브론즈 잉곳",
+    "point": 40
+  },
+  {
+    "id": "copper_ingot",
+    "name": "구리 잉곳",
+    "point": 20
+  },
+  {
+    "id": "glass",
+    "name": "유리",
+    "point": 10
+  },
+  {
+    "id": "metal_scraps",
+    "name": "금속 폐기물",
+    "point": 5
+  },
+  {
+    "id": "special_plastic",
+    "name": "특제 플라스틱",
+    "point": 15
+  },
+  {
+    "id": "engineer_plastic",
+    "name": "엔지니어 플라스틱",
+    "point": 10
+  },
+  {
+    "id": "fireproof_plastic",
+    "name": "방화 플라스틱",
+    "point": 5
+  },
+  {
+    "id": "all_purpose_plastic",
+    "name": "통용 플라스틱",
+    "point": 5
+  },
+  {
+    "id": "waste_plastic",
+    "name": "버려진 플라스틱",
+    "point": 5
+  },
+  {
+    "id": "special_part",
+    "name": "특수 부품",
+    "point": 5
+  },
+
+  {
+    "id": "automatic_part",
+    "name": "자동화 부품",
+    "point": 15
+  },
+  {
+    "id": "refined_parts",
+    "name": "특제 부품",
+    "point": 5
+  },
+  {
+    "id": "standard_parts",
+    "name": "표준 부품",
+    "point": 5
+  },
+  {
+    "id": "rusted_parts",
+    "name": "녹슨 부품",
+    "point": 5
+  },
+  {
+    "id": "bulletproof_fiber_fabric",
+    "name": "방탄 섬유 직물",
+    "point": 15
+  },
+  {
+    "id": "carbon_fiber_fabric",
+    "name": "탄소 섬유 소재",
+    "point": 5
+  },
+  {
+    "id": "metallic_fiber",
+    "name": "금속 섬유 직물",
+    "point": 10
+  },
+  {
+    "id": "cotton_fabric",
+    "name": "면 직물",
+    "point": 5
+  },
+  {
+    "id": "shabby_fabric",
+    "name": "오래된 패브릭",
+    "point": 5
+  },
+  {
+    "id": "rubber",
+    "name": "고무",
+    "point": 5
+  },
+  {
+    "id": "adhesive",
+    "name": "접착제",
+    "point": 5
+  },
+  {
+    "id": "electronic_parts",
+    "name": "전자 부품",
+    "point": 5
+  },
+
+  {
+    "id": "acid",
+    "name": "산성 용액",
+    "point": 8
+  },
+
+  {
+    "id": "fuse",
+    "name": "퓨즈",
+    "point": 20,
+    "requiment": [
+      {
+        "id": "copper_ingot",
+        "stock": 5
+      },
+      {
+        "id": "glass",
+        "stock": 2
+      },
+      {
+        "id": "metal_scraps",
+        "stock": 2
+      }
+    ]
+  },
+  {
+    "id": "bettery",
+    "name": "배터리",
+    "point": 500,
+    "requiment": [
+      {
+        "id": "steel_ingot",
+        "stock": 15
+      },
+      {
+        "id": "rubber",
+        "stock": 20
+      },
+      {
+        "id": "acid",
+        "stock": 20
+      },
+      {
+        "id": "metal_scraps",
+        "stock": 2
+      }
+    ]
+  },
+
+  {
+    "id": "beryllium_crystal",
+    "name": "베릴륨 결정",
+    "point": 80
+  },
+  {
+    "id": "vanadium_crystal",
+    "name": "바나듐 결정",
+    "point": 120
+  },
+  {
+    "id": "iridium_crystal",
+    "name": "이리듐 결정",
+    "point": 160
+  },
+  {
+    "id": "platinum_crystal",
+    "name": "플래티넘 결정",
+    "point": 200
+  },
+  {
+    "id": "stardust_source",
+    "name": "스타더스트 에테르",
+    "point": 3
+  }
+]

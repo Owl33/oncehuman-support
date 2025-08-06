@@ -7,17 +7,9 @@ import { useDataTableContext } from "../context/data-table-context";
 import { cn } from "@/lib/utils";
 import { Check, X, Edit, Trash } from "lucide-react";
 
-export function FloatingActionBar() {
-  const {
-    table,
-    editState,
-    isInEditMode,
-    startEdit,
-    saveChanges,
-    cancelEdit,
-    onSave,
-    onDelete,
-  } = useDataTableContext();
+export const FloatingActionBar = () => {
+  const { table, editState, isInEditMode, startEdit, saveChanges, cancelEdit, onSave, onDelete } =
+    useDataTableContext();
 
   if (!table) return null;
 
@@ -66,7 +58,7 @@ export function FloatingActionBar() {
   const canDelete = !isInEditMode && selectedCount > 0;
 
   return (
-    <div className="fixed top-52 left-1/2 transform -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-5">
+    <div className="fixed top-47 left-78 transform -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-5">
       <Card className="p-2 shadow-lg border-muted bg-popover dark:bg-muted">
         <CardContent className="px-2 flex items-center gap-4">
           <div
@@ -74,19 +66,24 @@ export function FloatingActionBar() {
             className={cn(
               "text-blue-400 text-sm font-medium",
               !isInEditMode && "cursor-pointer hover:underline"
-            )}
-          >
+            )}>
             {getDisplayText()}
           </div>
 
           {isInEditMode ? (
             // Edit mode buttons
             <div className="flex gap-2">
-              <Button variant="default" size="sm" onClick={handleSave}>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={handleSave}>
                 <Check className="h-4 w-4" />
                 저장
               </Button>
-              <Button variant="outline" size="sm" onClick={cancelEdit}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={cancelEdit}>
                 <X className="h-4 w-4" />
                 취소
               </Button>
@@ -94,11 +91,19 @@ export function FloatingActionBar() {
           ) : (
             // Normal mode buttons
             <div className="flex gap-2">
-              <Button disabled={!canEdit} variant="outline" size="sm" onClick={startEdit}>
+              <Button
+                disabled={!canEdit}
+                variant="outline"
+                size="sm"
+                onClick={startEdit}>
                 <Edit className="h-4 w-4" />
                 편집
               </Button>
-              <Button disabled={!canDelete} variant="destructive" size="sm" onClick={handleDelete}>
+              <Button
+                disabled={!canDelete}
+                variant="destructive"
+                size="sm"
+                onClick={handleDelete}>
                 <Trash className="h-4 w-4" />
                 삭제
               </Button>

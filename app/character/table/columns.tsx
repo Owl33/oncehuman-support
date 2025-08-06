@@ -13,20 +13,6 @@ import { Dropdown, DropdownItem } from "@/components/ui/dropdown";
 import { Payment } from "../page";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-import "@tanstack/react-table";
-declare module "@tanstack/react-table" {
-  interface ColumnMeta<TData, TValue> {
-    displayName?: string;
-    editable?: boolean;
-    editType?: "text" | "select" | "textarea";
-    editOptions?: { label: string; value: any }[];
-    startEditing?: () => any;
-    onSave?: (rowId: string, columnId: string, value: any) => Promise<void>;
-  }
-  interface TableMeta<TData> {
-    isInEditMode?: boolean;
-  }
-}
 
 export const columns: ColumnDef<Payment>[] = [
   {
@@ -49,7 +35,14 @@ export const columns: ColumnDef<Payment>[] = [
       editType: "text",
     },
   },
-
+  {
+    accessorKey: "name",
+    header: "캐릭터명",
+    meta: {
+      editable: true,
+      displayName: "캐릭터명",
+    },
+  },
   {
     accessorKey: "job",
     header: ({ column }) => {
@@ -68,14 +61,6 @@ export const columns: ColumnDef<Payment>[] = [
       displayName: "비고",
       editable: true,
       editType: "text",
-    },
-  },
-  {
-    accessorKey: "name",
-    header: "캐릭터명",
-    meta: {
-      editable: true,
-      displayName: "캐릭터명",
     },
   },
 

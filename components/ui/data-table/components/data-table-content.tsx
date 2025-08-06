@@ -16,11 +16,11 @@ interface DataTableContentProps<TData, TValue> {
   className?: string;
 }
 
-export function DataTableContent<TData, TValue>({
+export const DataTableContent = <TData, TValue>({
   showPagination = true,
   customHeaderContent,
   className,
-}: DataTableContentProps<TData, TValue>) {
+}: DataTableContentProps<TData, TValue>) => {
   const { cancelEdit } = useDataTableContext<TData>();
 
   // ESC key handler
@@ -47,4 +47,4 @@ export function DataTableContent<TData, TValue>({
       )}
     </div>
   );
-}
+};

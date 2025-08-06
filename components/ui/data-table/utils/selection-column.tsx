@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/base/checkbox";
 
-export function createSelectionColumn<TData>(): ColumnDef<TData> {
+export const createSelectionColumn = <TData,>(): ColumnDef<TData> => {
   return {
     id: "select",
     size: 32,
@@ -12,7 +12,7 @@ export function createSelectionColumn<TData>(): ColumnDef<TData> {
       const HeaderCheckbox = () => {
         // This will be wrapped by provider, so context will be available
         const isInEditMode = table.options.meta?.isInEditMode || false;
-        
+
         return (
           <div className="text-center">
             <Checkbox
@@ -27,18 +27,22 @@ export function createSelectionColumn<TData>(): ColumnDef<TData> {
           </div>
         );
       };
-      
+
       return <HeaderCheckbox />;
     },
     cell: ({ row, table }) => {
       // Row selection checkbox
       const RowCheckbox = () => {
         const isInEditMode = table.options.meta?.isInEditMode || false;
-        
+
         if (row.id === "temp_new_row") {
           return (
             <div className="text-center">
-              <Checkbox checked={false} disabled aria-label="Select row" />
+              <Checkbox
+                checked={false}
+                disabled
+                aria-label="Select row"
+              />
             </div>
           );
         }
@@ -54,10 +58,10 @@ export function createSelectionColumn<TData>(): ColumnDef<TData> {
           </div>
         );
       };
-      
+
       return <RowCheckbox />;
     },
     enableSorting: false,
     enableHiding: false,
   };
-}
+};

@@ -1,0 +1,540 @@
+[
+  {
+    "category": "production_processing",
+    "id": "growing_box",
+    "name": "재배상자",
+    "requiment": [
+      {
+        "id": "gravel",
+        "stock": 50
+      },
+      {
+        "id": "log",
+        "stock": 20
+      },
+      {
+        "id": "boild_water",
+        "stock": 15
+      },
+      {
+        "id": "spoiled_food",
+        "stock": 5
+      }
+    ]
+  },
+
+  {
+    "category": "production_processing",
+
+    "id": "water_pump",
+    "name": "워터펌프",
+    "requiment": [
+      {
+        "id": "steel_ingot",
+        "stock": 25
+      },
+      {
+        "id": "carbon_fiber_fabric",
+        "stock": 20
+      },
+      {
+        "id": "special_part",
+        "stock": 5
+      },
+      {
+        "id": "standard_parts",
+        "stock": 5
+      },
+      {
+        "id": "electronic_parts",
+        "stock": 5
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+
+    "id": "large_refinery_facility",
+    "name": "대형 정유 시설",
+    "requiment": [
+      {
+        "id": "steel_ingot",
+        "stock": 25
+      },
+      {
+        "id": "carbon_fiber_fabric",
+        "stock": 20
+      },
+      {
+        "id": "special_part",
+        "stock": 5
+      },
+      {
+        "id": "standard_parts",
+        "stock": 5
+      },
+      {
+        "id": "electronic_parts",
+        "stock": 5
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+
+    "id": "electric_Furnace",
+    "name": "전기난로",
+    "requiment": [
+      {
+        "id": "steel_ingot",
+        "stock": 35
+      },
+      {
+        "id": "copper_ingot",
+        "stock": 15
+      },
+      {
+        "id": "standard_parts",
+        "stock": 10
+      },
+      {
+        "id": "electronic_parts",
+        "stock": 5
+      }
+    ]
+  },
+  {
+    "category": "functional",
+
+    "id": "isolated_securement_unit",
+    "name": "단독 수용 유닛",
+    "requiment": [
+      {
+        "id": "metal_scraps",
+        "stock": 20
+      },
+      {
+        "id": "copper_ingot",
+        "stock": 15
+      },
+      {
+        "id": "glass",
+        "stock": 10
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+
+    "id": "compact_water_filter",
+    "name": "소형 정수기",
+    "requiment": [
+      {
+        "id": "log",
+        "stock": 50
+      },
+      {
+        "id": "charcoal",
+        "stock": 20
+      },
+      {
+        "id": "adhesive",
+        "stock": 15
+      },
+      {
+        "id": "iron_ingot",
+        "stock": 15
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+    "id": "large_water_filter",
+    "name": "대형 정수기",
+    "requiment": [
+      {
+        "id": "electronic_parts",
+        "stock": 15
+      },
+      {
+        "id": "automatic_part",
+        "stock": 20
+      },
+      {
+        "id": "adhesive",
+        "stock": 20
+      },
+      {
+        "id": "metal_scraps",
+        "stock": 20
+      },
+      {
+        "id": "rubber",
+        "stock": 10
+      },
+      {
+        "id": "tungsten_ingot",
+        "stock": 10
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+    "id": "compact_garage",
+    "name": "소형 차고",
+    "requiment": [
+      {
+        "id": "copper_ingot",
+        "stock": 13
+      },
+      {
+        "id": "rusted_parts",
+        "stock": 10
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+    "id": "motorcycle",
+    "name": "오토바이",
+    "requiment": [
+      {
+        "id": "copper_ingot",
+        "stock": 25
+      },
+      {
+        "id": "rusted_parts",
+        "stock": 10
+      },
+      {
+        "id": "metal_scraps",
+        "stock": 25
+      },
+      {
+        "id": "rubber",
+        "stock": 25
+      },
+      {
+        "id": "waste_plastic",
+        "stock": 15
+      },
+      {
+        "id": "adhesive",
+        "stock": 5
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+    "id": "bicycle",
+    "name": "자전거",
+    "requiment": [
+      {
+        "id": "copper_ingot",
+        "stock": 13
+      },
+      {
+        "id": "rusted_parts",
+        "stock": 10
+      }
+    ]
+  },
+  {
+    "category": "power_generation",
+    "id": "solar_powered_generator",
+    "name": "소형 태양광 모터",
+    "requiment": [
+      {
+        "id": "copper_ingot",
+        "stock": 8
+      },
+      {
+        "id": "iron_ingot",
+        "stock": 15
+      },
+      {
+        "id": "glass",
+        "stock": 5
+      },
+      {
+        "id": "refined_parts",
+        "stock": 4
+      },
+      {
+        "id": "fireproof_plastic",
+        "stock": 4
+      },
+      {
+        "id": "electronic_parts",
+        "stock": 8
+      },
+      {
+        "id": "fuse",
+        "stock": 3
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+    "id": "furnace",
+    "name": "용광로",
+    "requiment": [
+      {
+        "id": "copper_ore",
+        "stock": 20
+      },
+      {
+        "id": "gravel",
+        "stock": 30
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+    "id": "disassembly_Bench",
+    "name": "분해작업대",
+    "requiment": [
+      {
+        "id": "copper_ore",
+        "stock": 10
+      },
+      {
+        "id": "gravel",
+        "stock": 20
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+    "id": "supplies_workbench",
+    "name": "초급 제작대",
+    "requiment": [
+      {
+        "id": "copper_ore",
+        "stock": 20
+      },
+      {
+        "id": "log",
+        "stock": 30
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+    "id": "intermediate_supplies_workbench",
+    "name": "중급 제작대",
+    "requiment": [
+      {
+        "id": "copper_ingot",
+        "stock": 20
+      },
+      {
+        "id": "standard_parts",
+        "stock": 20
+      },
+      {
+        "id": "metal_scraps",
+        "stock": 20
+      },
+      {
+        "id": "rubber",
+        "stock": 15
+      },
+      {
+        "id": "electronic_parts",
+        "stock": 1
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+    "id": "gear_workbench",
+    "name": "초급 장비 제작대",
+    "requiment": [
+      {
+        "id": "copper_ingot",
+        "stock": 30
+      },
+      {
+        "id": "adhesive",
+        "stock": 5
+      },
+      {
+        "id": "metal_scraps",
+        "stock": 10
+      },
+      {
+        "id": "shabby_fabric",
+        "stock": 10
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+    "id": "intermediate_gear_workbench",
+    "name": "중급 장비 제작대",
+    "requiment": [
+      {
+        "id": "iron_ingot",
+        "stock": 25
+      },
+      {
+        "id": "adhesive",
+        "stock": 10
+      },
+      {
+        "id": "vanadium_crystal",
+        "stock": 3
+      },
+      {
+        "id": "standard_parts",
+        "stock": 20
+      },
+      {
+        "id": "special_part",
+        "stock": 10
+      },
+      {
+        "id": "fireproof_plastic",
+        "stock": 10
+      },
+      {
+        "id": "electronic_parts",
+        "stock": 20
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+    "id": "stove",
+    "name": "스토브",
+    "requiment": [
+      {
+        "id": "copper_ore",
+        "stock": 25
+      },
+      {
+        "id": "gravel",
+        "stock": 20
+      },
+      {
+        "id": "charcoal",
+        "stock": 30
+      },
+      {
+        "id": "metal_scraps",
+        "stock": 10
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+    "id": "advanced_Stove",
+    "name": "중급 스토브 (전기레인지)",
+    "requiment": [
+      {
+        "id": "steel_ingot",
+        "stock": 20
+      },
+      {
+        "id": "copper_ingot",
+        "stock": 15
+      },
+      {
+        "id": "special_part",
+        "stock": 15
+      },
+      {
+        "id": "glass",
+        "stock": 10
+      },
+      {
+        "id": "metal_scraps",
+        "stock": 10
+      },
+      {
+        "id": "electronic_parts",
+        "stock": 10
+      }
+    ]
+  },
+  {
+    "category": "storage",
+    "id": "water_reservoir",
+    "name": "물통",
+    "requiment": [
+      {
+        "id": "log",
+        "stock": 20
+      },
+      {
+        "id": "adhesive",
+        "stock": 5
+      },
+
+      {
+        "id": "metal_scraps",
+        "stock": 15
+      }
+    ]
+  },
+  {
+    "category": "storage",
+    "id": "refrigerator",
+    "name": "냉장고",
+    "requiment": [
+      {
+        "id": "copper_ore",
+        "stock": 15
+      },
+      {
+        "id": "iron_ingot",
+        "stock": 25
+      },
+      {
+        "id": "standard_parts",
+        "stock": 15
+      },
+      {
+        "id": "glass",
+        "stock": 10
+      },
+      {
+        "id": "electronic_parts",
+        "stock": 20
+      }
+    ]
+  },
+  {
+    "category": "production_processing",
+    "id": "mining_operation_platform",
+    "name": "채광 작업대",
+    "requiment": [
+      {
+        "id": "tungsten_ingot",
+        "stock": 25
+      },
+      {
+        "id": "electronic_parts",
+        "stock": 30
+      },
+      {
+        "id": "metal_scraps",
+        "stock": 15
+      },
+      {
+        "id": "adhesive",
+        "stock": 15
+      },
+      {
+        "id": "rubber",
+        "stock": 20
+      },
+
+      {
+        "id": "bettery",
+        "stock": 4
+      }
+    ]
+  }
+]

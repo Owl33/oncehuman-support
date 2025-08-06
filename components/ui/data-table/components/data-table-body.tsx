@@ -14,7 +14,7 @@ import { EditableCell } from "./editable-cell";
 import { cn } from "@/lib/utils";
 import { SYSTEM_COLUMN_IDS, EDITABLE_CELL_HEIGHT } from "../constants";
 
-export function DataTableBody() {
+export const DataTableBody = () => {
   const { table, editState, isRowEditing } = useDataTableContext();
 
   if (!table) return null;

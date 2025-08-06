@@ -6,13 +6,22 @@ import { DataTableProvider } from "./context/data-table-context";
 import { DataTableContent } from "./components/data-table-content";
 import { forwardRef, useMemo, useRef, useImperativeHandle } from "react";
 import { createSelectionColumn } from "./utils/selection-column";
+import { createActionsColumn, ActionItem } from "./utils/actions-column";
 import { useDataTableContext } from "./context/data-table-context";
+import "./types/table-types"; // 타입 확장 import
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   showPagination?: boolean;
   showSelection?: boolean;
+  showActions?: boolean;
+  actionItems?: ActionItem<TData>[] | ((row: TData) => ActionItem<TData>[]);
+  customActions?: {
+    header?: string | React.ReactNode;
+    size?: number;
+    render: (row: TData, tableRef: React.RefObject<DataTableRef<TData> | null>) => React.ReactNode;
+  };
   tableId?: string;
   customHeaderContent?: React.ReactNode;
   className?: string;
@@ -31,16 +40,30 @@ export interface DataTableRef<TData> {
   cancelAll: () => void;
   saveChanges: () => { updatedRows: TData[]; newRow: TData | null };
   completeSave: () => void;
+  updateData: (updater: (data: TData[]) => TData[]) => void;
+  getRowData: (rowId: string) => TData | undefined;
   isInEditMode: boolean;
   isAddMode: boolean;
 }
 
 // Internal component that uses context
 function DataTableInner<TData, TValue>(
-  props: DataTableProps<TData, TValue> & { tableRef: React.MutableRefObject<DataTableRef<TData> | null> }
+  props: DataTableProps<TData, TValue> & {
+    tableRef: React.RefObject<DataTableRef<TData> | null>;
+    finalColumns: ColumnDef<TData, TValue>[];
+  }
 ) {
   const context = useDataTableContext<TData>();
-  const { table, startAdd, cancelEdit, saveChanges, completeSave, isInEditMode, isAddMode, clearAllFilters } = context;
+  const {
+    table,
+    startAdd,
+    cancelEdit,
+    saveChanges,
+    completeSave,
+    isInEditMode,
+    isAddMode,
+    clearAllFilters,
+  } = context;
 
   useImperativeHandle(
     props.tableRef,
@@ -68,13 +91,36 @@ function DataTableInner<TData, TValue>(
       cancelAll: cancelEdit,
       saveChanges,
       completeSave,
+      updateData: (updater: (data: TData[]) => TData[]) => {
+        // This would require lifting state up or using a state management solution
+        console.warn("updateData is not yet implemented. Consider using onSave callback instead.");
+      },
+      getRowData: (rowId: string) => {
+        const row = table?.getRowModel().rows.find((r) => r.id === rowId);
+        return row?.original;
+      },
       isInEditMode,
       isAddMode,
     }),
-    [table, props.data, startAdd, cancelEdit, saveChanges, completeSave, isInEditMode, isAddMode, clearAllFilters]
+    [
+      table,
+      props.data,
+      startAdd,
+      cancelEdit,
+      saveChanges,
+      completeSave,
+      isInEditMode,
+      isAddMode,
+      clearAllFilters,
+    ]
   );
 
-  return <DataTableContent {...props} />;
+  return (
+    <DataTableContent
+      {...props}
+      columns={props.finalColumns}
+    />
+  );
 }
 
 // Main component
@@ -86,6 +132,9 @@ function DataTableComponent<TData, TValue>(
     columns,
     data,
     showSelection = true,
+    showActions = false,
+    actionItems,
+    customActions,
     tableId: propTableId,
     onSave,
     onDelete,
@@ -106,15 +155,51 @@ function DataTableComponent<TData, TValue>(
     return "table-ssr";
   }, [propTableId]);
 
-  // Add selection column if needed
+  // Add selection and actions columns if needed
   const finalColumns = useMemo(() => {
-    if (!showSelection) return columns;
+    let cols = [...columns];
 
-    const hasSelectColumn = columns.some((col) => "id" in col && col.id === "select");
-    if (hasSelectColumn) return columns;
+    // Add selection column at the beginning
+    if (showSelection) {
+      const hasSelectColumn = cols.some((col) => "id" in col && col.id === "select");
+      if (!hasSelectColumn) {
+        cols = [createSelectionColumn<TData>(), ...cols];
+      }
+    }
 
-    return [createSelectionColumn<TData>(), ...columns];
-  }, [columns, showSelection]);
+    // Add actions column at the end
+    if (showActions || customActions) {
+      const hasActionsColumn = cols.some(
+        (col) => "id" in col && (col.id === "actions" || col.id === "custom-actions")
+      );
+      if (!hasActionsColumn) {
+        if (customActions) {
+          // 내부에서 직접 컬럼 생성
+          const customActionsColumn: ColumnDef<TData> = {
+            id: "custom-actions",
+            size: customActions.size || 100,
+            enableSorting: false,
+            enableHiding: false,
+            meta: {
+              editable: false,
+            },
+            header: () => <div className="text-center">{customActions.header || "Actions"}</div>,
+            cell: ({ row, table }) => {
+              const tableRef = (table.options.meta as any)?.tableRef;
+              return (
+                <div className="text-center">{customActions.render(row.original, tableRef)}</div>
+              );
+            },
+          };
+          cols = [...cols, customActionsColumn];
+        } else if (actionItems) {
+          cols = [...cols, createActionsColumn<TData>({ items: actionItems })];
+        }
+      }
+    }
+
+    return cols;
+  }, [columns, showSelection, showActions, actionItems, customActions]);
 
   // Create table instance
   const { table, savedState } = useDataTable({
@@ -123,9 +208,17 @@ function DataTableComponent<TData, TValue>(
     tableId,
   });
 
-  useImperativeHandle(ref, () => tableRef.current!, []);
+  // Add tableRef to table meta for access in columns
+  if (table) {
+    table.options.meta = {
+      ...table.options.meta,
+      tableRef,
+      isInEditMode: false, // Context에서 관리하지만 초기값 설정
+    };
+  }
 
-  console.log('Loading savedState:', savedState);
+  // Forward ref
+  useImperativeHandle(ref, () => tableRef.current!, []);
 
   return (
     <DataTableProvider
@@ -133,9 +226,12 @@ function DataTableComponent<TData, TValue>(
       tableId={tableId}
       initialFilterState={savedState.filterState}
       onSave={onSave}
-      onDelete={onDelete}
-    >
-      <DataTableInner {...props} columns={finalColumns} tableRef={tableRef} />
+      onDelete={onDelete}>
+      <DataTableInner
+        {...props}
+        finalColumns={finalColumns}
+        tableRef={tableRef}
+      />
     </DataTableProvider>
   );
 }

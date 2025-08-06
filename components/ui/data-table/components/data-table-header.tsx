@@ -7,11 +7,11 @@ interface DataTableHeaderProps {
   customHeaderContent?: React.ReactNode;
 }
 
-export function DataTableHeader({ customHeaderContent }: DataTableHeaderProps) {
+export const DataTableHeader = ({ customHeaderContent }: DataTableHeaderProps) => {
   return (
     <div className="flex items-center justify-between py-4">
       <DataTableFilter />
       {customHeaderContent}
     </div>
   );
-}
+};

@@ -8,7 +8,7 @@ import { Switch } from "@/components/base/switch";
 import { useDataTableContext } from "../context/data-table-context";
 import { useEffect } from "react";
 
-export function DataTableFilter() {
+export const DataTableFilter = () => {
   const {
     table,
     filterState,
@@ -25,8 +25,8 @@ export function DataTableFilter() {
   if (!table) return null;
 
   const { activeColumns, mode, values } = filterState;
-  const isMultipleFilter = mode === 'individual';
-  const globalFilter = values.global || '';
+  const isMultipleFilter = mode === "individual";
+  const globalFilter = values.global || "";
 
   // Apply filters based on mode
   useEffect(() => {
@@ -76,7 +76,10 @@ export function DataTableFilter() {
       value: (
         <>
           <span>다중 필터</span>
-          <Switch checked={isMultipleFilter} onCheckedChange={(checked) => setFilterMode(checked ? 'individual' : 'global')} />
+          <Switch
+            checked={isMultipleFilter}
+            onCheckedChange={(checked) => setFilterMode(checked ? "individual" : "global")}
+          />
         </>
       ),
     },
@@ -86,7 +89,7 @@ export function DataTableFilter() {
   ];
 
   // Check active filters
-  const hasActiveFilters = Object.keys(values).some(key => values[key]);
+  const hasActiveFilters = Object.keys(values).some((key) => values[key]);
 
   // Button text
   const getButtonText = () => {
@@ -110,7 +113,9 @@ export function DataTableFilter() {
       {isMultipleFilter ? (
         <div className="flex flex-wrap gap-2">
           {activeColumns.map((column) => (
-            <div key={column} className="relative">
+            <div
+              key={column}
+              className="relative">
               <Input
                 placeholder={`Filter ${getColumnDisplayName(column)}...`}
                 value={values[column] || ""}
@@ -121,8 +126,7 @@ export function DataTableFilter() {
                 <button
                   onClick={() => clearIndividualFilter(column)}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  type="button"
-                >
+                  type="button">
                   <X className="h-4 w-4" />
                 </button>
               )}
@@ -141,8 +145,7 @@ export function DataTableFilter() {
             <button
               onClick={clearGlobalFilter}
               className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              type="button"
-            >
+              type="button">
               <X className="h-4 w-4" />
             </button>
           )}
@@ -154,12 +157,11 @@ export function DataTableFilter() {
           variant="outline"
           size="sm"
           onClick={clearAllFilters}
-          className="flex items-center gap-2"
-        >
+          className="flex items-center gap-2">
           <Filter className="h-4 w-4" />
           Clear
         </Button>
       )}
     </div>
   );
-}
+};

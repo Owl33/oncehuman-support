@@ -66,13 +66,13 @@ interface DataTableContextValue<TData> {
 const DataTableContext = createContext<DataTableContextValue<any> | null>(null);
 
 // Custom hook for using the context
-export function useDataTableContext<TData>() {
+export const useDataTableContext = <TData,>() => {
   const context = useContext(DataTableContext) as DataTableContextValue<TData> | null;
   if (!context) {
     throw new Error("useDataTableContext must be used within DataTableProvider");
   }
   return context;
-}
+};
 
 interface DataTableProviderProps<TData> {
   children: ReactNode;
@@ -83,14 +83,14 @@ interface DataTableProviderProps<TData> {
   onDelete?: (data: TData[]) => void;
 }
 
-export function DataTableProvider<TData>({
+export const DataTableProvider = <TData,>({
   children,
   table,
   tableId,
   initialFilterState,
   onSave,
   onDelete,
-}: DataTableProviderProps<TData>) {
+}: DataTableProviderProps<TData>) => {
   const tempRowId = "temp_new_row";
 
   // Edit state
@@ -365,4 +365,4 @@ export function DataTableProvider<TData>({
   );
 
   return <DataTableContext.Provider value={value}>{children}</DataTableContext.Provider>;
-}
+};
