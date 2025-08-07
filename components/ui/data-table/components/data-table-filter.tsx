@@ -81,7 +81,7 @@ export function DataTableFilter() {
           className="w-100 p-0"
           align="start">
           <div className="p-4 pb-3">
-            <h4 className="font-medium text-sm">필터 설정</h4>
+            <h4 className="font-medium ">필터 설정</h4>
             <p className="text-xs text-muted-foreground mt-1">
               검색할 컬럼과 표시할 컬럼을 선택하세요
             </p>
@@ -94,7 +94,7 @@ export function DataTableFilter() {
             <div className="flex items-center justify-between">
               <Label
                 htmlFor="filter-mode"
-                className="text-sm font-medium">
+                className=" font-medium">
                 개별 검색
               </Label>
               <Switch
@@ -112,7 +112,7 @@ export function DataTableFilter() {
             <div className="mt-4">
               <Label
                 htmlFor="filter-mode"
-                className="text-sm font-medium">
+                className=" font-medium">
                 {" "}
                 검색 대상
               </Label>
@@ -128,7 +128,7 @@ export function DataTableFilter() {
                     />
                     <Label
                       htmlFor={`search-${column.id}`}
-                      className="text-sm font-normal cursor-pointer flex-1">
+                      className=" font-normal cursor-pointer flex-1">
                       {getColumnDisplayName(column.id)}
                     </Label>
                   </div>
@@ -157,7 +157,7 @@ export function DataTableFilter() {
                     />
                     <Label
                       htmlFor={`display-${column.id}`}
-                      className="text-sm font-normal cursor-pointer flex-1">
+                      className=" font-normal cursor-pointer flex-1">
                       {getColumnDisplayName(column.id)}
                     </Label>
                   </div>

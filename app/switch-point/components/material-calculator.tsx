@@ -90,7 +90,7 @@ export function MaterialCalculator({
                         ) : (
                           <AlertCircle className="h-3 w-3 text-orange-500" />
                         )}
-                        <span className="text-sm">{material.name}</span>
+                        <span className="">{material.name}</span>
                       </div>
                       
                       <div className="text-center">
@@ -114,7 +114,7 @@ export function MaterialCalculator({
                         ) : (
                           <button
                             onClick={() => setEditingMaterial(material.id)}
-                            className="w-16 mx-auto py-1 text-center border rounded hover:bg-muted transition-colors text-sm"
+                            className="w-16 mx-auto py-1 text-center border rounded hover:bg-muted transition-colors "
                           >
                             {owned}
                           </button>

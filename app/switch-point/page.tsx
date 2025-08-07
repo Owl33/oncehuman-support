@@ -74,7 +74,7 @@ export default function SwitchPointPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold">Switch Point Calculator</h1>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className=" text-muted-foreground mt-1">
                   아이템 제작에 필요한 재료와 포인트를 계산합니다
                 </p>
               </div>
@@ -92,7 +92,7 @@ export default function SwitchPointPage() {
                     <UserPlus className="h-6 w-6 text-muted-foreground" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">캐릭터가 없습니다</h3>
-                  <p className="text-sm text-muted-foreground mb-6">
+                  <p className=" text-muted-foreground mb-6">
                     Switch Point를 계산하려면 먼저 캐릭터를 등록해야 합니다.
                     <br />
                     캐릭터 관리 페이지에서 캐릭터를 생성해주세요.
@@ -120,7 +120,7 @@ export default function SwitchPointPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold">Switch Point Calculator</h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className=" text-muted-foreground mt-1">
                 아이템 제작에 필요한 재료와 포인트를 계산합니다
               </p>
             </div>

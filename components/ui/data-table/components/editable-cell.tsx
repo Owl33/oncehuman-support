@@ -74,8 +74,8 @@ export function EditableCell<TData>({ row, column, value, table }: EditableCellP
       return value || <span className="text-muted-foreground">-</span>;
     })();
     return (
-      <div className="h-[44px] flex items-center px-3 overflow-hidden">
-        <div className="truncate text-sm w-full">{displayContent}</div>
+      <div className="h-[44px] flex items-center px-3  overflow-hidden">
+        <div className="truncate  w-full">{displayContent}</div>
       </div>
     );
   }
@@ -106,7 +106,7 @@ export function EditableCell<TData>({ row, column, value, table }: EditableCellP
             onChange={(e) => handleUpdate(e.target.value)}
             placeholder={placeholder}
             autoFocus={isFirstEditCell}
-            className="h-full w-full resize-none text-sm border-0 bg-transparent focus:outline-none focus:ring-0 placeholder:text-muted-foreground"
+            className="h-full w-full resize-none   bg-transparent focus:outline-none focus:ring-0 placeholder:text-muted-foreground"
           />
         </div>
       );
@@ -138,7 +138,7 @@ export function EditableCell<TData>({ row, column, value, table }: EditableCellP
       const displayText = selectedOption?.label || "";
 
       return (
-        <div className="h-[44px] flex items-center px-2 bg-muted/20 border border-input rounded mx-1">
+        <div className="h-[44px] flex items-center ">
           <Select
             value={currentValue || ""}
             onValueChange={handleUpdate}>
@@ -164,14 +164,14 @@ export function EditableCell<TData>({ row, column, value, table }: EditableCellP
 
     case "number":
       return (
-        <div className="h-[44px] flex items-center px-3 bg-muted/20 border border-input rounded mx-1">
+        <div className="h-[44px] flex items-center ">
           <Input
             type="number"
             value={currentValue || ""}
             onChange={(e) => handleUpdate(e.target.value)}
             placeholder={placeholder}
             autoFocus={isFirstEditCell}
-            className="h-full w-full text-sm border-0 bg-transparent focus:outline-none focus:ring-0 placeholder:text-muted-foreground"
+            className=" bg-transparent focus:outline-none focus:ring-0 placeholder:text-muted-foreground"
           />
         </div>
       );
@@ -179,13 +179,13 @@ export function EditableCell<TData>({ row, column, value, table }: EditableCellP
     case "text":
     default:
       return (
-        <div className="h-[44px] flex items-center px-3 bg-muted/20 border border-input rounded mx-1">
+        <div className="h-[44px] flex items-center ">
           <Input
             value={currentValue || ""}
             onChange={(e) => handleUpdate(e.target.value)}
             placeholder={placeholder}
             autoFocus={isFirstEditCell}
-            className="h-full w-full text-sm border-0 bg-transparent focus:outline-none focus:ring-0 placeholder:text-muted-foreground"
+            className="  bg-transparent focus:outline-none focus:ring-0 placeholder:text-muted-foreground"
           />
         </div>
       );

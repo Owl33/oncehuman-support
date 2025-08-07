@@ -8,7 +8,6 @@ import {
   Material, 
   ViewMode,
   ItemCategory,
-  JSON_CATEGORY_MAP
 } from '@/types/character';
 import itemsData from '../data/items-list.json';
 import materialsData from '../data/materials-list.json';
@@ -35,18 +34,17 @@ export function useSwitchPoint() {
   const itemsByCategory = useMemo(() => {
     const categorized: Record<ItemCategory, Item[]> = {
       storage: [],
-      outdoor: [],
       production: [],
-      defence: [],
-      facility: [],
+      processing: [],
+      functional: [],
+      vehicle: [],
       weapon: [],
       infection: [],
     };
     
     items.forEach(item => {
-      const mappedCategory = JSON_CATEGORY_MAP[item.category] || 'facility';
-      if (categorized[mappedCategory as ItemCategory]) {
-        categorized[mappedCategory as ItemCategory].push(item);
+      if (categorized[item.category as ItemCategory]) {
+        categorized[item.category as ItemCategory].push(item);
       }
     });
     

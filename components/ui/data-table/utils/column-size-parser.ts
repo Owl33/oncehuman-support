@@ -1,6 +1,7 @@
 // components/ui/data-table/utils/column-size-parser.ts
+"use client";
 
-export type ColumnSizeValue = number | string;
+type ColumnSizeValue = number | string;
 
 export interface ParsedColumnSize {
   type: 'px' | 'tailwind' | 'percentage' | 'vw' | 'fraction';

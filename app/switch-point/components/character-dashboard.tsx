@@ -54,7 +54,7 @@ export function CharacterDashboard({
             
             <CardContent className="space-y-4">
               {/* 선택된 아이템 수 */}
-              <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center justify-between ">
                 <span className="text-muted-foreground">선택 아이템</span>
                 <div className="flex items-center gap-1">
                   <Package className="h-4 w-4" />
@@ -66,7 +66,7 @@ export function CharacterDashboard({
                 <>
                   {/* 총 필요 포인트 */}
                   <div>
-                    <div className="flex items-center justify-between text-sm mb-2">
+                    <div className="flex items-center justify-between  mb-2">
                       <span className="text-muted-foreground">필요 포인트</span>
                       <span className="font-bold text-lg">
                         {summary.totalPoints.toLocaleString()}P
@@ -81,7 +81,7 @@ export function CharacterDashboard({
                   {/* 부족한 재료 TOP 3 */}
                   {summary.topMissingMaterials.length > 0 && (
                     <div className="space-y-2">
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1  text-muted-foreground">
                         <AlertCircle className="h-3 w-3" />
                         <span>부족한 재료</span>
                       </div>
@@ -109,7 +109,7 @@ export function CharacterDashboard({
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
                   <Package className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">아이템을 선택해주세요</p>
+                  <p className="">아이템을 선택해주세요</p>
                 </div>
               )}
             </CardContent>

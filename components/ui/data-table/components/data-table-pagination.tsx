@@ -80,7 +80,7 @@ export function DataTablePagination({
     <div className="flex   items-center gap-4 sm:gap-6">
       {/* Page info */}
       {showPageInfo && (
-        <div className="text-sm text-muted-foreground ">
+        <div className=" text-muted-foreground ">
           <span className="font-medium text-foreground">
             {table.getFilteredSelectedRowModel().rows.length}
           </span>
@@ -174,7 +174,7 @@ export function DataTablePagination({
       </div>
       {showPageSizeSelector && (
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground hidden sm:inline">페이지당</span>
+          <span className=" text-muted-foreground hidden sm:inline">페이지당</span>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
@@ -193,7 +193,7 @@ export function DataTablePagination({
               ))}
             </SelectContent>
           </Select>
-          <span className="text-sm text-muted-foreground hidden sm:inline">개</span>
+          <span className=" text-muted-foreground hidden sm:inline">개</span>
         </div>
       )}
       {/* Total pages badge */}

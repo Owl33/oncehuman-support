@@ -1,0 +1,33 @@
+// components/ui/data-table/components/table-header-cell.tsx
+"use client";
+import { flexRender, Header } from "@tanstack/react-table";
+import { TableHead } from "@/components/base/table";
+import { cn } from "@/lib/utils";
+import { analyzeColumn } from "../utils/column-utils";
+import { EDITABLE_CELL_HEIGHT } from "../constants";
+
+interface TableHeaderCellProps<TData, TValue> {
+  header: Header<TData, TValue>;
+}
+
+export function TableHeaderCell<TData, TValue>({ header }: TableHeaderCellProps<TData, TValue>) {
+  const { isSystemColumn, cellClassName, headerStyle } = analyzeColumn(header.column);
+
+  return (
+    <TableHead
+      className={cellClassName}
+      style={headerStyle}>
+      {header.isPlaceholder ? null : (
+        <>
+          {isSystemColumn ? (
+            flexRender(header.column.columnDef.header, header.getContext())
+          ) : (
+            <div className={cn(EDITABLE_CELL_HEIGHT, "flex items-center pl-3")}>
+              <p className="">{flexRender(header.column.columnDef.header, header.getContext())}</p>
+            </div>
+          )}
+        </>
+      )}
+    </TableHead>
+  );
+}

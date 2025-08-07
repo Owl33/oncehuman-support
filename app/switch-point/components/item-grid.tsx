@@ -63,7 +63,7 @@ export function ItemGrid({
               </div>
 
               {/* 필요 재료 미리보기 */}
-              <div className="text-sm text-muted-foreground mb-3">
+              <div className=" text-muted-foreground mb-3">
                 <p className="mb-1">필요 재료:</p>
                 <div className="flex flex-wrap gap-1">
                   {item.requiment.slice(0, 3).map((req, index) => (

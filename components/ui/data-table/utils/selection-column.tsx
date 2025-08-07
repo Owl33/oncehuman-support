@@ -6,7 +6,9 @@ import { Checkbox } from "@/components/base/checkbox";
 export const createSelectionColumn = <TData,>(): ColumnDef<TData> => {
   return {
     id: "select",
-    size: 32,
+    meta: {
+      className: "w-[42px]",
+    },
     header: ({ table }) => {
       // Get context from table meta or create inline component
       const HeaderCheckbox = () => {
@@ -14,16 +16,18 @@ export const createSelectionColumn = <TData,>(): ColumnDef<TData> => {
         const isInEditMode = table.options.meta?.isInEditMode || false;
 
         return (
-          <div className="text-center">
-            <Checkbox
-              checked={
-                table.getIsAllPageRowsSelected() ||
-                (table.getIsSomePageRowsSelected() && "indeterminate")
-              }
-              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-              disabled={isInEditMode}
-              aria-label="Select all"
-            />
+          <div className="flex h-[44px] items-center justify-center ">
+            <p>
+              <Checkbox
+                checked={
+                  table.getIsAllPageRowsSelected() ||
+                  (table.getIsSomePageRowsSelected() && "indeterminate")
+                }
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                disabled={isInEditMode}
+                aria-label="Select all"
+              />
+            </p>
           </div>
         );
       };
@@ -37,24 +41,28 @@ export const createSelectionColumn = <TData,>(): ColumnDef<TData> => {
 
         if (row.id === "temp_new_row") {
           return (
-            <div className="text-center">
-              <Checkbox
-                checked={false}
-                disabled
-                aria-label="Select row"
-              />
+            <div className="flex items-center justify-center ">
+              <div>
+                <Checkbox
+                  checked={false}
+                  disabled
+                  aria-label="Select row"
+                />
+              </div>
             </div>
           );
         }
 
         return (
-          <div className="text-center">
-            <Checkbox
-              checked={row?.getIsSelected() || false}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
-              disabled={isInEditMode}
-              aria-label="Select row"
-            />
+          <div className="flex items-center justify-center ">
+            <div>
+              <Checkbox
+                checked={row?.getIsSelected() || false}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                disabled={isInEditMode}
+                aria-label="Select row"
+              />
+            </div>
           </div>
         );
       };
