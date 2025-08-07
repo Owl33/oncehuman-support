@@ -16,6 +16,7 @@ interface DataTableProps<TData, TValue> {
   showPagination?: boolean;
   showSelection?: boolean;
   showActions?: boolean;
+  
   actionItems?: ActionItem<TData>[] | ((row: TData) => ActionItem<TData>[]);
   customActions?: {
     header?: string | React.ReactNode;
@@ -134,7 +135,8 @@ function DataTableComponent<TData, TValue>(
     showSelection = true,
     showActions = false,
     actionItems,
-    customActions,
+    customActions,  
+    
     tableId: propTableId,
     onSave,
     onDelete,

@@ -8,7 +8,7 @@ import { Plus, Download, Upload, RotateCcw } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { DataTableRef } from "@/components/ui/data-table";
 import { characterStorage } from "@/lib/storage/character-storage";
-import { CharacterData } from "@/types/character";
+import { BaseCharacter } from "@/types/character";
 
 import {
   AlertDialog,
@@ -23,10 +23,10 @@ import {
 import { toast } from "sonner";
 
 export default function CharacterPage() {
-  const [data, setData] = useState<CharacterData[]>([]);
+  const [data, setData] = useState<BaseCharacter[]>([]);
   const [loading, setLoading] = useState(true);
   const [showClearDialog, setShowClearDialog] = useState(false);
-  const tableRef = useRef<DataTableRef<CharacterData>>(null);
+  const tableRef = useRef<DataTableRef<BaseCharacter>>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   // 데이터 로드
   const loadData = async () => {
@@ -47,9 +47,9 @@ export default function CharacterPage() {
   }, []);
 
   // 유효성 검사 함수
-  const validateCharacterData = (saveData: {
-    updatedRows: CharacterData[];
-    newRow: CharacterData | null;
+  const validateBaseCharacter = (saveData: {
+    updatedRows: BaseCharacter[];
+    newRow: BaseCharacter | null;
   }) => {
     const errors: string[] = [];
 
@@ -83,11 +83,11 @@ export default function CharacterPage() {
 
   // 저장 핸들러
   const handleSave = async (saveData: {
-    updatedRows: CharacterData[];
-    newRow: CharacterData | null;
+    updatedRows: BaseCharacter[];
+    newRow: BaseCharacter | null;
   }) => {
     // 유효성 검사
-    const errors = validateCharacterData(saveData);
+    const errors = validateBaseCharacter(saveData);
     if (errors.length > 0) {
       toast.error("입력 정보를 확인해주세요", {
         description: errors.join("\n"),
@@ -120,7 +120,7 @@ export default function CharacterPage() {
   };
 
   // 삭제 핸들러
-  const handleDelete = async (deleteData: CharacterData[]) => {
+  const handleDelete = async (deleteData: BaseCharacter[]) => {
     const confirmMessage =
       deleteData.length === 1
         ? `'${deleteData[0].name}' 캐릭터를 삭제하시겠습니까?`

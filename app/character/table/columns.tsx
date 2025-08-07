@@ -1,64 +1,56 @@
 //app/character/table/column.tsx
 
 "use client";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/base/select";
+
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, MoreVertical } from "lucide-react";
-import { ArrowUpDown } from "lucide-react";
-import { Checkbox } from "@/components/base/checkbox";
-import { Input } from "@/components/base/input";
-import { useState } from "react";
-import { Button } from "@/components/base/button";
-import { CharacterData } from "@/types/character";
-import { Dropdown, DropdownItem } from "@/components/ui/dropdown";
+
+import { BaseCharacter } from "@/types/character";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
+const scenarioSelectList = [
+  { label: "터치 오브 스카이", value: "manibus" },
+  { label: "무한한 꿈", value: "endless-dream" },
+  { label: "혹독한 설산", value: "way-of-winter" },
+  { label: "프리즘 전쟁", value: "prismverse's-clash" },
+  { label: "진화의 부름", value: "evolution's-call" },
+];
+const jobSelectList = [
+  { label: "메타 휴먼", value: "meta-human" },
+  { label: "정원사", value: "crafter" },
+  { label: "셰프", value: "chef" },
+  { label: "조련사", value: "tamer" },
+];
 
-export const columns: ColumnDef<CharacterData>[] = [
+const getScenarioLabel = (selectList: any[], value: string) => {
+  const lists = selectList.reduce((acc, option) => {
+    acc[option.value] = option.label;
+    return acc;
+  }, {});
+  return lists[value] || value;
+};
+
+export const columns: ColumnDef<BaseCharacter>[] = [
   {
     accessorKey: "scenario",
     header: "시나리오",
-
+    size: 100,
+    enableResizing: false,
+    cell: ({ getValue }) => {
+      const value = getValue() as string;
+      return getScenarioLabel(scenarioSelectList, value);
+    },
     meta: {
       displayName: "시나리오",
       editable: true,
       editType: "select",
-      editOptions: [
-        {
-          label: "터치 오브 스카이",
-          value: "touch",
-        },
-        {
-          label: "무한한 꿈",
-          value: "tab",
-        },
-        {
-          label: "혹독한 설산",
-          value: "toㄴuch",
-        },
-        {
-          label: "레이드 존",
-          value: "toucㄹh",
-        },
-        {
-          label: "진화의 부름",
-          value: "touㅇch",
-        },
-      ],
+      editOptions: scenarioSelectList,
     },
   },
   {
     accessorKey: "server",
-
+    size: 150,
     header: "서버",
+    enableResizing: false,
     meta: {
       displayName: "서버",
       editable: true,
@@ -68,6 +60,7 @@ export const columns: ColumnDef<CharacterData>[] = [
   {
     accessorKey: "name",
     header: "캐릭터명",
+    enableResizing: false,
     meta: {
       editable: true,
       displayName: "캐릭터명",
@@ -75,36 +68,24 @@ export const columns: ColumnDef<CharacterData>[] = [
   },
   {
     accessorKey: "job",
-    header: ({ column }) => {
-      return <p>직업</p>;
+    size: 150,
+    header: "직업",
+    enableResizing: false,
+    cell: ({ getValue }) => {
+      const value = getValue() as string;
+      return getScenarioLabel(jobSelectList, value);
     },
     meta: {
       displayName: "직업",
       editable: true,
       editType: "select",
-      editOptions: [
-        {
-          label: "메타 휴먼",
-          value: "human",
-        },
-        {
-          label: "조련사",
-          value: "tab",
-        },
-        {
-          label: "쉐프",
-          value: "toㄴuch",
-        },
-        {
-          label: "정원사",
-          value: "toucㄹh",
-        },
-      ],
+      editOptions: jobSelectList,
     },
   },
   {
     accessorKey: "desc",
     header: "비고",
+    enableResizing: false,
     meta: {
       displayName: "비고",
       editable: true,

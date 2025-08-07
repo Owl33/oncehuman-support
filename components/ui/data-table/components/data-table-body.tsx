@@ -68,8 +68,10 @@ export const DataTableBody = () => {
                         {isSystemColumn ? (
                           flexRender(header.column.columnDef.header, header.getContext())
                         ) : (
-                          <div className={cn(EDITABLE_CELL_HEIGHT, "flex items-center px-3 py-1")}>
-                            <span className="text-sm font-medium">
+                          <div
+                            style={{ width: `${header.getSize()}px` }}
+                            className={cn(EDITABLE_CELL_HEIGHT, "flex items-center px-3 py-1")}>
+                            <span className="text-sm  font-medium">
                               {flexRender(header.column.columnDef.header, header.getContext())}
                             </span>
                           </div>
@@ -118,7 +120,8 @@ export const DataTableBody = () => {
                     isNewRow && "bg-green-50 dark:bg-green-950/20"
                   )}>
                   {cells.map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id}
+                    >
                       <EditableCell
                         row={row}
                         column={cell.column}

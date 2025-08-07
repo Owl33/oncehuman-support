@@ -5,11 +5,21 @@ import { useSwitchPoint } from "./hooks/use-switchpoint";
 import { CharacterDashboard } from "./components/character-dashboard";
 import { CharacterDetail } from "./components/character-detail";
 import { Button } from "@/components/base/button";
-import { Download, Upload, LayoutGrid, ListFilter } from "lucide-react";
+import { Download, Upload, LayoutGrid, ListFilter, UserPlus } from "lucide-react";
 import { useRef } from "react";
+import { Card, CardContent } from "@/components/base/card";
 
 export default function SwitchPointPage() {
-  const { loading, viewMode, changeViewMode, exportData, importData, ...props } = useSwitchPoint();
+  const {
+    loading,
+    viewMode,
+    characters,
+    dashboardProps,
+    detailProps,
+    changeViewMode,
+    exportData,
+    importData,
+  } = useSwitchPoint();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -35,10 +45,9 @@ export default function SwitchPointPage() {
     try {
       const text = await file.text();
       await importData(text);
-      // 성공 알림 추가 가능
+      window.location.reload(); // 데이터 다시 로드
     } catch (error) {
       console.error("Import failed:", error);
-      // 에러 알림 추가 가능
     }
   };
 
@@ -55,8 +64,56 @@ export default function SwitchPointPage() {
     );
   }
 
+  // 캐릭터가 없는 경우
+  if (characters.length === 0) {
+    return (
+      <div className="min-h-screen bg-background">
+        {/* 헤더 */}
+        <div className="border-b">
+          <div className="container mx-auto py-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold">Switch Point Calculator</h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  아이템 제작에 필요한 재료와 포인트를 계산합니다
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 빈 상태 */}
+        <div className="container mx-auto py-20">
+          <div className="max-w-md mx-auto">
+            <Card className="border-dashed">
+              <CardContent className="pt-6">
+                <div className="text-center">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted mb-4">
+                    <UserPlus className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">캐릭터가 없습니다</h3>
+                  <p className="text-sm text-muted-foreground mb-6">
+                    Switch Point를 계산하려면 먼저 캐릭터를 등록해야 합니다.
+                    <br />
+                    캐릭터 관리 페이지에서 캐릭터를 생성해주세요.
+                  </p>
+                  <Button
+                    onClick={() => (window.location.href = "/character")}
+                    className="gap-2">
+                    <UserPlus className="h-4 w-4" />
+                    캐릭터 등록하러 가기
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="">
+    <div className="min-h-screen bg-background">
       {/* 헤더 */}
       <div className="border-b">
         <div className="container mx-auto py-4">
@@ -90,7 +147,7 @@ export default function SwitchPointPage() {
               </div>
 
               {/* 데이터 관리 */}
-              {/* <div className="flex items-center gap-2 ml-4">
+              <div className="flex items-center gap-2 ml-4">
                 <Button
                   variant="outline"
                   size="sm"
@@ -114,7 +171,7 @@ export default function SwitchPointPage() {
                   onChange={handleImport}
                   className="hidden"
                 />
-              </div> */}
+              </div>
             </div>
           </div>
         </div>
@@ -123,12 +180,9 @@ export default function SwitchPointPage() {
       {/* 콘텐츠 */}
       <div className="container mx-auto py-6">
         {viewMode === "dashboard" ? (
-          <CharacterDashboard
-            changeViewMode={changeViewMode}
-            {...props}
-          />
+          <CharacterDashboard {...dashboardProps} />
         ) : (
-          <CharacterDetail {...props} />
+          <CharacterDetail {...detailProps} />
         )}
       </div>
     </div>
