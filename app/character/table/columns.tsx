@@ -3,8 +3,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-
-import { BaseCharacter } from "@/types/character";
+import { BaseCharacter } from "../../../types/character";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 const scenarioSelectList = [
@@ -33,7 +32,6 @@ export const columns: ColumnDef<BaseCharacter>[] = [
   {
     accessorKey: "scenario",
     header: "시나리오",
-    size: 100,
     enableResizing: false,
     cell: ({ getValue }) => {
       const value = getValue() as string;
@@ -44,17 +42,18 @@ export const columns: ColumnDef<BaseCharacter>[] = [
       editable: true,
       editType: "select",
       editOptions: scenarioSelectList,
+      className: "w-[200px]", // Tailwind 고정 크기
     },
   },
   {
     accessorKey: "server",
-    size: 150,
     header: "서버",
     enableResizing: false,
     meta: {
       displayName: "서버",
       editable: true,
       editType: "text",
+      className: "w-1/6", // Tailwind 비율 (예시: 전체의 1/6)
     },
   },
   {
@@ -68,7 +67,6 @@ export const columns: ColumnDef<BaseCharacter>[] = [
   },
   {
     accessorKey: "job",
-    size: 150,
     header: "직업",
     enableResizing: false,
     cell: ({ getValue }) => {

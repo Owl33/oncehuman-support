@@ -74,8 +74,8 @@ export function EditableCell<TData>({ row, column, value, table }: EditableCellP
       return value || <span className="text-muted-foreground">-</span>;
     })();
     return (
-      <div className={"h-[44px]  py-1 flex items-center px-1 "}>
-        <p className=" pl-2   truncate">{displayContent}</p>
+      <div className="h-[44px] flex items-center px-3 overflow-hidden">
+        <div className="truncate text-sm w-full">{displayContent}</div>
       </div>
     );
   }
@@ -100,12 +100,13 @@ export function EditableCell<TData>({ row, column, value, table }: EditableCellP
   switch (meta.editType) {
     case "textarea":
       return (
-        <div className="py-2 ">
+        <div className="h-[44px] flex items-center px-3 bg-muted/20 border border-input rounded mx-1">
           <Textarea
             value={currentValue || ""}
             onChange={(e) => handleUpdate(e.target.value)}
             placeholder={placeholder}
             autoFocus={isFirstEditCell}
+            className="h-full w-full resize-none text-sm border-0 bg-transparent focus:outline-none focus:ring-0 placeholder:text-muted-foreground"
           />
         </div>
       );
@@ -124,20 +125,36 @@ export function EditableCell<TData>({ row, column, value, table }: EditableCellP
         );
       }
 
+      // 디버깅: 현재 값과 옵션 확인
+      console.log("Select Debug:", {
+        currentValue,
+        options: meta.editOptions,
+        columnId: column.id,
+        matchedOption: meta.editOptions.find((opt: any) => opt.value === currentValue),
+      });
+
+      // 현재 값에 해당하는 label 찾기
+      const selectedOption = meta.editOptions.find((opt: any) => opt.value === currentValue);
+      const displayText = selectedOption?.label || "";
+
       return (
-        <div className="py-1 ">
+        <div className="h-[44px] flex items-center px-2 bg-muted/20 border border-input rounded mx-1">
           <Select
             value={currentValue || ""}
             onValueChange={handleUpdate}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder={`${placeholder} 선택`} />
+            <SelectTrigger className="w-full ">
+              <SelectValue
+                placeholder={`${placeholder} 선택`}
+                className="text-foreground truncate">
+                {displayText && <span className="text-foreground truncate">{displayText}</span>}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {meta.editOptions.map((option: any) => (
                 <SelectItem
                   key={option.value}
                   value={option.value}>
-                  {option.label}
+                  <span className="truncate">{option.label}</span>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -147,13 +164,14 @@ export function EditableCell<TData>({ row, column, value, table }: EditableCellP
 
     case "number":
       return (
-        <div className="py-1 ">
+        <div className="h-[44px] flex items-center px-3 bg-muted/20 border border-input rounded mx-1">
           <Input
             type="number"
             value={currentValue || ""}
             onChange={(e) => handleUpdate(e.target.value)}
             placeholder={placeholder}
             autoFocus={isFirstEditCell}
+            className="h-full w-full text-sm border-0 bg-transparent focus:outline-none focus:ring-0 placeholder:text-muted-foreground"
           />
         </div>
       );
@@ -161,12 +179,13 @@ export function EditableCell<TData>({ row, column, value, table }: EditableCellP
     case "text":
     default:
       return (
-        <div className="py-1 ">
+        <div className="h-[44px] flex items-center px-3 bg-muted/20 border border-input rounded mx-1">
           <Input
             value={currentValue || ""}
             onChange={(e) => handleUpdate(e.target.value)}
             placeholder={placeholder}
             autoFocus={isFirstEditCell}
+            className="h-full w-full text-sm border-0 bg-transparent focus:outline-none focus:ring-0 placeholder:text-muted-foreground"
           />
         </div>
       );

@@ -1,6 +1,6 @@
 // components/ui/data-table/hooks/use-debounced-save.ts
 import { useEffect, useRef } from 'react';
-import { sessionStorageUtils } from '@/utils/session-storage';
+import { storageUtils } from '@/lib/shared/storage-utils';
 
 interface UseDebouncedSaveOptions {
   delay?: number;
@@ -24,13 +24,13 @@ export const useDebouncedSave = <T>(
     // 새 timeout 설정
     timeoutRef.current = setTimeout(() => {
       if (merge) {
-        const savedState = sessionStorageUtils.getJSON(key) || {};
-        sessionStorageUtils.setJSON(key, {
+        const savedState = storageUtils.getJSON(key) || {};
+        storageUtils.setJSON(key, {
           ...savedState,
           ...value,
         });
       } else {
-        sessionStorageUtils.setJSON(key, value);
+        storageUtils.setJSON(key, value);
       }
     }, delay);
     

@@ -13,5 +13,7 @@ declare module "@tanstack/react-table" {
     editable?: boolean;
     editType?: "text" | "select" | "textarea" | "number";
     editOptions?: { label: string; value: any }[];
+    className?: string; // Tailwind CSS 클래스나 기타 CSS 클래스 지원
   }
 }
+

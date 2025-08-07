@@ -1,0 +1,21 @@
+/* 임시 디버깅용 CSS - 테이블 크기 문제 해결 */
+.debug-table-fixed {
+  table-layout: fixed !important;
+  width: 100% !important;
+}
+
+.debug-th-fixed {
+  width: var(--th-width) !important;
+  min-width: var(--th-width) !important;
+  max-width: var(--th-width) !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+}
+
+.debug-td-fixed {
+  width: var(--td-width) !important;
+  min-width: var(--td-width) !important;
+  max-width: var(--td-width) !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+}
