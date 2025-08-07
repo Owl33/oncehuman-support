@@ -74,8 +74,8 @@ export function EditableCell<TData>({ row, column, value, table }: EditableCellP
       return value || <span className="text-muted-foreground">-</span>;
     })();
     return (
-      <div className="h-[44px] flex items-center px-3  overflow-hidden">
-        <div className="truncate  w-full">{displayContent}</div>
+      <div className="h-[44px] flex items-center px-2 overflow-hidden">
+        <div className="truncate  px-3   w-full">{displayContent}</div>
       </div>
     );
   }
@@ -138,7 +138,7 @@ export function EditableCell<TData>({ row, column, value, table }: EditableCellP
       const displayText = selectedOption?.label || "";
 
       return (
-        <div className="h-[44px] flex items-center ">
+        <div className="h-[44px] flex items-center px-2">
           <Select
             value={currentValue || ""}
             onValueChange={handleUpdate}>
@@ -164,7 +164,7 @@ export function EditableCell<TData>({ row, column, value, table }: EditableCellP
 
     case "number":
       return (
-        <div className="h-[44px] flex items-center ">
+        <div className="h-[44px] flex items-center px-2">
           <Input
             type="number"
             value={currentValue || ""}
@@ -179,7 +179,7 @@ export function EditableCell<TData>({ row, column, value, table }: EditableCellP
     case "text":
     default:
       return (
-        <div className="h-[44px] flex items-center ">
+        <div className="h-[44px] flex items-center px-2">
           <Input
             value={currentValue || ""}
             onChange={(e) => handleUpdate(e.target.value)}
