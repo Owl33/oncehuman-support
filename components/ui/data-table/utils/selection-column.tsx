@@ -17,17 +17,15 @@ export const createSelectionColumn = <TData,>(): ColumnDef<TData> => {
 
         return (
           <div className="flex h-[44px] items-center justify-center ">
-            <p>
-              <Checkbox
-                checked={
-                  table.getIsAllPageRowsSelected() ||
-                  (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                disabled={isInEditMode}
-                aria-label="Select all"
-              />
-            </p>
+            <Checkbox
+              checked={
+                table.getIsAllPageRowsSelected() ||
+                (table.getIsSomePageRowsSelected() && "indeterminate")
+              }
+              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+              disabled={isInEditMode}
+              aria-label="Select all"
+            />
           </div>
         );
       };
@@ -42,27 +40,23 @@ export const createSelectionColumn = <TData,>(): ColumnDef<TData> => {
         if (row.id === "temp_new_row") {
           return (
             <div className="flex items-center justify-center ">
-              <div>
-                <Checkbox
-                  checked={false}
-                  disabled
-                  aria-label="Select row"
-                />
-              </div>
+              <Checkbox
+                checked={false}
+                disabled
+                aria-label="Select row"
+              />
             </div>
           );
         }
 
         return (
           <div className="flex items-center justify-center ">
-            <div>
-              <Checkbox
-                checked={row?.getIsSelected() || false}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                disabled={isInEditMode}
-                aria-label="Select row"
-              />
-            </div>
+            <Checkbox
+              checked={row?.getIsSelected() || false}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              disabled={isInEditMode}
+              aria-label="Select row"
+            />
           </div>
         );
       };

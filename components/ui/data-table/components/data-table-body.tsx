@@ -7,7 +7,7 @@ import { TableDataCell } from "./table-data-cell";
 import { categorizeColumns } from "../utils/column-utils";
 import { cn } from "@/lib/utils";
 import "../types/table-types"; // TanStack Table 타입 확장
-import "../table-fixed-width.css";
+import "./styles/table-fixed-width.css";
 
 export const DataTableBody = () => {
   const { table, editState, isRowEditing } = useDataTableContext();

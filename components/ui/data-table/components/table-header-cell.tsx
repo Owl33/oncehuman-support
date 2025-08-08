@@ -22,8 +22,10 @@ export function TableHeaderCell<TData, TValue>({ header }: TableHeaderCellProps<
           {isSystemColumn ? (
             flexRender(header.column.columnDef.header, header.getContext())
           ) : (
-            <div className={cn(EDITABLE_CELL_HEIGHT, "flex items-center pl-3")}>
-              <p className="">{flexRender(header.column.columnDef.header, header.getContext())}</p>
+            <div className={cn(EDITABLE_CELL_HEIGHT, "flex items-center px-2")}>
+              <p className="border border-transparent px-3">
+                {flexRender(header.column.columnDef.header, header.getContext())}
+              </p>
             </div>
           )}
         </>

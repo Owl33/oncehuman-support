@@ -1,19 +1,18 @@
 // components/ui/data-table/components/data-table-filter.tsx
 "use client";
 import { Input } from "@/components/base/input";
-import { Filter, X, Settings2, Search } from "lucide-react";
+import { Filter, X, Settings2, Search, Eye, EyeClosed, SearchCheck, SearchX } from "lucide-react";
 import { Button } from "@/components/base/button";
 import { Badge } from "@/components/base/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/base/popover";
 import { Switch } from "@/components/base/switch";
 import { Label } from "@/components/base/label";
 import { Separator } from "@/components/base/separator";
-import { ScrollArea } from "@/components/base/scroll-area";
 import { Checkbox } from "@/components/base/checkbox";
 import { useDataTableContext } from "../contexts/data-table-context";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
-
+import { Toggle } from "@/components/base/toggle";
 export function DataTableFilter() {
   const {
     table,
@@ -78,79 +77,79 @@ export function DataTableFilter() {
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-100 p-0"
+          className="w-auto p-0"
           align="start">
-          <div className="p-4 pb-3">
-            <h4 className="font-medium ">필터 설정</h4>
-            <p className="text-xs text-muted-foreground mt-1">
-              검색할 컬럼과 표시할 컬럼을 선택하세요
-            </p>
-          </div>
-
-          <Separator />
-
-          {/* Multiple Filter Mode Toggle */}
-          <div className="p-4 pb-3">
+          {/* 개별검색 */}
+          <div className="p-4">
             <div className="flex items-center justify-between">
-              <Label
-                htmlFor="filter-mode"
-                className=" font-medium">
-                개별 검색
-              </Label>
+              <div>
+                <Label
+                  htmlFor="filter-mode"
+                  className=" font-medium">
+                  {isMultipleFilter ? "개별 검색" : "통합 검색"}{" "}
+                </Label>
+                <p className="text-xs text-muted-foreground mt-2">
+                  {isMultipleFilter
+                    ? "검색 대상에서 개별적으로 검색합니다"
+                    : "검색 대상에서 통합적으로 검색합니다"}
+                </p>
+              </div>
               <Switch
-                id="filter-mode"
                 checked={isMultipleFilter}
                 onCheckedChange={(checked) => setFilterMode(checked ? "individual" : "global")}
               />
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {isMultipleFilter
-                ? "각 컬럼별로 개별 검색합니다"
-                : "선택한 컬럼들에서 통합 검색합니다"}
-            </p>
+          </div>
+          <Separator />
 
-            <div className="mt-4">
-              <Label
-                htmlFor="filter-mode"
-                className=" font-medium">
-                {" "}
-                검색 대상
-              </Label>
-              <div className="py-2 flex gap-4">
+          {/* 검색 대상 */}
+          <div className="p-4">
+            <div className="mb-2">
+              <h5 className="text-xs font-medium text-muted-foreground mb-1">검색 대상</h5>
+              <div className="py-2 flex gap-2">
                 {filterableColumns.map((column) => (
                   <div
                     key={column.id}
                     className="flex items-center">
-                    <Checkbox
+                    {/* <Checkbox
                       id={`search-${column.id}`}
                       checked={activeColumns.includes(column.id)}
                       onCheckedChange={(checked) => toggleFilterColumn(column.id, !!checked)}
                     />
                     <Label
                       htmlFor={`search-${column.id}`}
-                      className=" font-normal cursor-pointer flex-1">
+                      className=" font-normal cursor-pointer flex-1"></Label> */}
+                    <Toggle
+                      className="data-[state=on]:bg-green-50"
+                      defaultPressed={activeColumns.includes(column.id)}
+                      onPressedChange={(checked) => toggleFilterColumn(column.id, !!checked)}>
+                      {activeColumns.includes(column.id) ? (
+                        <SearchCheck></SearchCheck>
+                      ) : (
+                        <SearchX></SearchX>
+                      )}
                       {getColumnDisplayName(column.id)}
-                    </Label>
+                    </Toggle>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
-
-          <Separator />
-
-          <div className="p-4 flex ">
-            {/* Search Columns */}
-
-            {/* Display Columns */}
-            <div className="ml-auto">
-              <h5 className="text-xs font-medium text-muted-foreground mb-1">표시 컬럼</h5>
-              <div className="">
+            {/* 표시컬럼 */}
+            <div className="mt-2">
+              <h5 className="text-xs font-medium text-muted-foreground">표시 컬럼</h5>
+              <div className="py-2 flex gap-2">
                 {hideableColumns.map((column) => (
                   <div
                     key={column.id}
                     className="flex items-center">
-                    <Checkbox
+                    <Toggle
+                      className="data-[state=on]:bg-green-50"
+                      defaultPressed={column.getIsVisible()}
+                      onPressedChange={(checked) => column.toggleVisibility(!!checked)}>
+                      {column.getIsVisible() ? <Eye></Eye> : <EyeClosed></EyeClosed>}
+                      {getColumnDisplayName(column.id)}
+                    </Toggle>
+                    {/* <Checkbox
                       id={`display-${column.id}`}
                       checked={column.getIsVisible()}
                       onCheckedChange={(checked) => column.toggleVisibility(!!checked)}
@@ -159,7 +158,7 @@ export function DataTableFilter() {
                       htmlFor={`display-${column.id}`}
                       className=" font-normal cursor-pointer flex-1">
                       {getColumnDisplayName(column.id)}
-                    </Label>
+                    </Label> */}
                   </div>
                 ))}
               </div>
@@ -226,7 +225,7 @@ export function DataTableFilter() {
           onClick={clearAllFilters}
           className="gap-2 text-muted-foreground hover:text-foreground">
           <X className="h-4 w-4" />
-          필터 초기화
+          초기화
           <Badge
             variant="secondary"
             className="h-5 px-1.5 text-xs">
