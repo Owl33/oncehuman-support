@@ -1,26 +1,50 @@
 // app/switchpoint/components/item-grid.tsx
 "use client";
 
-import { Item } from '@/types/character';
-import { Card, CardContent } from '@/components/base/card';
-import { Button } from '@/components/base/button';
-import { Input } from '@/components/base/input';
-import { Badge } from '@/components/base/badge';
-import { Plus, Minus } from 'lucide-react';
-import { useState } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import { Item, Material } from "@/types/character";
+import { Button } from "@/components/base/button";
+import { Input } from "@/components/base/input";
+import { Badge } from "@/components/base/badge";
+import { ScrollArea } from "@/components/base/scroll-area";
+import { Separator } from "@/components/base/separator";
+import { Plus, Minus, Package, RotateCcw, ShoppingCart, Boxes, Box } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ItemGridProps {
   items: Item[];
+  materials: Material[];
   selectedItems: Record<string, number>;
   onUpdateQuantity: (itemId: string, quantity: number) => void;
+  onResetClick?: () => void; // handleReset("items") 호출용
+  selectedCategory?: string;
 }
 
 export function ItemGrid({
   items,
+  materials,
   selectedItems,
   onUpdateQuantity,
+  onResetClick,
 }: ItemGridProps) {
   const [editingItem, setEditingItem] = useState<string | null>(null);
+
+  // Material id -> name 매핑 (성능 최적화)
+  const materialMap = useMemo(() => {
+    if (!materials || !Array.isArray(materials)) {
+      return {};
+    }
+    return Object.fromEntries(materials.map((m) => [m.id, m.name]));
+  }, [materials]);
+
+  // 선택된 아이템 통계
+  const stats = useMemo(
+    () => ({
+      selectedCount: Object.values(selectedItems).filter((q) => q > 0).length,
+      totalQuantity: Object.values(selectedItems).reduce((sum, q) => sum + q, 0),
+    }),
+    [selectedItems]
+  );
 
   const handleQuantityChange = (itemId: string, value: string) => {
     const quantity = parseInt(value) || 0;
@@ -32,98 +56,138 @@ export function ItemGrid({
     onUpdateQuantity(itemId, Math.max(0, currentQuantity + delta));
   };
 
-  if (items.length === 0) {
-    return (
-      <div className="text-center py-12 text-muted-foreground">
-        이 카테고리에는 아이템이 없습니다.
-      </div>
-    );
-  }
-
+  // 전체 컨테이너에 스크롤 적용
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {items.map((item) => {
-        const quantity = selectedItems[item.id] || 0;
-        const isEditing = editingItem === item.id;
-        const isSelected = quantity > 0;
-
-        return (
-          <Card
-            key={item.id}
-            className={`transition-all ${
-              isSelected ? 'ring-2 ring-primary shadow-lg' : 'hover:shadow-md'
-            }`}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold text-lg">{item.name}</h3>
-                {isSelected && (
-                  <Badge variant="default">선택됨</Badge>
-                )}
-              </div>
-
-              {/* 필요 재료 미리보기 */}
-              <div className=" text-muted-foreground mb-3">
-                <p className="mb-1">필요 재료:</p>
-                <div className="flex flex-wrap gap-1">
-                  {item.requiment.slice(0, 3).map((req, index) => (
-                    <Badge key={index} variant="outline" className="text-xs">
-                      {req.id} x{req.stock}
-                    </Badge>
-                  ))}
-                  {item.requiment.length > 3 && (
-                    <Badge variant="outline" className="text-xs">
-                      +{item.requiment.length - 3}개
-                    </Badge>
-                  )}
-                </div>
-              </div>
-
-              {/* 수량 조절 */}
+    <ScrollArea className="h-[56vh]">
+      <div className="pr-4">
+        {/* 선택헤더 */}
+        <div className="mb-4 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-lg p-3 sticky top-0 z-10 backdrop-blur-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => adjustQuantity(item.id, -1)}
-                  disabled={quantity === 0}
-                >
-                  <Minus className="h-4 w-4" />
-                </Button>
-
-                {isEditing ? (
-                  <Input
-                    type="number"
-                    value={quantity}
-                    onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-                    onBlur={() => setEditingItem(null)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') setEditingItem(null);
-                    }}
-                    className="w-20 text-center"
-                    min="0"
-                    autoFocus
-                  />
-                ) : (
-                  <button
-                    onClick={() => setEditingItem(item.id)}
-                    className="w-20 py-1 text-center font-medium border rounded hover:bg-muted transition-colors"
-                  >
-                    {quantity}개
-                  </button>
-                )}
-
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => adjustQuantity(item.id, 1)}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
+                <Box className="w-4 h-4 text-primary" />
+                <span className="text-sm font-medium">{stats.selectedCount}개 선택</span>
               </div>
-            </CardContent>
-          </Card>
-        );
-      })}
-    </div>
+              <Separator
+                orientation="vertical"
+                className="h-4"
+              />
+              <div className="flex items-center gap-2">
+                <Boxes className="w-4 h-4 text-primary" />
+                <span className="text-sm font-medium">총 {stats.totalQuantity}개</span>
+              </div>
+            </div>
+            {stats.selectedCount > 0 && onResetClick && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onResetClick}
+                className=" text-xs hover:bg-destructive/10 hover:text-destructive">
+                <RotateCcw className="w-3 h-3 mr-1" />
+                선택 초기화
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Items List */}
+        {items.length === 0 ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="rounded-full bg-muted/50 p-4 mb-4 mx-auto w-fit">
+                <Package className="w-8 h-8 text-muted-foreground/50" />
+              </div>
+              <p className="text-sm text-muted-foreground">이 카테고리에는 아이템이 없습니다</p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 pb-4">
+            {items.map((item, index) => {
+              const quantity = selectedItems[item.id] || 0;
+              const isSelected = quantity > 0;
+
+              return (
+                <div
+                  key={item.id}
+                  className={cn(
+                    "m-1 p-4 relative rounded-lg transition-all duration-200",
+                    "bg-card hover:shadow-md",
+                    isSelected && "ring-1 ring-primary/50 bg-primary/5 shadow-md",
+                    // 스태거 애니메이션 (새 카테고리 로드 시)
+                    "animate-in fade-in slide-in-from-bottom-2"
+                  )}
+                  style={{
+                    animationDelay: `${Math.min(index * 30, 300)}ms`,
+                    animationFillMode: "backwards",
+                  }}>
+                  {/* 셀렉트 우측 상단 표기 */}
+                  {isSelected && (
+                    <div className="absolute -top-1 -right-1 z-10">
+                      <div className="relative bg-primary rounded-sm border-0 h-6 px-2">
+                        <span className="text-primary-foreground text-sm">{quantity}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 설비 이름 */}
+                  <h3 className="font-semibold text-lg py-2 line-clamp-2 min-h-[3.5rem]">
+                    {item.name}
+                  </h3>
+
+                  {/* 필요 재료 나열 */}
+                  <div className="py-2 min-h-[4rem]">
+                    <p className="mb-1 text-xs text-muted-foreground">필요 재료</p>
+                    <div className="flex flex-wrap gap-1">
+                      {item.requiment.slice(0, 2).map((req, index) => (
+                        <Badge
+                          variant="outline"
+                          key={index}>
+                          {`${materialMap[req.id] || req.id} × ${req.stock}`}
+                        </Badge>
+                      ))}
+                      {item.requiment.length > 2 && (
+                        <Badge variant="secondary">+{item.requiment.length - 2}개</Badge>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 개수 플마 */}
+                  <div className="py-2 flex items-center gap-1">
+                    <Button
+                      variant={isSelected ? "secondary" : "outline"}
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={() => adjustQuantity(item.id, -1)}
+                      disabled={quantity === 0}>
+                      <Minus className="h-3 w-3" />
+                    </Button>
+
+                    <Input
+                      type="number"
+                      value={quantity}
+                      onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                      onBlur={() => setEditingItem(null)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") setEditingItem(null);
+                      }}
+                      className="flex-1 h-7 text-center text-sm font-medium"
+                      min="0"
+                    />
+
+                    <Button
+                      variant={isSelected ? "secondary" : "outline"}
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={() => adjustQuantity(item.id, 1)}>
+                      <Plus className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </ScrollArea>
   );
 }

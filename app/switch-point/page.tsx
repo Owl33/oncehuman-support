@@ -67,7 +67,7 @@ export default function SwitchPointPage() {
   // 캐릭터가 없는 경우
   if (characters.length === 0) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className=" bg-background">
         {/* 헤더 */}
         <div className="border-b">
           <div className="container mx-auto py-4">
@@ -113,7 +113,7 @@ export default function SwitchPointPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className=" bg-background">
       {/* 헤더 */}
       <div className="border-b">
         <div className="container mx-auto py-4">

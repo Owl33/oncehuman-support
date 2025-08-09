@@ -1,23 +1,25 @@
 // app/switchpoint/components/character-dashboard.tsx
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/base/card';
-import { Badge } from '@/components/base/badge';
-import { Button } from '@/components/base/button';
-import { Progress } from '@/components/base/progress';
-import { ArrowRight, Package, AlertCircle } from 'lucide-react';
-import { Character } from '@/types/character';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/base/card";
+import { Badge } from "@/components/base/badge";
+import { Button } from "@/components/base/button";
+import { Progress } from "@/components/base/progress";
+import { ArrowRight, Package, AlertCircle } from "lucide-react";
+import { Character } from "@/types/character";
 
 interface CharacterDashboardProps {
-  characterSummaries: Array<Character & {
-    summary: {
-      totalPoints: number;
-      topMissingMaterials: { name: string; points: number }[];
-      totalSelectedItems: number;
-    };
-  }>;
+  characterSummaries: Array<
+    Character & {
+      summary: {
+        totalPoints: number;
+        topMissingMaterials: { name: string; points: number }[];
+        totalSelectedItems: number;
+      };
+    }
+  >;
   selectCharacter: (characterId: string) => void;
-  changeViewMode: (mode: 'dashboard' | 'detail') => void;
+  changeViewMode: (mode: "dashboard" | "detail") => void;
 }
 
 export function CharacterDashboard({
@@ -27,38 +29,38 @@ export function CharacterDashboard({
 }: CharacterDashboardProps) {
   const handleCharacterClick = (characterId: string) => {
     selectCharacter(characterId);
-    changeViewMode('detail');
+    changeViewMode("detail");
   };
 
   // 최대 포인트 계산 (진행률 표시용)
-  const maxPoints = Math.max(...characterSummaries.map(c => c.summary.totalPoints), 1);
+  // const maxPoints = Math.max(...characterSummaries.map((c) => c.summary.totalPoints), 1);
+  const maxPoints = 20000;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {characterSummaries.map((character) => {
         const { summary } = character;
         const hasItems = summary.totalSelectedItems > 0;
-        
+
         return (
           <Card
             key={character.id}
             className="hover:shadow-lg transition-all cursor-pointer group"
-            onClick={() => handleCharacterClick(character.id)}
-          >
-            <CardHeader className="pb-3">
+            onClick={() => handleCharacterClick(character.id)}>
+            <CardHeader className="">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg">{character.name}</CardTitle>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="h-4 w-4  group-hover:translate-x-1 transition-transform" />
               </div>
             </CardHeader>
-            
+
             <CardContent className="space-y-4">
               {/* 선택된 아이템 수 */}
               <div className="flex items-center justify-between ">
-                <span className="text-muted-foreground">선택 아이템</span>
+                <span className="">선택 아이템</span>
                 <div className="flex items-center gap-1">
                   <Package className="h-4 w-4" />
-                  <span className="font-medium">{summary.totalSelectedItems}개</span>
+                  <span className="">{summary.totalSelectedItems}개</span>
                 </div>
               </div>
 
@@ -67,35 +69,30 @@ export function CharacterDashboard({
                   {/* 총 필요 포인트 */}
                   <div>
                     <div className="flex items-center justify-between  mb-2">
-                      <span className="text-muted-foreground">필요 포인트</span>
-                      <span className="font-bold text-lg">
-                        {summary.totalPoints.toLocaleString()}P
-                      </span>
+                      <span className="">필요 포인트</span>
+                      <span className=" text-lg">{summary.totalPoints.toLocaleString()}P</span>
                     </div>
-                    <Progress 
-                      value={(summary.totalPoints / maxPoints) * 100} 
+                    <Progress
+                      value={(summary.totalPoints / maxPoints) * 100}
                       className="h-2"
                     />
                   </div>
 
                   {/* 부족한 재료 TOP 3 */}
                   {summary.topMissingMaterials.length > 0 && (
-                    <div className="space-y-2">
+                    <div className="">
                       <div className="flex items-center gap-1  text-muted-foreground">
                         <AlertCircle className="h-3 w-3" />
-                        <span>부족한 재료</span>
+                        <span>가장 포인트가 많이 필요한 재료 3개</span>
                       </div>
-                      <div className="flex flex-wrap gap-1">
-                        {summary.topMissingMaterials.map((material, index) => (
-                          <Badge 
-                            key={index} 
-                            variant="secondary"
-                            className="text-xs"
-                          >
-                            {material.name} ({material.points}P)
-                          </Badge>
-                        ))}
-                      </div>
+                      {summary.topMissingMaterials.map((material, index) => (
+                        <Badge
+                          className="text-xs"
+                          key={index}
+                          variant="secondary">
+                          {material.name} ({material.points.toLocaleString()}P)
+                        </Badge>
+                      ))}
                     </div>
                   )}
 

@@ -30,7 +30,7 @@
     "name": "워터펌프",
     "requiment": [
       {
-        "id": "steel_ingot",
+        "id": "iron_ingot",
         "stock": 25
       },
       {
@@ -58,7 +58,7 @@
     "name": "대형 정유 시설",
     "requiment": [
       {
-        "id": "steel_ingot",
+        "id": "iron_ingot",
         "stock": 25
       },
       {
@@ -86,7 +86,7 @@
     "name": "전기난로",
     "requiment": [
       {
-        "id": "steel_ingot",
+        "id": "iron_ingot",
         "stock": 35
       },
       {
@@ -433,7 +433,7 @@
     "name": "중급 스토브 (전기레인지)",
     "requiment": [
       {
-        "id": "steel_ingot",
+        "id": "iron_ingot",
         "stock": 20
       },
       {

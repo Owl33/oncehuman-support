@@ -1,13 +1,13 @@
 // app/switchpoint/components/character-detail.tsx
 "use client";
 
-import { Character, Item, Material, ItemCategory, CalculationResult } from '@/types/character';
-import { CharacterSelector } from './character-selector';
-import { CategoryTabs } from './category-tabs';
-import { ItemGrid } from './item-grid';
-import { MaterialCalculator } from './material-calculator';
-import { Button } from '@/components/base/button';
-import { RotateCcw } from 'lucide-react';
+import { Character, Item, Material, ItemCategory, CalculationResult } from "@/types/character";
+import { CharacterSelector } from "./character-selector";
+import { CategoryTabs } from "./category-tabs";
+import { ItemGrid } from "./item-grid";
+import { MaterialCalculator } from "./material-calculator";
+import { Button } from "@/components/base/button";
+import { RotateCcw } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/base/alert-dialog";
-import { useState } from 'react';
+import { useState } from "react";
 
 interface CharacterDetailProps {
   characters: Character[];
@@ -52,17 +52,17 @@ export function CharacterDetail({
   resetAllMaterials,
 }: CharacterDetailProps) {
   const [showResetDialog, setShowResetDialog] = useState(false);
-  const [resetType, setResetType] = useState<'items' | 'materials' | null>(null);
-
-  const handleReset = (type: 'items' | 'materials') => {
+  const [resetType, setResetType] = useState<"items" | "materials" | null>(null);
+  console.log(materials);
+  const handleReset = (type: "items" | "materials") => {
     setResetType(type);
     setShowResetDialog(true);
   };
 
   const confirmReset = () => {
-    if (resetType === 'items') {
+    if (resetType === "items") {
       resetAllItems();
-    } else if (resetType === 'materials') {
+    } else if (resetType === "materials") {
       resetAllMaterials();
     }
     setShowResetDialog(false);
@@ -89,31 +89,28 @@ export function CharacterDetail({
 
         {/* 아이템 선택 */}
         <div>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between ">
             <h2 className="text-lg font-semibold">아이템 선택</h2>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleReset('items')}
-              className="gap-2"
-            >
-              <RotateCcw className="h-4 w-4" />
+              onClick={() => handleReset("items")}
+              className="">
+              <RotateCcw />
               모든 아이템 초기화
             </Button>
           </div>
-          
           <CategoryTabs
             selectedCategory={selectedCategory}
             onSelectCategory={setSelectedCategory}
           />
-          
-          <div className="mt-4">
-            <ItemGrid
-              items={items}
-              selectedItems={currentCharacter.selectedItems || {}}
-              onUpdateQuantity={updateItemQuantity}
-            />
-          </div>
+          <ItemGrid
+            items={items}
+            materials={materials}
+            selectedItems={currentCharacter.selectedItems || {}}
+            onUpdateQuantity={updateItemQuantity}
+            onResetClick={() => handleReset("items")}
+          />
         </div>
       </div>
 
@@ -125,32 +122,34 @@ export function CharacterDetail({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleReset('materials')}
-              className="gap-2"
-            >
+              onClick={() => handleReset("materials")}
+              className="gap-2">
               <RotateCcw className="h-4 w-4" />
               보유 재료 초기화
             </Button>
           </div>
-          
+
           <MaterialCalculator
             materials={calculationResult.materials}
             totalPoints={calculationResult.totalPoints}
             ownedMaterials={currentCharacter.ownedMaterials || {}}
             onUpdateOwned={updateMaterialOwned}
+            onResetClick={() => handleReset("materials")} // 이렇게 전달
           />
         </div>
       </div>
 
       {/* 초기화 확인 다이얼로그 */}
-      <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+      <AlertDialog
+        open={showResetDialog}
+        onOpenChange={setShowResetDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>정말 초기화하시겠습니까?</AlertDialogTitle>
             <AlertDialogDescription>
-              {resetType === 'items' 
-                ? '선택한 모든 아이템이 초기화됩니다. 이 작업은 되돌릴 수 없습니다.'
-                : '입력한 모든 보유 재료가 초기화됩니다. 이 작업은 되돌릴 수 없습니다.'}
+              {resetType === "items"
+                ? "선택한 모든 아이템이 초기화됩니다. 이 작업은 되돌릴 수 없습니다."
+                : "입력한 모든 보유 재료가 초기화됩니다. 이 작업은 되돌릴 수 없습니다."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
