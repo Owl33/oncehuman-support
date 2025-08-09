@@ -3,7 +3,18 @@
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/base/tabs";
 import { ItemCategory, CATEGORY_LABELS } from "@/types/character";
-import { Import, Package, Trees, Factory, Shield, Wrench, Swords, Bug } from "lucide-react";
+import {
+  Import,
+  Pickaxe,
+  Parentheses,
+  Cpu,
+  Car,
+  Factory,
+  Shield,
+  Swords,
+  Bug,
+  Rabbit,
+} from "lucide-react";
 
 interface CategoryTabsProps {
   selectedCategory: ItemCategory;
@@ -12,12 +23,12 @@ interface CategoryTabsProps {
 
 const CATEGORY_ICONS: Record<ItemCategory, React.ReactNode> = {
   storage: <Import className="h-4 w-4" />,
-  production: <Factory className="h-4 w-4" />,
-  processing: <Factory className="h-4 w-4" />,
-  functional: <Factory className="h-4 w-4" />,
-  vehicle: <Swords className="h-4 w-4" />,
+  production: <Pickaxe className="h-4 w-4" />,
+  processing: <Cpu className="h-4 w-4" />,
+  functional: <Parentheses className="h-4 w-4" />,
+  vehicle: <Car className="h-4 w-4" />,
   weapon: <Swords className="h-4 w-4" />,
-  infection: <Bug className="h-4 w-4" />,
+  infection: <Rabbit className="h-4 w-4" />,
 };
 
 export function CategoryTabs({ selectedCategory, onSelectCategory }: CategoryTabsProps) {
@@ -25,15 +36,14 @@ export function CategoryTabs({ selectedCategory, onSelectCategory }: CategoryTab
 
   return (
     <Tabs
-      className="my-4"
       value={selectedCategory}
       onValueChange={(value) => onSelectCategory(value as ItemCategory)}>
-      <TabsList className="w-full">
+      <TabsList className="h-11 w-full">
         {categories.map((category) => (
           <TabsTrigger
             key={category}
             value={category}
-            className=" py-4 ">
+            className="cursor-pointer">
             {CATEGORY_ICONS[category]}
             <span className="">{CATEGORY_LABELS[category]}</span>
           </TabsTrigger>

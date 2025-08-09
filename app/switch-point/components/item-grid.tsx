@@ -61,7 +61,7 @@ export function ItemGrid({
     <ScrollArea className="h-[56vh]">
       <div className="pr-4">
         {/* 선택헤더 */}
-        <div className="mb-4 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-lg p-3 sticky top-0 z-10 backdrop-blur-sm">
+        <div className="my-4 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-lg p-3 sticky top-0 z-10 backdrop-blur-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">

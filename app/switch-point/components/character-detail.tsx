@@ -6,8 +6,7 @@ import { CharacterSelector } from "./character-selector";
 import { CategoryTabs } from "./category-tabs";
 import { ItemGrid } from "./item-grid";
 import { MaterialCalculator } from "./material-calculator";
-import { Button } from "@/components/base/button";
-import { RotateCcw } from "lucide-react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -89,17 +88,15 @@ export function CharacterDetail({
 
         {/* 아이템 선택 */}
         <div>
-          <div className="flex items-center justify-between ">
-            <h2 className="text-lg font-semibold">아이템 선택</h2>
-            <Button
+          <h2 className="text-lg font-semibold mb-4">아이템 선택</h2>
+          {/* <Button
               variant="outline"
               size="sm"
               onClick={() => handleReset("items")}
               className="">
               <RotateCcw />
               모든 아이템 초기화
-            </Button>
-          </div>
+            </Button> */}
           <CategoryTabs
             selectedCategory={selectedCategory}
             onSelectCategory={setSelectedCategory}
@@ -117,17 +114,17 @@ export function CharacterDetail({
       {/* 오른쪽: 재료 계산 */}
       <div className="lg:col-span-1">
         <div className="sticky top-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">재료 계산</h2>
-            <Button
+          {/* <div className="flex items-center justify-between mb-4"> */}
+          <h2 className="text-lg font-semibold">재료 계산</h2>
+          {/* <Button
               variant="outline"
               size="sm"
               onClick={() => handleReset("materials")}
               className="gap-2">
               <RotateCcw className="h-4 w-4" />
               보유 재료 초기화
-            </Button>
-          </div>
+            </Button> */}
+          {/* </div> */}
 
           <MaterialCalculator
             materials={calculationResult.materials}

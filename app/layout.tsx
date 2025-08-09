@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { ThemeProvider } from "@/components/theme-provider";
+
 import { Geist, Geist_Mono } from "next/font/google";
 import { Languages, Sun } from "lucide-react";
 import { Button } from "@/components/ui";
 import Link from "next/link";
 import { Toaster } from "sonner";
-
+import { ToggleTheme } from "@/components/toggle-theme";
 import "../styles/globals.css";
 
 const geistSans = Geist({
@@ -28,44 +30,53 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      suppressHydrationWarning>
       <body className={`${geistSans.variable}   ${geistMono.variable} antialiased`}>
-        <Toaster richColors></Toaster>
-        <header className="py-4 flex container mx-auto">
-          <div className="flex space-x-2">
-            <Button
-              asChild
-              variant="secondary">
-              <Link href="/character">캐릭터 관리</Link>
-            </Button>
-            <Button
-              asChild
-              variant="secondary">
-              <Link href="/character">데미지 계산</Link>
-            </Button>
-            <Button variant="secondary">
-              <Link href="/switch-point">이전 포인트 계산</Link>
-            </Button>{" "}
-            <Button variant="secondary">
-              <Link href="/character3">협동 타이머</Link>
-            </Button>
-          </div>
-          <div className="ml-auto flex w-max space-x-4">
-            <Button
-              variant="secondary"
-              size="icon"
-              className="size-8">
-              <Languages />
-            </Button>
-            <Button
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange>
+          <Toaster richColors></Toaster>
+          <header className="py-4 flex container mx-auto">
+            <div className="flex space-x-2">
+              <Button
+                asChild
+                variant="secondary">
+                <Link href="/character">캐릭터 관리</Link>
+              </Button>
+              <Button
+                asChild
+                variant="secondary">
+                <Link href="/character">데미지 계산</Link>
+              </Button>
+              <Button variant="secondary">
+                <Link href="/switch-point">이전 포인트 계산</Link>
+              </Button>{" "}
+              <Button variant="secondary">
+                <Link href="/character3">협동 타이머</Link>
+              </Button>
+            </div>
+            <div className="ml-auto flex w-max space-x-4">
+              <Button
+                variant="secondary"
+                size="icon"
+                className="size-8">
+                <Languages />
+              </Button>
+              {/* <Button
               variant="secondary"
               size="icon"
               className="size-8">
               <Sun />
-            </Button>
-          </div>
-        </header>
-        <main className="container mx-auto">{children}</main>
+            </Button> */}
+              <ToggleTheme></ToggleTheme>
+            </div>
+          </header>
+          <main className="container mx-auto">{children}</main>
+        </ThemeProvider>
       </body>
     </html>
   );

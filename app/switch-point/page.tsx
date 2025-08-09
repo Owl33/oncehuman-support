@@ -8,7 +8,6 @@ import { Button } from "@/components/base/button";
 import { Download, Upload, LayoutGrid, ListFilter, UserPlus } from "lucide-react";
 import { useRef } from "react";
 import { Card, CardContent } from "@/components/base/card";
-
 export default function SwitchPointPage() {
   const {
     loading,
@@ -73,9 +72,9 @@ export default function SwitchPointPage() {
           <div className="container mx-auto py-4">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold">Switch Point Calculator</h1>
+                <h1 className="text-2xl font-bold">서버 이전 포인트 계산</h1>
                 <p className=" text-muted-foreground mt-1">
-                  아이템 제작에 필요한 재료와 포인트를 계산합니다
+                  서버 이전에 필요한 재료와 포인트를 계산합니다
                 </p>
               </div>
             </div>
@@ -119,15 +118,15 @@ export default function SwitchPointPage() {
         <div className="container mx-auto py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold">Switch Point Calculator</h1>
+              <h1 className="text-2xl font-bold">서버 이전 포인트 계산</h1>
               <p className=" text-muted-foreground mt-1">
-                아이템 제작에 필요한 재료와 포인트를 계산합니다
+                서버 이전에 필요한 재료와 포인트를 계산합니다
               </p>
             </div>
 
             <div className="flex items-center gap-2">
               {/* 뷰 모드 전환 */}
-              <div className="flex items-center rounded-lg border p-1">
+              <div className="flex items-center rounded-lg border gap-1 p-1">
                 <Button
                   variant={viewMode === "dashboard" ? "default" : "ghost"}
                   size="sm"
@@ -147,7 +146,7 @@ export default function SwitchPointPage() {
               </div>
 
               {/* 데이터 관리 */}
-              <div className="flex items-center gap-2 ml-4">
+              {/* <div className="flex items-center gap-2 ml-4">
                 <Button
                   variant="outline"
                   size="sm"
@@ -171,7 +170,7 @@ export default function SwitchPointPage() {
                   onChange={handleImport}
                   className="hidden"
                 />
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

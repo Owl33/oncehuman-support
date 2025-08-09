@@ -196,7 +196,6 @@ export function MaterialCalculator({
         ref={scrollAreaRef}>
         <div className="px-2 pb-2 space-y-1">
           {sortedMaterials.map((material, index) => {
-            const isEditing = editingMaterial === material.id;
             const owned = ownedMaterials[material.id] || 0;
             const isComplete = owned >= material.required;
             const progress = Math.min((owned / material.required) * 100, 100);
@@ -208,8 +207,7 @@ export function MaterialCalculator({
                 key={material.id}
                 className={cn(
                   "group relative rounded-lg transition-all duration-200",
-                  "hover:bg-muted/50",
-                  isComplete && "bg-green-50/50 hover:bg-green-50/70"
+                  "hover:bg-muted/50"
                 )}>
                 <div className="px-4 py-3">
                   {/* Main Content */}
