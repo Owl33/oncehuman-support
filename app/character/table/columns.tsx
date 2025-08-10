@@ -42,7 +42,7 @@ export const columns: ColumnDef<BaseCharacter>[] = [
       editable: true,
       editType: "select",
       editOptions: scenarioSelectList,
-      className: "w-[200px]", // Tailwind 고정 크기
+      className: "w-[15vw]", // Tailwind 고정 크기
     },
   },
   {
@@ -53,7 +53,7 @@ export const columns: ColumnDef<BaseCharacter>[] = [
       displayName: "서버",
       editable: true,
       editType: "text",
-      className: "w-1/6", // Tailwind 비율 (예시: 전체의 1/6)
+      className: "w-[15vw]", // Tailwind 비율 (예시: 전체의 1/6)
     },
   },
   {
@@ -63,6 +63,7 @@ export const columns: ColumnDef<BaseCharacter>[] = [
     meta: {
       editable: true,
       displayName: "캐릭터명",
+      className: "w-[20vw]", // Tailwind 비율 (예시: 전체의 1/6)
     },
   },
   {
@@ -78,6 +79,7 @@ export const columns: ColumnDef<BaseCharacter>[] = [
       editable: true,
       editType: "select",
       editOptions: jobSelectList,
+      className: "w-[10vw]", // Tailwind 비율 (예시: 전체의 1/6)
     },
   },
   {

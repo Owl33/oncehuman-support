@@ -15,8 +15,8 @@ import {
   ChevronsRight,
   MoreHorizontal,
 } from "lucide-react";
-import { useDataTableContext } from "../contexts/data-table-context";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "../constants";
+import { useDataTableContext } from "@/components/ui/data-table/contexts/data-table-context";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/components/ui/data-table/constants";
 import { Badge } from "@/components/base/badge";
 import { cn } from "@/lib/utils";
 

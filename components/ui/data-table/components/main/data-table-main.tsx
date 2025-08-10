@@ -1,15 +1,15 @@
 // components/ui/data-table/components/data-table-body.tsx
 "use client";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/base/table";
-import { useDataTableContext } from "../contexts/data-table-context";
-import { TableHeaderCell } from "./table-header-cell";
-import { TableDataCell } from "./table-data-cell";
-import { categorizeColumns } from "../utils/column-utils";
+import { useDataTableContext } from "@/components/ui/data-table/contexts/data-table-context";
+import { DataTableRowHeaderCell } from "./row-header-cell";
+import { DataTableRowCell } from "./row-cell";
+import { categorizeColumns } from "@/components/ui/data-table/utils/column-utils";
 import { cn } from "@/lib/utils";
-import "../types/table-types"; // TanStack Table 타입 확장
-import "./styles/table-fixed-width.css";
+import "@/components/ui/data-table/types/table-types"; // TanStack Table 타입 확장
+import "@/components/ui/data-table/styles/table-fixed-width.css";
 
-export const DataTableBody = () => {
+export const DataTableMain = () => {
   const { table, editState, isRowEditing } = useDataTableContext();
 
   if (!table) return null;
@@ -50,15 +50,15 @@ export const DataTableBody = () => {
   const tableLayout = categorizeColumns(allColumns);
 
   // 디버그 로그 (필요시에만 활성화)
-  if (process.env.NODE_ENV === 'development') {
-    console.log("Table Layout Debug:", {
+  /* if (process.env.NODE_ENV === "development") {
+   console.log("Table Layout Debug:", {
       fixedWidth: tableLayout.fixedWidth,
       autoColumnsCount: tableLayout.autoColumnsCount,
       columnsCount: allColumns.length,
       fixedColumns: tableLayout.fixedColumns.map((col) => ({ id: col.id, size: col.getSize() })),
       autoColumns: tableLayout.autoColumns.map((col) => ({ id: col.id })),
     });
-  }
+  }*/
 
   return (
     <div className="overflow-auto rounded-md border bg-background">
@@ -72,7 +72,10 @@ export const DataTableBody = () => {
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHeaderCell key={header.id} header={header} />
+                <DataTableRowHeaderCell
+                  key={header.id}
+                  header={header}
+                />
               ))}
             </TableRow>
           ))}
@@ -113,7 +116,12 @@ export const DataTableBody = () => {
                     isNewRow && "bg-green-50 dark:bg-green-950/20"
                   )}>
                   {cells.map((cell) => (
-                    <TableDataCell key={cell.id} cell={cell} row={row} table={table} />
+                    <DataTableRowCell
+                      key={cell.id}
+                      cell={cell}
+                      row={row}
+                      table={table}
+                    />
                   ))}
                 </TableRow>
               );

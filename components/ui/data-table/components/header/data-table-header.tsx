@@ -1,7 +1,7 @@
 // components/ui/data-table/components/data-table-header.tsx
 "use client";
-import { useDataTableContext } from "../contexts/data-table-context";
-import { DataTableFilter } from "./data-table-filter";
+import { useDataTableContext } from "@/components/ui/data-table/contexts/data-table-context";
+import { DataTableFilter } from "@/components/ui/data-table/components/header/data-table-filter";
 import { cn } from "@/lib/utils";
 
 interface DataTableHeaderProps {

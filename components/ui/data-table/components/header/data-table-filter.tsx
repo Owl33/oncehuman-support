@@ -9,7 +9,7 @@ import { Switch } from "@/components/base/switch";
 import { Label } from "@/components/base/label";
 import { Separator } from "@/components/base/separator";
 import { Checkbox } from "@/components/base/checkbox";
-import { useDataTableContext } from "../contexts/data-table-context";
+import { useDataTableContext } from "@/components/ui/data-table/contexts/data-table-context";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Toggle } from "@/components/base/toggle";
@@ -111,14 +111,6 @@ export function DataTableFilter() {
                   <div
                     key={column.id}
                     className="flex items-center">
-                    {/* <Checkbox
-                      id={`search-${column.id}`}
-                      checked={activeColumns.includes(column.id)}
-                      onCheckedChange={(checked) => toggleFilterColumn(column.id, !!checked)}
-                    />
-                    <Label
-                      htmlFor={`search-${column.id}`}
-                      className=" font-normal cursor-pointer flex-1"></Label> */}
                     <Toggle
                       className="data-[state=on]:bg-green-50"
                       defaultPressed={activeColumns.includes(column.id)}
@@ -149,16 +141,6 @@ export function DataTableFilter() {
                       {column.getIsVisible() ? <Eye></Eye> : <EyeClosed></EyeClosed>}
                       {getColumnDisplayName(column.id)}
                     </Toggle>
-                    {/* <Checkbox
-                      id={`display-${column.id}`}
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(checked) => column.toggleVisibility(!!checked)}
-                    />
-                    <Label
-                      htmlFor={`display-${column.id}`}
-                      className=" font-normal cursor-pointer flex-1">
-                      {getColumnDisplayName(column.id)}
-                    </Label> */}
                   </div>
                 ))}
               </div>

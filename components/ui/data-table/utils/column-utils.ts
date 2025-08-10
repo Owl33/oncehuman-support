@@ -36,7 +36,7 @@ export function analyzeColumn<TData, TValue>(column: Column<TData, TValue>): Col
 
   // className 생성
   const cellClassName = cn(
-    "p-0 h-[44px] box-border",
+    " box-border",
     isFixedColumn ? "table-fixed-column" : "table-auto-column",
     // Tailwind width 클래스 추가 (고정되지 않은 경우)
     parsedSize?.type === "tailwind" && !parsedSize.isFixed

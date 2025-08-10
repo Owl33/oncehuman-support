@@ -1,9 +1,9 @@
 // components/ui/data-table/components/data-table-content.tsx
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTableHeader } from "./data-table-header";
-import { DataTableBody } from "./data-table-body";
-import { DataTablePagination } from "./data-table-pagination";
+import { DataTableHeader } from "./header/data-table-header";
+import { DataTableMain } from "./main/data-table-main";
+import { DataTablePagination } from "./footer/data-table-pagination";
 import { FloatingActionBar } from "./floating-action-bar";
 import { useDataTableContext } from "../contexts/data-table-context";
 import { useEffect } from "react";
@@ -39,12 +39,12 @@ export function DataTableContent<TData, TValue>({
   return (
     <div className={cn("space-y-4", className)}>
       <DataTableHeader customHeaderContent={customHeaderContent} />
-      
+
       <div className="relative">
-        <DataTableBody />
+        <DataTableMain />
         <FloatingActionBar />
       </div>
-      
+
       {showPagination && (
         <div className="border-t pt-4">
           <DataTablePagination />

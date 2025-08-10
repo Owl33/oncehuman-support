@@ -13,10 +13,10 @@ import {
   SelectValue,
 } from "@/components/base/select";
 import { Badge } from "@/components/base/badge";
-import { useDataTableContext } from "../contexts/data-table-context";
-import { analyzeColumn } from "../utils/column-utils";
+import { useDataTableContext } from "@/components/ui/data-table/contexts/data-table-context";
+import { analyzeColumn } from "@/components/ui/data-table/utils/column-utils";
 import { cn } from "@/lib/utils";
-import { SYSTEM_COLUMN_IDS } from "../constants";
+import { SYSTEM_COLUMN_IDS, EDITABLE_CELL_HEIGHT } from "@/components/ui/data-table/constants";
 
 interface TableDataCellProps<TData> {
   cell: {
@@ -52,18 +52,16 @@ const renderCustomContent = (column: any, row: any, value: any, table: any) => {
 const cellRenderers = {
   // System column renderer
   system: ({ column, row, value, table }: any) => (
-    <div className="flex items-center justify-center">
+    <div className="w-full flex items-center justify-center">
       {renderCustomContent(column, row, value, table) || "-"}
     </div>
   ),
 
   // Read-only cell renderer
   readonly: ({ column, row, value, table }: any) => (
-    <div className="px-2">
-      <p className="border border-transparent px-3">
-        {renderCustomContent(column, row, value, table)}
-      </p>
-    </div>
+    <p className="px-3 border border-transparent h-[36px] flex items-center">
+      {renderCustomContent(column, row, value, table)}
+    </p>
   ),
 
   // Text input renderer
@@ -135,7 +133,7 @@ const cellRenderers = {
   },
 };
 
-export function TableDataCell<TData>({ cell, row, table }: TableDataCellProps<TData>) {
+export function DataTableRowCell<TData>({ cell, row, table }: TableDataCellProps<TData>) {
   const { isRowEditing, editState, updateCell } = useDataTableContext<TData>();
   const { cellClassName, headerStyle } = analyzeColumn(cell.column);
 
@@ -206,23 +204,23 @@ export function TableDataCell<TData>({ cell, row, table }: TableDataCellProps<TD
   const content = renderer(rendererProps);
 
   // Wrap edit mode content if needed
-  const wrappedContent = canEdit ? (
-    <div
-      className={cn(
-        "h-[44px] flex items-center px-2",
-        rendererType === "textarea" && "bg-muted/20 border border-input rounded mx-1 px-3"
-      )}>
-      {content}
-    </div>
-  ) : (
-    content
-  );
+  // const wrappedContent = canEdit ? (
+  //   <>{content}</>
+  // ) : (
+  //   <div
+  //     className={cn(
+  //       "",
+  //       rendererType === "textarea" && "bg-muted/20 border border-input rounded mx-1 px-3"
+  //     )}>
+  //     {content}
+  //   </div>
+  // );
 
   return (
     <TableCell
-      className={cn("overflow-hidden", cellClassName)}
+      className={cn(" text-ellipsis ", cellClassName)}
       style={headerStyle}>
-      {wrappedContent}
+      {content}
     </TableCell>
   );
 }
