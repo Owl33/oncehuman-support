@@ -1,0 +1,140 @@
+"use client";
+
+import React, { useState, useMemo, useCallback } from "react";
+import { Character, Item, Material, CalculationResult } from "@/types/character";
+import { characterStorage } from "@/lib/storage/character-storage";
+import { calculateMaterials } from "../../../lib/switchpoint/calculations";
+import { MaterialCalculator } from "../../material-calculator";
+import { useSwitchPointContext } from "../../../contexts/switch-point-context";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/base/alert-dialog";
+
+// 정적 데이터 import
+import itemsData from "../../../data/items-list.json";
+import materialsData from "../../../data/materials-list.json";
+
+interface MaterialCalculationSectionProps {
+  currentCharacter: Character;
+}
+
+export function MaterialCalculationSection({ currentCharacter }: MaterialCalculationSectionProps) {
+  // Context에서 필요한 것만 가져오기
+  const { reloadCharacters } = useSwitchPointContext();
+
+  // 로컬 상태
+  const [showResetDialog, setShowResetDialog] = useState(false);
+
+  // 정적 데이터
+  const items = useMemo(() => itemsData as Item[], []);
+  const materials = useMemo(() => materialsData as Material[], []);
+
+  // 계산 결과 (이 컴포넌트에서 직접 계산)
+  const calculationResult = useMemo((): CalculationResult => {
+    if (!currentCharacter) {
+      return { materials: [], totalPoints: 0 };
+    }
+
+    return calculateMaterials(
+      currentCharacter.selectedItems || {},
+      currentCharacter.ownedMaterials || {},
+      items,
+      materials
+    );
+  }, [currentCharacter, items, materials]);
+
+  // 재료 보유량 업데이트 로직
+  const updateMaterialOwned = useCallback(async (materialId: string, quantity: number) => {
+    try {
+      const updatedMaterials = {
+        ...currentCharacter.ownedMaterials,
+        [materialId]: Math.max(0, quantity),
+      };
+
+      // localStorage에 저장
+      const updated = await characterStorage.updateSwitchPointData(currentCharacter.id, {
+        ownedMaterials: updatedMaterials,
+      });
+
+      if (updated) {
+        await reloadCharacters(); // Context의 characters 다시 로드
+      }
+    } catch (error) {
+      console.error("Failed to update material quantity:", error);
+      toast.error("재료 수량 업데이트에 실패했습니다.");
+    }
+  }, [currentCharacter, reloadCharacters]);
+
+  // 모든 재료 초기화
+  const resetAllMaterials = useCallback(async () => {
+    try {
+      const updated = await characterStorage.updateSwitchPointData(currentCharacter.id, {
+        ownedMaterials: {},
+      });
+
+      if (updated) {
+        await reloadCharacters();
+        toast.success("모든 보유 재료를 초기화했습니다.");
+      }
+    } catch (error) {
+      console.error("Failed to reset materials:", error);
+      toast.error("재료 초기화에 실패했습니다.");
+    }
+  }, [currentCharacter, reloadCharacters]);
+
+  // 초기화 다이얼로그 핸들러
+  const handleResetClick = () => {
+    setShowResetDialog(true);
+  };
+
+  const confirmReset = () => {
+    resetAllMaterials();
+    setShowResetDialog(false);
+  };
+
+  return (
+    <div className="sticky top-6">
+      <h2 className="text-lg font-semibold mb-4">재료 계산</h2>
+
+      <MaterialCalculator
+        materials={calculationResult.materials}
+        totalPoints={calculationResult.totalPoints}
+        ownedMaterials={currentCharacter.ownedMaterials || {}}
+        onUpdateOwned={updateMaterialOwned}
+        onResetClick={handleResetClick}
+      />
+
+      {/* 재료 초기화 확인 다이얼로그 */}
+      <AlertDialog
+        open={showResetDialog}
+        onOpenChange={setShowResetDialog}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>모든 보유 재료를 초기화하시겠습니까?</AlertDialogTitle>
+            <AlertDialogDescription>
+              입력한 모든 보유 재료가 초기화됩니다. 이 작업은 되돌릴 수 없습니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmReset}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              초기화
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}

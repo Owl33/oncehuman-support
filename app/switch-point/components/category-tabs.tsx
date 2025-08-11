@@ -9,10 +9,7 @@ import {
   Parentheses,
   Cpu,
   Car,
-  Factory,
-  Shield,
   Swords,
-  Bug,
   Rabbit,
 } from "lucide-react";
 

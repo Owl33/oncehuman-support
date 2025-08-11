@@ -1,14 +1,14 @@
 // app/switchpoint/components/item-grid.tsx
 "use client";
 
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { Item, Material } from "@/types/character";
 import { Button } from "@/components/base/button";
 import { Input } from "@/components/base/input";
 import { Badge } from "@/components/base/badge";
 import { ScrollArea } from "@/components/base/scroll-area";
 import { Separator } from "@/components/base/separator";
-import { Plus, Minus, Package, RotateCcw, ShoppingCart, Boxes, Box } from "lucide-react";
+import { Plus, Minus, Package, RotateCcw, Boxes, Box } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ItemGridProps {
