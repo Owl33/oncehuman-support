@@ -11,7 +11,7 @@ interface PageLayoutProps {
 
 export function PageLayout({ children, className }: PageLayoutProps) {
   return (
-    <div className={cn("min-h-screen bg-background", className)}>
+    <div className={cn("min-h-full", className)}>
       {children}
     </div>
   );

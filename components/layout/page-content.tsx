@@ -11,7 +11,7 @@ interface PageContentProps {
 
 export function PageContent({ children, className }: PageContentProps) {
   return (
-    <div className={cn("container mx-auto py-6", className)}>
+    <div className={cn("py-4 md:py-6", className)}>
       {children}
     </div>
   );
