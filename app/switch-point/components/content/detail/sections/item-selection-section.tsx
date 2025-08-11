@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useMemo, useCallback } from "react";
-import { Character, Item, Material, ItemCategory } from "@/types/character";
+import { Character, Item, ItemCategory } from "@/types/character";
 import { characterStorage } from "@/lib/storage/character-storage";
-import { CategoryTabs } from "../../category-tabs";
-import { ItemGrid } from "../../item-grid";
-import { useSwitchPointContext } from "../../../contexts/switch-point-context";
+import { CategoryTabs } from "../widgets/category-tabs";
+import { ItemGrid } from "../widgets/item-grid";
+import { useSwitchPointContext } from "../../../../contexts/switch-point-context";
+import { useGameData } from "../../../../hooks/use-game-data";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -18,10 +19,6 @@ import {
   AlertDialogTitle,
 } from "@/components/base/alert-dialog";
 
-// 정적 데이터 import
-import itemsData from "../../../data/items-list.json";
-import materialsData from "../../../data/materials-list.json";
-
 interface ItemSelectionSectionProps {
   currentCharacter: Character;
 }
@@ -29,14 +26,11 @@ interface ItemSelectionSectionProps {
 export function ItemSelectionSection({ currentCharacter }: ItemSelectionSectionProps) {
   // Context에서 필요한 것만 가져오기
   const { reloadCharacters } = useSwitchPointContext();
+  const { items, materials } = useGameData();
 
   // 로컬 상태
   const [selectedCategory, setSelectedCategory] = useState<ItemCategory>("storage");
   const [showResetDialog, setShowResetDialog] = useState(false);
-
-  // 정적 데이터
-  const items = useMemo(() => itemsData as Item[], []);
-  const materials = useMemo(() => materialsData as Material[], []);
 
   // 카테고리별 아이템 필터링
   const itemsByCategory = useMemo(() => {

@@ -2,9 +2,9 @@
 
 import React from "react";
 import { Character } from "@/types/character";
-import { CharacterSelectorSection } from "./character-selector-section";
-import { ItemSelectionSection } from "./item-selection-section";
-import { MaterialCalculationSection } from "./material-calculation-section";
+import { CharacterSelectorSection } from "./sections/character-selector-section";
+import { ItemSelectionSection } from "./sections/item-selection-section";
+import { MaterialCalculationSection } from "./sections/material-calculation-section";
 
 interface DetailLayoutProps {
   currentCharacter?: Character;

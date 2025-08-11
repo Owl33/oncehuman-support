@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { CharacterSelector } from "../../character-selector";
-import { useSwitchPointContext } from "../../../contexts/switch-point-context";
+import { CharacterSelector } from "../../../shared/character-selector";
+import { useSwitchPointContext } from "../../../../contexts/switch-point-context";
 
 export function CharacterSelectorSection() {
   // Context에서 필요한 것만 가져오기 (단순하게)

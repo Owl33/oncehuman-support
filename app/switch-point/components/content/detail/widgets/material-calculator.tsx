@@ -3,13 +3,11 @@
 
 import { useState, useMemo, useRef } from "react";
 import { CalculatedMaterial } from "@/types/character";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/base/card";
 import { Input } from "@/components/base/input";
 import { Badge } from "@/components/base/badge";
 import { Button } from "@/components/base/button";
 import { Progress } from "@/components/base/progress";
 import { ScrollArea } from "@/components/base/scroll-area";
-import { Separator } from "@/components/base/separator";
 import {
   CircleCheckBig,
   CircleCheck,
@@ -18,7 +16,6 @@ import {
   Package2,
   CircleX,
   RotateCcw,
-  CheckCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 

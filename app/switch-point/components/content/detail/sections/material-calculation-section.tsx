@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useMemo, useCallback } from "react";
-import { Character, Item, Material, CalculationResult } from "@/types/character";
+import { Character, CalculationResult } from "@/types/character";
 import { characterStorage } from "@/lib/storage/character-storage";
-import { calculateMaterials } from "../../../lib/switchpoint/calculations";
-import { MaterialCalculator } from "../../material-calculator";
-import { useSwitchPointContext } from "../../../contexts/switch-point-context";
+import { calculateMaterials } from "../../../../lib/switchpoint/calculations";
+import { MaterialCalculator } from "../widgets/material-calculator";
+import { useSwitchPointContext } from "../../../../contexts/switch-point-context";
+import { useGameData } from "../../../../hooks/use-game-data";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -18,10 +19,6 @@ import {
   AlertDialogTitle,
 } from "@/components/base/alert-dialog";
 
-// 정적 데이터 import
-import itemsData from "../../../data/items-list.json";
-import materialsData from "../../../data/materials-list.json";
-
 interface MaterialCalculationSectionProps {
   currentCharacter: Character;
 }
@@ -29,13 +26,10 @@ interface MaterialCalculationSectionProps {
 export function MaterialCalculationSection({ currentCharacter }: MaterialCalculationSectionProps) {
   // Context에서 필요한 것만 가져오기
   const { reloadCharacters } = useSwitchPointContext();
+  const { items, materials } = useGameData();
 
   // 로컬 상태
   const [showResetDialog, setShowResetDialog] = useState(false);
-
-  // 정적 데이터
-  const items = useMemo(() => itemsData as Item[], []);
-  const materials = useMemo(() => materialsData as Material[], []);
 
   // 계산 결과 (이 컴포넌트에서 직접 계산)
   const calculationResult = useMemo((): CalculationResult => {
