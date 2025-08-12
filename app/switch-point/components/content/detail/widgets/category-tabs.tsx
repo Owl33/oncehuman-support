@@ -3,15 +3,7 @@
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/base/tabs";
 import { ItemCategory, CATEGORY_LABELS } from "@/types/character";
-import {
-  Import,
-  Pickaxe,
-  Parentheses,
-  Cpu,
-  Car,
-  Swords,
-  Rabbit,
-} from "lucide-react";
+import { Import, Pickaxe, Parentheses, Cpu, Car, Swords, Rabbit } from "lucide-react";
 
 interface CategoryTabsProps {
   selectedCategory: ItemCategory;
@@ -35,7 +27,7 @@ export function CategoryTabs({ selectedCategory, onSelectCategory }: CategoryTab
     <Tabs
       value={selectedCategory}
       onValueChange={(value) => onSelectCategory(value as ItemCategory)}>
-      <TabsList className="h-11 w-full">
+      <TabsList className="flex h-11 w-full">
         {categories.map((category) => (
           <TabsTrigger
             key={category}

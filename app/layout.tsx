@@ -7,6 +7,15 @@ import { Button } from "@/components/ui";
 import Link from "next/link";
 import { Toaster } from "sonner";
 import { ToggleTheme } from "@/components/toggle-theme";
+import {
+  SidebarHeader,
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/base/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
+
 import "../styles/globals.css";
 
 const geistSans = Geist({
@@ -39,43 +48,21 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange>
-          <Toaster richColors></Toaster>
-          <header className="py-4 flex container mx-auto">
-            <div className="flex space-x-2">
-              <Button
-                asChild
-                variant="secondary">
-                <Link href="/character">캐릭터 관리</Link>
-              </Button>
-              <Button
-                asChild
-                variant="secondary">
-                <Link href="/character">데미지 계산</Link>
-              </Button>
-              <Button variant="secondary">
-                <Link href="/switch-point">이전 포인트 계산</Link>
-              </Button>{" "}
-              <Button variant="secondary">
-                <Link href="/character3">협동 타이머</Link>
-              </Button>
-            </div>
-            <div className="ml-auto flex w-max space-x-4">
-              <Button
-                variant="secondary"
-                size="icon"
-                className="size-8">
-                <Languages />
-              </Button>
-              {/* <Button
-              variant="secondary"
-              size="icon"
-              className="size-8">
-              <Sun />
-            </Button> */}
-              <ToggleTheme></ToggleTheme>
-            </div>
-          </header>
-          <main className="container mx-auto">{children}</main>
+          <Toaster richColors />
+          <SidebarProvider defaultOpen>
+            <AppSidebar />
+            <SidebarInset>
+              <SidebarHeader>
+                <div className=" flex items-center justify-between">
+                  <SidebarTrigger></SidebarTrigger>
+                  <ToggleTheme></ToggleTheme>
+                </div>
+              </SidebarHeader>
+              <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
+                <div className="min-h-[100vh] flex-1 rounded-xl ">{children}</div>
+              </main>
+            </SidebarInset>
+          </SidebarProvider>
         </ThemeProvider>
       </body>
     </html>

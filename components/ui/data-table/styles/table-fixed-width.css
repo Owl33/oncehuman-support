@@ -1,11 +1,5 @@
-/* 테이블 고정 크기 강제 적용 */
-.table-fixed-column {
-  width: var(--column-width) !important;
-  min-width: var(--column-width) !important;
-  max-width: var(--column-width) !important;
-  box-sizing: border-box !important;
-}
-
-.table-auto-column {
-  /* 자동 컬럼은 width 설정 안함 - 남은 공간 균등분배 */
+/* 데이터 테이블 기본 스타일 */
+.data-table {
+  table-layout: fixed;
+  width: 100%;
 }

@@ -14,6 +14,7 @@ import {
 } from "@/components/base/select";
 import { Badge } from "@/components/base/badge";
 import { useDataTableContext } from "@/components/ui/data-table/contexts/data-table-context";
+import { SmartTooltipCell } from "./smart-tooltip-cell";
 import { analyzeColumn } from "@/components/ui/data-table/utils/column-utils";
 import { cn } from "@/lib/utils";
 import { SYSTEM_COLUMN_IDS, EDITABLE_CELL_HEIGHT } from "@/components/ui/data-table/constants";
@@ -48,21 +49,56 @@ const renderCustomContent = (column: any, row: any, value: any, table: any) => {
   });
 };
 
+// Helper function to extract text content for tooltip
+const extractTextContent = (column: any, row: any, value: any, table: any): string => {
+  if (!column.columnDef.cell) {
+    return String(value || '');
+  }
+
+  // 기본 값부터 시도
+  if (typeof value === 'string' || typeof value === 'number') {
+    return String(value);
+  }
+
+  // row.original에서 해당 컬럼 데이터 추출
+  const originalValue = row.original?.[column.id];
+  if (typeof originalValue === 'string' || typeof originalValue === 'number') {
+    return String(originalValue);
+  }
+
+  // 빈 문자열 반환 (복잡한 React 컴포넌트 렌더링 방지)
+  return '';
+};
+
 // Cell renderers object (like dropdown pattern)
 const cellRenderers = {
   // System column renderer
-  system: ({ column, row, value, table }: any) => (
-    <div className="w-full flex items-center justify-center">
-      {renderCustomContent(column, row, value, table) || "-"}
-    </div>
-  ),
+  system: ({ column, row, value, table }: any) => {
+    const content = renderCustomContent(column, row, value, table) || "-";
+    const textContent = extractTextContent(column, row, value, table);
+    
+    return (
+      <div className="w-full flex items-center justify-center">
+        <SmartTooltipCell tooltipText={textContent}>
+          {content}
+        </SmartTooltipCell>
+      </div>
+    );
+  },
 
   // Read-only cell renderer
-  readonly: ({ column, row, value, table }: any) => (
-    <p className="px-3 border border-transparent h-[36px] flex items-center">
-      {renderCustomContent(column, row, value, table)}
-    </p>
-  ),
+  readonly: ({ column, row, value, table }: any) => {
+    const content = renderCustomContent(column, row, value, table);
+    const textContent = extractTextContent(column, row, value, table);
+    
+    return (
+      <div className="px-3 border border-transparent h-[36px] flex items-center w-full">
+        <SmartTooltipCell tooltipText={textContent}>
+          {content}
+        </SmartTooltipCell>
+      </div>
+    );
+  },
 
   // Text input renderer
   text: ({ value, placeholder, autoFocus, onChange }: any) => (
@@ -218,7 +254,7 @@ export function DataTableRowCell<TData>({ cell, row, table }: TableDataCellProps
 
   return (
     <TableCell
-      className={cn(" text-ellipsis ", cellClassName)}
+      className={cellClassName}
       style={headerStyle}>
       {content}
     </TableCell>

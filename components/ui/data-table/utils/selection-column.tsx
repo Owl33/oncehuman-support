@@ -7,7 +7,7 @@ export const createSelectionColumn = <TData,>(): ColumnDef<TData> => {
   return {
     id: "select",
     meta: {
-      className: "w-[42px]",
+      width: "32px",
     },
     header: ({ table }) => {
       // Get context from table meta or create inline component
