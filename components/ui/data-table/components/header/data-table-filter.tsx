@@ -112,7 +112,7 @@ export function DataTableFilter() {
                     key={column.id}
                     className="flex items-center">
                     <Toggle
-                      className="data-[state=on]:bg-green-50 dark:data-[state=on]:bg-green-950"
+                      className="data-[state=on]:bg-[var(--selection)] data-[state=on]:text-[var(--selection-foreground)]"
                       defaultPressed={activeColumns.includes(column.id)}
                       onPressedChange={(checked) => toggleFilterColumn(column.id, !!checked)}>
                       {activeColumns.includes(column.id) ? (
@@ -135,7 +135,7 @@ export function DataTableFilter() {
                     key={column.id}
                     className="flex items-center">
                     <Toggle
-                      className="data-[state=on]:bg-green-50 dark:data-[state=on]:bg-green-950"
+                      className="data-[state=on]:bg-[var(--selection)] data-[state=on]:text-[var(--selection-foreground)]"
                       defaultPressed={column.getIsVisible()}
                       onPressedChange={(checked) => column.toggleVisibility(!!checked)}>
                       {column.getIsVisible() ? <Eye></Eye> : <EyeClosed></EyeClosed>}

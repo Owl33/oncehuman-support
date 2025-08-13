@@ -125,7 +125,9 @@ export const DataTableProvider = <TData,>({
 
   // Edit actions
   const getSelectedRowIds = useCallback(() => {
-    return Object.keys(table.getState().rowSelection);
+    const rowSelection = table.getState().rowSelection;
+    const selectedIds = Object.keys(rowSelection).filter(id => rowSelection[id] === true);
+    return selectedIds;
   }, [table]);
 
   const startEdit = useCallback(() => {

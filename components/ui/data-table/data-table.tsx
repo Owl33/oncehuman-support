@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useDataTable } from "./hooks/use-data-table";
 import { DataTableProvider } from "./contexts/data-table-context";
 import { DataTableContent } from "./components/data-table-content";
-import { forwardRef, useMemo, useRef, useImperativeHandle } from "react";
+import { forwardRef, useMemo, useRef, useImperativeHandle, useEffect } from "react";
 import { createSelectionColumn } from "./utils/selection-column";
 import { createActionsColumn, ActionItem } from "./utils/actions-column";
 import { useDataTableContext } from "./contexts/data-table-context";
@@ -65,6 +65,16 @@ function DataTableInner<TData, TValue>(
     isAddMode,
     clearAllFilters,
   } = context;
+
+  // Update table meta with current edit mode state
+  useEffect(() => {
+    if (table) {
+      table.options.meta = {
+        ...table.options.meta,
+        isInEditMode,
+      };
+    }
+  }, [table, isInEditMode]);
 
   useImperativeHandle(
     props.tableRef,

@@ -113,7 +113,7 @@ export const DataTableMain = () => {
                   className={cn(
                     "hover:bg-muted/50 transition-colors",
                     isEditing && "bg-muted/30",
-                    isNewRow && "bg-green-50 dark:bg-green-950/20"
+                    isNewRow && "bg-[var(--selection)]/30 hover:bg-[var(--selection)]/40"
                   )}>
                   {cells.map((cell) => (
                     <DataTableRowCell

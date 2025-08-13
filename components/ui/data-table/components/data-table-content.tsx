@@ -37,12 +37,13 @@ export function DataTableContent<TData, TValue>({
   }, [cancelEdit]);
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn("", className)}>
       <DataTableHeader customHeaderContent={customHeaderContent} />
 
+      {/* FloatingActionBar positioned above table */}
       <div className="relative">
-        <DataTableMain />
         <FloatingActionBar />
+        <DataTableMain />
       </div>
 
       {showPagination && (

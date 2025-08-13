@@ -35,12 +35,30 @@ export function MaterialCalculator({
   // 최소한의 상태 관리
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const [pendingValues, setPendingValues] = useState<Record<string, string>>({});
-  const [materialOrder, setMaterialOrder] = useState<CalculatedMaterial[]>(() => materials);
+  const [materialOrder, setMaterialOrder] = useState<CalculatedMaterial[]>([]);
+  const [isOrderInitialized, setIsOrderInitialized] = useState(false);
 
   // materials가 변경되면 순서 업데이트 (완료된 아이템 위치 유지)
   useEffect(() => {
     setMaterialOrder(prevOrder => {
-      // 기존 순서가 있으면 유지, 새로운 항목만 추가
+      // 처음 초기화되는 경우 - 완료된 항목을 아래로 자동 정렬
+      if (!isOrderInitialized && materials.length > 0) {
+        const sortedMaterials = [...materials].sort((a, b) => {
+          const aOwned = ownedMaterials[a.id] || 0;
+          const bOwned = ownedMaterials[b.id] || 0;
+          const aComplete = aOwned >= a.required;
+          const bComplete = bOwned >= b.required;
+          
+          // 완료된 항목을 아래로, 미완료 항목을 위로
+          if (aComplete && !bComplete) return 1;
+          if (!aComplete && bComplete) return -1;
+          return 0;
+        });
+        setIsOrderInitialized(true);
+        return sortedMaterials;
+      }
+      
+      // 이후 materials 변경 시에는 기존 순서 유지
       const existingIds = new Set(prevOrder.map(m => m.id));
       const newMaterials = materials.filter(m => !existingIds.has(m.id));
       const updatedExisting = prevOrder.filter(m => materials.some(mat => mat.id === m.id))
@@ -48,7 +66,13 @@ export function MaterialCalculator({
       
       return [...updatedExisting, ...newMaterials];
     });
-  }, [materials]);
+  }, [materials, ownedMaterials, isOrderInitialized]);
+
+  // 캐릭터 변경이나 페이지 이동 시 초기화 플래그 리셋
+  const materialKey = materials.length > 0 ? materials[0]?.id : '';
+  useEffect(() => {
+    setIsOrderInitialized(false);
+  }, [materialKey]);
 
   const displayMaterials = materialOrder;
 
