@@ -40,7 +40,7 @@ export function MaterialCalculator({
 
   // materials가 변경되면 순서 업데이트 (완료된 아이템 위치 유지)
   useEffect(() => {
-    setMaterialOrder(prevOrder => {
+    setMaterialOrder((prevOrder) => {
       // 처음 초기화되는 경우 - 완료된 항목을 아래로 자동 정렬
       if (!isOrderInitialized && materials.length > 0) {
         const sortedMaterials = [...materials].sort((a, b) => {
@@ -48,7 +48,7 @@ export function MaterialCalculator({
           const bOwned = ownedMaterials[b.id] || 0;
           const aComplete = aOwned >= a.required;
           const bComplete = bOwned >= b.required;
-          
+
           // 완료된 항목을 아래로, 미완료 항목을 위로
           if (aComplete && !bComplete) return 1;
           if (!aComplete && bComplete) return -1;
@@ -57,19 +57,20 @@ export function MaterialCalculator({
         setIsOrderInitialized(true);
         return sortedMaterials;
       }
-      
+
       // 이후 materials 변경 시에는 기존 순서 유지
-      const existingIds = new Set(prevOrder.map(m => m.id));
-      const newMaterials = materials.filter(m => !existingIds.has(m.id));
-      const updatedExisting = prevOrder.filter(m => materials.some(mat => mat.id === m.id))
-        .map(oldMaterial => materials.find(m => m.id === oldMaterial.id) || oldMaterial);
-      
+      const existingIds = new Set(prevOrder.map((m) => m.id));
+      const newMaterials = materials.filter((m) => !existingIds.has(m.id));
+      const updatedExisting = prevOrder
+        .filter((m) => materials.some((mat) => mat.id === m.id))
+        .map((oldMaterial) => materials.find((m) => m.id === oldMaterial.id) || oldMaterial);
+
       return [...updatedExisting, ...newMaterials];
     });
   }, [materials, ownedMaterials, isOrderInitialized]);
 
   // 캐릭터 변경이나 페이지 이동 시 초기화 플래그 리셋
-  const materialKey = materials.length > 0 ? materials[0]?.id : '';
+  const materialKey = materials.length > 0 ? materials[0]?.id : "";
   useEffect(() => {
     setIsOrderInitialized(false);
   }, [materialKey]);
@@ -79,7 +80,7 @@ export function MaterialCalculator({
   // 즉시 UI 업데이트를 위한 핸들러 (debounce 없음)
   const handleInputChange = (materialId: string, value: string) => {
     // 로컬 상태 즉시 업데이트 (UI 반응성)
-    setPendingValues(prev => ({ ...prev, [materialId]: value }));
+    setPendingValues((prev) => ({ ...prev, [materialId]: value }));
   };
 
   // Input value 가져오기 (pending 값 우선)
@@ -95,11 +96,11 @@ export function MaterialCalculator({
     if (!material) return;
 
     onUpdateOwned(materialId, material.required);
-    
+
     // 완료되었으므로 맨 아래로 이동
-    setMaterialOrder(prev => {
-      const filtered = prev.filter(m => m.id !== materialId);
-      const completedMaterial = prev.find(m => m.id === materialId);
+    setMaterialOrder((prev) => {
+      const filtered = prev.filter((m) => m.id !== materialId);
+      const completedMaterial = prev.find((m) => m.id === materialId);
       return completedMaterial ? [...filtered, completedMaterial] : prev;
     });
   };
@@ -109,15 +110,14 @@ export function MaterialCalculator({
     if (!material) return;
 
     onUpdateOwned(materialId, 0);
-    
+
     // 미완료 상태가 되었으므로 맨 위로 이동
-    setMaterialOrder(prev => {
-      const filtered = prev.filter(m => m.id !== materialId);
-      const incompleteMaterial = prev.find(m => m.id === materialId);
+    setMaterialOrder((prev) => {
+      const filtered = prev.filter((m) => m.id !== materialId);
+      const incompleteMaterial = prev.find((m) => m.id === materialId);
       return incompleteMaterial ? [incompleteMaterial, ...filtered] : prev;
     });
   };
-
 
   // Focus 관리
   const handleFocus = (materialId: string) => {
@@ -126,29 +126,29 @@ export function MaterialCalculator({
 
   const handleBlur = (materialId: string) => {
     setFocusedInput(null);
-    
+
     // pending 값이 있으면 즉시 적용
     if (materialId in pendingValues) {
       const material = materialOrder.find((m) => m.id === materialId);
       if (material) {
         let quantity = parseInt(pendingValues[materialId]) || 0;
         quantity = Math.max(0, Math.min(quantity, material.required));
-        
+
         // 실제 값 업데이트
         onUpdateOwned(materialId, quantity);
-        
+
         // 완료되었다면 맨 아래로 이동
         if (quantity >= material.required) {
-          setMaterialOrder(prev => {
-            const filtered = prev.filter(m => m.id !== materialId);
-            const completedMaterial = prev.find(m => m.id === materialId);
+          setMaterialOrder((prev) => {
+            const filtered = prev.filter((m) => m.id !== materialId);
+            const completedMaterial = prev.find((m) => m.id === materialId);
             return completedMaterial ? [...filtered, completedMaterial] : prev;
           });
         }
       }
-      
+
       // pending 값 제거
-      setPendingValues(prev => {
+      setPendingValues((prev) => {
         const newPending = { ...prev };
         delete newPending[materialId];
         return newPending;
@@ -162,8 +162,8 @@ export function MaterialCalculator({
         <div className="rounded-full bg-muted/50 p-4 mb-4">
           <Package2 className="h-8 w-8 text-muted-foreground/50" />
         </div>
-        <p className="text-sm text-muted-foreground">설비를 선택하면</p>
-        <p className="text-sm text-muted-foreground">필요한 재료가 표시됩니다</p>
+        <p className=" text-muted-foreground">설비를 선택하면</p>
+        <p className=" text-muted-foreground">필요한 재료가 표시됩니다</p>
       </div>
     );
   }
@@ -189,8 +189,8 @@ export function MaterialCalculator({
                 <p className="text-xs text-muted-foreground">필요 포인트</p>
                 <p className="text-2xl font-bold">
                   {Math.round(actualTotalPoints).toLocaleString()}
-                  <span className="text-sm font-normal text-muted-foreground ml-1">P</span>
-                  <span className="text-sm font-normal text-muted-foreground ml-1">/ 20,000 P</span>
+                  <span className=" font-normal text-muted-foreground ml-1">P</span>
+                  <span className=" font-normal text-muted-foreground ml-1">/ 20,000 P</span>
                 </p>
               </div>
             </div>
@@ -228,7 +228,7 @@ export function MaterialCalculator({
       </div>
 
       {/* Materials List */}
-      <ScrollArea className="h-[56vh]">
+      <ScrollArea className="h-[64vh]">
         <div className="px-2 pb-2 space-y-1">
           {displayMaterials.map((material) => {
             const inputValue = getInputValue(material.id);
@@ -251,19 +251,15 @@ export function MaterialCalculator({
                     <div className="col-span-4 flex items-center">
                       <div className="mr-3">
                         {!isComplete ? (
-                          <CircleX
-                            className="h-4 w-4 text-destructive"
-                          />
+                          <CircleX className="h-4 w-4 text-destructive" />
                         ) : (
-                          <CircleCheck
-                            className="h-4 w-4 text-green-600 dark:text-green-400"
-                          />
+                          <CircleCheck className="h-4 w-4 text-green-600 dark:text-green-400" />
                         )}
                       </div>
                       <div className="min-w-0">
-                        <p className="font-medium truncate text-sm">{material.name}</p>
+                        <p className="font-semibold ">{material.name}</p>
                         {actualOwned < material.required && (
-                          <p className="text-xs text-muted-foreground">
+                          <p className=" text-muted-foreground">
                             {material.required - actualOwned}개 부족
                           </p>
                         )}
@@ -271,9 +267,7 @@ export function MaterialCalculator({
                     </div>
 
                     <div className="col-span-2 text-center">
-                      <span className="font-mono text-sm text-muted-foreground">
-                        {material.required}
-                      </span>
+                      <span className="font-mono  text-muted-foreground">{material.required}</span>
                     </div>
 
                     <div className="col-span-2 flex items-center justify-center gap-1">
@@ -288,7 +282,7 @@ export function MaterialCalculator({
                           }
                         }}
                         className={cn(
-                          "w-full text-center font-mono text-sm transition-colors",
+                          "w-full text-center font-mono  transition-colors",
                           focusedInput === material.id && "ring-2 ring-primary"
                         )}
                         min="0"
@@ -323,9 +317,7 @@ export function MaterialCalculator({
                           className="h-8 w-8"
                           onClick={() => handleFillAll(material.id)}
                           title="필요 수량만큼 채우기">
-                          <CircleCheckBig
-                            className="h-3.5 w-3.5 text-green-600 dark:text-green-400"
-                          />
+                          <CircleCheckBig className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
                         </Button>
                       ) : (
                         <Button
@@ -334,9 +326,7 @@ export function MaterialCalculator({
                           className="h-8 w-8"
                           onClick={() => handleEmptyAll(material.id)}
                           title="보유 수량 초기화">
-                          <CircleMinus
-                            className="h-3.5 w-3.5 text-destructive"
-                          />
+                          <CircleMinus className="h-3.5 w-3.5 text-destructive" />
                         </Button>
                       )}
                     </div>
@@ -348,7 +338,9 @@ export function MaterialCalculator({
                       value={progress}
                       className={cn(
                         "h-1",
-                        isComplete ? "[&>div]:bg-green-600 dark:[&>div]:bg-green-400" : "[&>div]:bg-primary"
+                        isComplete
+                          ? "[&>div]:bg-green-600 dark:[&>div]:bg-green-400"
+                          : "[&>div]:bg-primary"
                       )}
                     />
                   </div>
