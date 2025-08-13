@@ -1,7 +1,7 @@
 // app/switchpoint/components/item-grid.tsx
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Item, Material } from "@/types/character";
 import { Button } from "@/components/base/button";
 import { Input } from "@/components/base/input";
@@ -20,14 +20,13 @@ interface ItemGridProps {
   selectedCategory?: string;
 }
 
-export function ItemGrid({
+export const ItemGrid = React.memo(function ItemGrid({
   items,
   materials,
   selectedItems,
   onUpdateQuantity,
   onResetClick,
 }: ItemGridProps) {
-  const [editingItem, setEditingItem] = useState<string | null>(null);
 
   // Material id -> name 매핑 (성능 최적화)
   const materialMap = useMemo(() => {
@@ -166,9 +165,8 @@ export function ItemGrid({
                       type="number"
                       value={quantity}
                       onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-                      onBlur={() => setEditingItem(null)}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter") setEditingItem(null);
+                        if (e.key === "Enter") e.currentTarget.blur();
                       }}
                       className="flex-1 h-7 text-center text-sm font-medium"
                       min="0"
@@ -190,4 +188,4 @@ export function ItemGrid({
       </div>
     </ScrollArea>
   );
-}
+});

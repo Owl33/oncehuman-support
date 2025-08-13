@@ -22,7 +22,7 @@ interface ItemSelectionSectionProps {
   currentCharacter: Character;
 }
 
-export function ItemSelectionSection({ currentCharacter }: ItemSelectionSectionProps) {
+export const ItemSelectionSection = React.memo(function ItemSelectionSection({ currentCharacter }: ItemSelectionSectionProps) {
   // Context에서 필요한 것만 가져오기
   const { updateCharacterItems } = useSwitchPointContext();
   const { items, materials } = useGameData();
@@ -140,4 +140,4 @@ export function ItemSelectionSection({ currentCharacter }: ItemSelectionSectionP
       </AlertDialog>
     </div>
   );
-}
+});

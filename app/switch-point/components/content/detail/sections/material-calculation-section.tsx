@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo, useCallback } from "react";
 import { Character, CalculationResult } from "@/types/character";
-import { characterStorage } from "@/lib/storage/character-storage";
 import { calculateMaterials } from "../../../../lib/switchpoint/calculations";
 import { MaterialCalculator } from "../widgets/material-calculator";
 import { useSwitchPointContext } from "../../../../contexts/switch-point-context";
@@ -25,7 +24,7 @@ interface MaterialCalculationSectionProps {
 
 export function MaterialCalculationSection({ currentCharacter }: MaterialCalculationSectionProps) {
   // Context에서 필요한 것만 가져오기
-  const { reloadCharacters } = useSwitchPointContext();
+  const { updateCharacterMaterials } = useSwitchPointContext();
   const { items, materials } = useGameData();
 
   // 로컬 상태
@@ -45,7 +44,7 @@ export function MaterialCalculationSection({ currentCharacter }: MaterialCalcula
     );
   }, [currentCharacter, items, materials]);
 
-  // 재료 보유량 업데이트 로직
+  // 재료 보유량 업데이트 로직 (리렌더링 최소화)
   const updateMaterialOwned = useCallback(async (materialId: string, quantity: number) => {
     try {
       const updatedMaterials = {
@@ -53,36 +52,25 @@ export function MaterialCalculationSection({ currentCharacter }: MaterialCalcula
         [materialId]: Math.max(0, quantity),
       };
 
-      // localStorage에 저장
-      const updated = await characterStorage.updateSwitchPointData(currentCharacter.id, {
-        ownedMaterials: updatedMaterials,
-      });
-
-      if (updated) {
-        await reloadCharacters(); // Context의 characters 다시 로드
-      }
+      // Context를 통해 직접 상태 업데이트 (reloadCharacters 제거)
+      await updateCharacterMaterials(currentCharacter.id, updatedMaterials);
     } catch (error) {
       console.error("Failed to update material quantity:", error);
       toast.error("재료 수량 업데이트에 실패했습니다.");
     }
-  }, [currentCharacter, reloadCharacters]);
+  }, [currentCharacter.id, currentCharacter.ownedMaterials, updateCharacterMaterials]);
 
-  // 모든 재료 초기화
+  // 모든 재료 초기화 (리렌더링 최소화)
   const resetAllMaterials = useCallback(async () => {
     try {
-      const updated = await characterStorage.updateSwitchPointData(currentCharacter.id, {
-        ownedMaterials: {},
-      });
-
-      if (updated) {
-        await reloadCharacters();
-        toast.success("모든 보유 재료를 초기화했습니다.");
-      }
+      // Context를 통해 직접 상태 업데이트 (reloadCharacters 제거)
+      await updateCharacterMaterials(currentCharacter.id, {});
+      toast.success("모든 보유 재료를 초기화했습니다.");
     } catch (error) {
       console.error("Failed to reset materials:", error);
       toast.error("재료 초기화에 실패했습니다.");
     }
-  }, [currentCharacter, reloadCharacters]);
+  }, [currentCharacter.id, updateCharacterMaterials]);
 
   // 초기화 다이얼로그 핸들러
   const handleResetClick = () => {

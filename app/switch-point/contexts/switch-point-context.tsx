@@ -18,6 +18,7 @@ interface SwitchPointContextType {
   changeViewMode: (mode: ViewMode) => void;
   reloadCharacters: () => Promise<void>;
   updateCharacterItems: (characterId: string, selectedItems: Record<string, number>) => Promise<void>;
+  updateCharacterMaterials: (characterId: string, ownedMaterials: Record<string, number>) => Promise<void>;
   
   // 데이터 관리
   exportData: () => Promise<string>;
@@ -94,6 +95,26 @@ export function SwitchPointProvider({ children }: SwitchPointProviderProps) {
     }
   }, []);
 
+  // 캐릭터 재료 상태 직접 업데이트 (리렌더링 최소화)
+  const updateCharacterMaterials = useCallback(async (characterId: string, ownedMaterials: Record<string, number>) => {
+    try {
+      // localStorage에 저장
+      await characterStorage.updateSwitchPointData(characterId, { ownedMaterials });
+      
+      // 로컬 상태만 업데이트 (리렌더링 최소화)
+      setCharacters(prev => 
+        prev.map(char => 
+          char.id === characterId 
+            ? { ...char, ownedMaterials }
+            : char
+        )
+      );
+    } catch (error) {
+      console.error("Failed to update character materials:", error);
+      toast.error("재료 상태 업데이트에 실패했습니다.");
+    }
+  }, []);
+
   // 데이터 내보내기
   const exportData = useCallback(async (): Promise<string> => {
     return await characterStorage.exportData();
@@ -118,6 +139,7 @@ export function SwitchPointProvider({ children }: SwitchPointProviderProps) {
     changeViewMode,
     reloadCharacters,
     updateCharacterItems,
+    updateCharacterMaterials,
     exportData,
     importData,
   };
