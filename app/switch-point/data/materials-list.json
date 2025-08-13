@@ -312,5 +312,15 @@
     "id": "stardust_source",
     "name": "스타더스트 에테르",
     "point": 3
+  },
+  {
+    "id": "weapon",
+    "name": "5티어 무기",
+    "point": 10000
+  },
+  {
+    "id": "infection",
+    "name": "감염물",
+    "point": 400
   }
 ]

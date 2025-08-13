@@ -17,18 +17,18 @@ export function CharacterSelector({
   onSelect,
 }: CharacterSelectorProps) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2 ">
       {characters.map((character) => (
         <Button
           variant={selectedCharacterId === character.id ? "default" : "ghost"}
           key={character.id}
           onClick={() => onSelect(character.id)}
           className={cn(
-            "flex items-center gap-2 px-4 py-2 rounded-lg border transition-all",
+            "flex items-center gap-2 px-4 py-2 rounded-lg border transition-all max-w-[200px]",
             "hover:shadow-md hover:scale-105"
           )}>
-          <User className="h-4 w-4" />
-          <span className="">{character.name}</span>
+          <User className="h-4 w-4 flex-shrink-0" />
+          <span className="truncate">{character.name}</span>
         </Button>
       ))}
     </div>

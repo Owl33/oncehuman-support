@@ -1,7 +1,7 @@
 // app/switchpoint/components/material-calculator.tsx
 "use client";
 
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { CalculatedMaterial } from "@/types/character";
 import { Input } from "@/components/base/input";
 import { Badge } from "@/components/base/badge";
@@ -36,20 +36,64 @@ export function MaterialCalculator({
 }: MaterialCalculatorProps) {
   const [editingMaterial, setEditingMaterial] = useState<string | null>(null);
   const [shouldSort, setShouldSort] = useState(true);
+  const [hasAnyFocus, setHasAnyFocus] = useState(false);
   const scrollPositionRef = useRef<number>(0);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const sortTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // 정렬된 materials (편집 중이 아닐 때만 정렬)
+  // 지연 정렬 함수
+  const debouncedSort = useCallback(() => {
+    if (sortTimeoutRef.current) {
+      clearTimeout(sortTimeoutRef.current);
+    }
+    sortTimeoutRef.current = setTimeout(() => {
+      setShouldSort(true);
+    }, 300); // 300ms 후에 정렬
+  }, []);
+
+  // Focus 상태 변경 시 정렬 제어
+  useEffect(() => {
+    if (hasAnyFocus) {
+      setShouldSort(false); // Focus 중에는 정렬 비활성화
+    } else {
+      debouncedSort(); // Focus 해제 후 지연 정렬
+    }
+  }, [hasAnyFocus, debouncedSort]);
+
+  // cleanup
+  useEffect(() => {
+    return () => {
+      if (sortTimeoutRef.current) {
+        clearTimeout(sortTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // 정렬된 materials (Focus 중이거나 편집 중일 때는 정렬하지 않음)
   const sortedMaterials = useMemo(() => {
-    if (!shouldSort || editingMaterial) {
+    if (!shouldSort || editingMaterial || hasAnyFocus) {
       return materials;
     }
     return [...materials].sort((a, b) => {
-      const aPoints =
-        Math.max(0, a.required - (ownedMaterials[a.id] || 0)) * (a.points / a.required);
-      const bPoints =
-        Math.max(0, b.required - (ownedMaterials[b.id] || 0)) * (b.points / b.required);
-      return bPoints - aPoints;
+      const aOwned = ownedMaterials[a.id] || 0;
+      const bOwned = ownedMaterials[b.id] || 0;
+      const aComplete = aOwned >= a.required;
+      const bComplete = bOwned >= b.required;
+      
+      // 완료 상태가 다르면 완료된 것을 뒤로
+      if (aComplete !== bComplete) {
+        return aComplete ? 1 : -1;
+      }
+      
+      // 둘 다 완료되지 않았으면 필요 포인트 순으로 정렬 (높은 순)
+      if (!aComplete && !bComplete) {
+        const aPoints = Math.max(0, a.required - aOwned) * (a.points / a.required);
+        const bPoints = Math.max(0, b.required - bOwned) * (b.points / b.required);
+        return bPoints - aPoints;
+      }
+      
+      // 둘 다 완료되었으면 원래 순서 유지 (안정 정렬)
+      return 0;
     });
   }, [materials, ownedMaterials, shouldSort, editingMaterial]);
 
@@ -213,13 +257,11 @@ export function MaterialCalculator({
                       <div className="mr-3">
                         {!isComplete ? (
                           <CircleX
-                            className="h-4 w-4"
-                            color="red"
+                            className="h-4 w-4 text-destructive"
                           />
                         ) : (
                           <CircleCheck
-                            className="h-4 w-4"
-                            color="green"
+                            className="h-4 w-4 text-green-600 dark:text-green-400"
                           />
                         )}
                       </div>
@@ -241,10 +283,19 @@ export function MaterialCalculator({
                       <Input
                         value={owned}
                         onChange={(e) => handleOwnedChange(material.id, e.target.value)}
-                        onFocus={() => handleEditStart(material.id)}
-                        onBlur={handleEditEnd}
+                        onFocus={() => {
+                          handleEditStart(material.id);
+                          setHasAnyFocus(true);
+                        }}
+                        onBlur={() => {
+                          handleEditEnd();
+                          setHasAnyFocus(false);
+                        }}
                         onKeyDown={(e) => {
-                          if (e.key === "Enter") handleEditEnd();
+                          if (e.key === "Enter") {
+                            handleEditEnd();
+                            setHasAnyFocus(false);
+                          }
                         }}
                         className="w-full text-center font-mono text-sm"
                         min="0"
@@ -256,14 +307,14 @@ export function MaterialCalculator({
                         <Badge
                           variant="outline"
                           className={cn(
-                            "font-mono text-xs border-orange-200 bg-orange-50 text-orange-700 min-w-[60px] justify-center"
+                            "font-mono text-xs border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-700 dark:bg-orange-950 dark:text-orange-300 min-w-[60px] justify-center"
                           )}>
                           {Math.round(currentPoints).toLocaleString()}P
                         </Badge>
                       ) : (
                         <Badge
                           variant="outline"
-                          className="font-mono text-xs border-green-200 bg-green-50 text-green-700 min-w-[60px] justify-center">
+                          className="font-mono text-xs border-green-200 bg-green-50 text-green-700 dark:border-green-700 dark:bg-green-950 dark:text-green-300 min-w-[60px] justify-center">
                           완료
                         </Badge>
                       )}
@@ -278,8 +329,7 @@ export function MaterialCalculator({
                           onClick={() => handleFillAll(material.id)}
                           title="필요 수량만큼 채우기">
                           <CircleCheckBig
-                            className="h-3.5 w-3.5"
-                            color="green"
+                            className="h-3.5 w-3.5 text-green-600 dark:text-green-400"
                           />
                         </Button>
                       ) : (
@@ -290,8 +340,7 @@ export function MaterialCalculator({
                           onClick={() => handleEmptyAll(material.id)}
                           title="보유 수량 초기화">
                           <CircleMinus
-                            className="h-3.5 w-3.5"
-                            color="red"
+                            className="h-3.5 w-3.5 text-destructive"
                           />
                         </Button>
                       )}
@@ -304,7 +353,7 @@ export function MaterialCalculator({
                       value={progress}
                       className={cn(
                         "h-1",
-                        isComplete ? "[&>div]:bg-green-500" : "[&>div]:bg-primary"
+                        isComplete ? "[&>div]:bg-green-600 dark:[&>div]:bg-green-400" : "[&>div]:bg-primary"
                       )}
                     />
                   </div>

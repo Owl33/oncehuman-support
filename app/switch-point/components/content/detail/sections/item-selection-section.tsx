@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo, useCallback } from "react";
 import { Character, Item, ItemCategory } from "@/types/character";
-import { characterStorage } from "@/lib/storage/character-storage";
 import { CategoryTabs } from "../widgets/category-tabs";
 import { ItemGrid } from "../widgets/item-grid";
 import { useSwitchPointContext } from "../../../../contexts/switch-point-context";
@@ -25,7 +24,7 @@ interface ItemSelectionSectionProps {
 
 export function ItemSelectionSection({ currentCharacter }: ItemSelectionSectionProps) {
   // Context에서 필요한 것만 가져오기
-  const { reloadCharacters } = useSwitchPointContext();
+  const { updateCharacterItems } = useSwitchPointContext();
   const { items, materials } = useGameData();
 
   // 로컬 상태
@@ -40,11 +39,11 @@ export function ItemSelectionSection({ currentCharacter }: ItemSelectionSectionP
       processing: [],
       functional: [],
       vehicle: [],
-      weapon: [],
-      infection: [],
+      weapons: [],
+      infections: [],
     };
 
-    items.forEach(item => {
+    items.forEach((item) => {
       if (categorized[item.category as ItemCategory]) {
         categorized[item.category as ItemCategory].push(item);
       }
@@ -57,48 +56,39 @@ export function ItemSelectionSection({ currentCharacter }: ItemSelectionSectionP
   const currentItems = itemsByCategory[selectedCategory] || [];
 
   // 아이템 수량 업데이트 로직
-  const updateItemQuantity = useCallback(async (itemId: string, quantity: number) => {
-    try {
-      const updatedItems = {
-        ...currentCharacter.selectedItems,
-        [itemId]: Math.max(0, quantity),
-      };
+  const updateItemQuantity = useCallback(
+    async (itemId: string, quantity: number) => {
+      try {
+        const updatedItems = {
+          ...currentCharacter.selectedItems,
+          [itemId]: Math.max(0, quantity),
+        };
 
-      // 0이면 제거
-      if (quantity <= 0) {
-        delete updatedItems[itemId];
+        // 0이면 제거
+        if (quantity <= 0) {
+          delete updatedItems[itemId];
+        }
+
+        // Context를 통해 상태 업데이트 (리렌더링 최소화)
+        await updateCharacterItems(currentCharacter.id, updatedItems);
+      } catch (error) {
+        console.error("Failed to update item quantity:", error);
+        toast.error("아이템 수량 업데이트에 실패했습니다.");
       }
-
-      // localStorage에 저장
-      const updated = await characterStorage.updateSwitchPointData(currentCharacter.id, {
-        selectedItems: updatedItems,
-      });
-
-      if (updated) {
-        await reloadCharacters(); // Context의 characters 다시 로드
-      }
-    } catch (error) {
-      console.error("Failed to update item quantity:", error);
-      toast.error("아이템 수량 업데이트에 실패했습니다.");
-    }
-  }, [currentCharacter, reloadCharacters]);
+    },
+    [currentCharacter, updateCharacterItems]
+  );
 
   // 모든 아이템 초기화
   const resetAllItems = useCallback(async () => {
     try {
-      const updated = await characterStorage.updateSwitchPointData(currentCharacter.id, {
-        selectedItems: {},
-      });
-
-      if (updated) {
-        await reloadCharacters();
-        toast.success("모든 아이템을 초기화했습니다.");
-      }
+      await updateCharacterItems(currentCharacter.id, {});
+      toast.success("모든 아이템을 초기화했습니다.");
     } catch (error) {
       console.error("Failed to reset items:", error);
       toast.error("아이템 초기화에 실패했습니다.");
     }
-  }, [currentCharacter, reloadCharacters]);
+  }, [currentCharacter, updateCharacterItems]);
 
   // 초기화 다이얼로그 핸들러
   const handleResetClick = () => {
@@ -113,7 +103,7 @@ export function ItemSelectionSection({ currentCharacter }: ItemSelectionSectionP
   return (
     <div>
       <h2 className="text-lg font-semibold mb-4">아이템 선택</h2>
-      
+
       <CategoryTabs
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
@@ -130,8 +120,7 @@ export function ItemSelectionSection({ currentCharacter }: ItemSelectionSectionP
       {/* 아이템 초기화 확인 다이얼로그 */}
       <AlertDialog
         open={showResetDialog}
-        onOpenChange={setShowResetDialog}
-      >
+        onOpenChange={setShowResetDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>모든 아이템을 초기화하시겠습니까?</AlertDialogTitle>
@@ -143,8 +132,7 @@ export function ItemSelectionSection({ currentCharacter }: ItemSelectionSectionP
             <AlertDialogCancel>취소</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmReset}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
+              className="bg-destructive font-bold hover:bg-destructive/90">
               초기화
             </AlertDialogAction>
           </AlertDialogFooter>

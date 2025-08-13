@@ -4,7 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/base/card";
 import { Badge } from "@/components/base/badge";
 import { Progress } from "@/components/base/progress";
-import { ArrowRight, Package, AlertCircle } from "lucide-react";
+import { ArrowRight, Package, AlertCircle, TrendingUp } from "lucide-react";
 import { Character } from "@/types/character";
 
 interface CharacterDashboardProps {
@@ -47,9 +47,14 @@ export function CharacterDashboard({
             className="hover:shadow-lg transition-all cursor-pointer group"
             onClick={() => handleCharacterClick(character.id)}>
             <CardHeader className="">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{character.name}</CardTitle>
-                <ArrowRight className="h-4 w-4  group-hover:translate-x-1 transition-transform" />
+              <div className="flex items-center justify-between overflow-hidden">
+                <CardTitle
+                  className="
+                flex-1
+                text-lg text-ellipsis overflow-hidden ">
+                  {character.name}
+                </CardTitle>
+                <ArrowRight className="basis-[16px] ml-4 h-4 w-4  group-hover:translate-x-1 transition-transform" />
               </div>
             </CardHeader>
 
@@ -79,19 +84,27 @@ export function CharacterDashboard({
 
                   {/* 부족한 재료 TOP 3 */}
                   {summary.topMissingMaterials.length > 0 && (
-                    <div className="">
-                      <div className="flex items-center gap-1  text-muted-foreground">
-                        <AlertCircle className="h-3 w-3" />
-                        <span>가장 포인트가 많이 필요한 재료 3개</span>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-1 text-muted-foreground">
+                        <TrendingUp className="h-3 w-3" />
+                        <span className="text-xs font-medium">포인트 상위 재료 3개</span>
                       </div>
-                      {summary.topMissingMaterials.map((material, index) => (
-                        <Badge
-                          className="text-xs"
-                          key={index}
-                          variant="secondary">
-                          {material.name} ({material.points.toLocaleString()}P)
-                        </Badge>
-                      ))}
+                      <div className="space-y-1">
+                        {summary.topMissingMaterials.slice(0, 3).map((material, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between p-2 rounded-md bg-muted/30 hover:bg-muted/50 transition-colors">
+                            <span className="text-xs font-medium truncate flex-1 min-w-0">
+                              {material.name}
+                            </span>
+                            <Badge
+                              variant="secondary"
+                              className="text-xs ml-2 flex-shrink-0">
+                              {material.points.toLocaleString()}P
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
 

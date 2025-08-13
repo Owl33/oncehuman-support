@@ -19,7 +19,7 @@ export default function Home() {
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <User className="h-8 w-8 text-blue-600" />
+              <User className="h-8 w-8 text-primary" />
               <div>
                 <CardTitle>캐릭터 관리</CardTitle>
                 <CardDescription>캐릭터 정보 및 진행 상황 관리</CardDescription>
@@ -39,7 +39,7 @@ export default function Home() {
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <ArrowRightLeft className="h-8 w-8 text-green-600" />
+              <ArrowRightLeft className="h-8 w-8 text-green-600 dark:text-green-400" />
               <div>
                 <CardTitle>이전 포인트 계산</CardTitle>
                 <CardDescription>서버 이전에 필요한 포인트 계산</CardDescription>
@@ -60,7 +60,7 @@ export default function Home() {
         <Card className="hover:shadow-lg transition-shadow opacity-75">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <Calculator className="h-8 w-8 text-orange-600" />
+              <Calculator className="h-8 w-8 text-orange-600 dark:text-orange-400" />
               <div>
                 <CardTitle>데미지 계산기</CardTitle>
                 <CardDescription>무기 데미지 및 빌드 최적화</CardDescription>
@@ -80,7 +80,7 @@ export default function Home() {
         <Card className="hover:shadow-lg transition-shadow opacity-75">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <Timer className="h-8 w-8 text-purple-600" />
+              <Timer className="h-8 w-8 text-purple-600 dark:text-purple-400" />
               <div>
                 <CardTitle>협동 타이머</CardTitle>
                 <CardDescription>협동 미션 및 이벤트 타이머</CardDescription>

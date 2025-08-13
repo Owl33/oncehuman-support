@@ -82,7 +82,7 @@ export function ItemGrid({
                 variant="ghost"
                 size="sm"
                 onClick={onResetClick}
-                className=" text-xs hover:bg-destructive/10 hover:text-destructive">
+                className="text-xs hover:bg-destructive/10 hover:text-destructive">
                 <RotateCcw className="w-3 h-3 mr-1" />
                 선택 초기화
               </Button>

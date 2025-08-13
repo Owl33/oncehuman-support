@@ -536,5 +536,38 @@
         "stock": 4
       }
     ]
+  },
+  {
+    "category": "weapon",
+    "id": "weapon",
+    "name": "5티어 무기",
+    "requiment": [
+      {
+        "id": "weapon",
+        "stock": 1
+      }
+    ]
+  },
+  {
+    "category": "weapons",
+    "id": "weapons",
+    "name": "5티어 무기",
+    "requiment": [
+      {
+        "id": "weapon",
+        "stock": 1
+      }
+    ]
+  },
+  {
+    "category": "infections",
+    "id": "infections",
+    "name": "감염물",
+    "requiment": [
+      {
+        "id": "infection",
+        "stock": 1
+      }
+    ]
   }
 ]

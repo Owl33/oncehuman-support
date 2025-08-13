@@ -19,7 +19,7 @@ export interface Character extends BaseCharacter {
 }
 
 // 캐릭터 생성 시 사용할 타입
-export type CreateCharacterInput = Omit<BaseCharacter, 'id'> & {
+export type CreateCharacterInput = Omit<BaseCharacter, "id"> & {
   id?: string;
 };
 
@@ -35,20 +35,18 @@ export type ItemCategory =
   | "processing"
   | "functional"
   | "vehicle"
-  | "weapon"
-  | "infection";
-  
+  | "weapons"
+  | "infections";
+
 export const CATEGORY_LABELS: Record<ItemCategory, string> = {
   storage: "저장 시설",
   production: "생산 시설",
   processing: "가공 시설",
   functional: "기능 시설",
   vehicle: "차량",
-  weapon: "무기",
-  infection: "감염물",
+  weapons: "무기",
+  infections: "감염물",
 };
-
-
 
 // 재료 인터페이스
 export interface Material {
@@ -89,4 +87,4 @@ export interface CalculationResult {
 }
 
 // 뷰 모드
-export type ViewMode = 'dashboard' | 'detail';
+export type ViewMode = "dashboard" | "detail";

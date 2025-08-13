@@ -29,7 +29,7 @@ export default function CharacterPage() {
     handleImport,
     handleClearAll,
     handleAddCharacter,
-    isEditMode
+    isEditMode,
   } = useCharacterManagement();
 
   if (loading) {

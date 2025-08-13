@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, Calculator, ArrowRightLeft, Timer, Settings } from "lucide-react";
+import { User, Calculator, ArrowRightLeft, Timer, Settings, Gamepad2 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -17,6 +17,7 @@ import {
   SidebarTrigger,
   useSidebar,
   SidebarGroupContent,
+  SidebarSeparator,
 } from "@/components/base/sidebar";
 import { ToggleTheme } from "@/components/toggle-theme";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -74,34 +75,51 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar
       collapsible="icon"
       {...props}
-      className="bg-background/80 backdrop-blur-xl border-border/50">
-      <SidebarContent className="px-2 py-2">
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-muted-foreground">메뉴</SidebarGroupLabel>
-          <SidebarGroupContent className="px-1.5 md:px-0">
-            <SidebarMenu>
-              {navigationData.map((group) => (
-                <>
-                  {group.items.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton
-                        asChild
-                        className="py-4"
-                        isActive={pathname === item.url}
-                        tooltip={item.title}>
-                        <Link href={item.url}>
-                          <item.icon className="h-4 w-4 shrink-0" />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
+      className="">
+      <SidebarHeader className="">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              size="lg"
+              className="">
+              <div className="">
+                <Gamepad2 className="size-8 text-primary" />
+              </div>
+              <div className=" ">
+                <p className=" font-semibold">OnceHuman</p>
+                <p className=" text-xs ">Support Tools</p>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarSeparator></SidebarSeparator>
+      {navigationData.map((group) => (
+        <SidebarContent key={group.title}>
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-muted-foreground">{group.title}</SidebarGroupLabel>
+            <SidebarGroupContent className=" md:px-0">
+              <SidebarMenu>
+                {group.items.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === item.url}
+                      tooltip={item.title}>
+                      <Link href={item.url}>
+                        <div className="flex items-center justify-center">
+                          <item.icon className="size-4" />
+                        </div>
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      ))}
 
       {/* <SidebarFooter>
         <SidebarMenu>
