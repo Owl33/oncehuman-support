@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/react";
 
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
@@ -111,6 +112,7 @@ export default function RootLayout({
             </SidebarInset>
           </SidebarProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
