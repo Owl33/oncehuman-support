@@ -16,6 +16,7 @@ import {
   SidebarRail,
   SidebarGroupContent,
   SidebarSeparator,
+  useSidebar,
 } from "@/components/base/sidebar";
 
 // OnceHuman 게임 특화 네비게이션 데이터
@@ -74,6 +75,7 @@ const navigationData = [
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
+  const { setOpenMobile } = useSidebar();
 
   return (
     <Sidebar
@@ -110,7 +112,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       asChild
                       isActive={pathname === item.url}
                       tooltip={item.title}>
-                      <Link href={item.url}>
+                      <Link
+                        href={item.url}
+                        onClick={() => setOpenMobile(false)}>
                         <div className="flex items-center justify-center">
                           <item.icon className="size-4" />
                         </div>
