@@ -9,9 +9,7 @@ export default function Home() {
     <div className="container mx-auto py-8">
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold mb-4">OnceHuman Support</h1>
-        <p className="text-xl text-muted-foreground mb-8">
-          원스휴먼 게임을 위한 종합 도구 모음
-        </p>
+        <p className="text-xl text-muted-foreground mb-8">원스휴먼 게임을 위한 종합 도구 모음</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -27,9 +25,7 @@ export default function Home() {
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              여러 캐릭터의 정보를 체계적으로 관리하고 진행 상황을 추적하세요.
-            </p>
+            <p className="text-sm text-muted-foreground mb-4">캐릭터 정보를 입력해주세요.</p>
             <Link href="/character">
               <Button className="w-full">시작하기</Button>
             </Link>
@@ -48,7 +44,7 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4">
-              서버 이전을 위한 제작 아이템과 필요 재료를 계산하여 포인트를 산출하세요.
+              서버 이전을 위한 제작 아이템과 필요 재료를 계산합니다.
             </p>
             <Link href="/switch-point">
               <Button className="w-full">계산하기</Button>
@@ -72,7 +68,11 @@ export default function Home() {
               다양한 무기의 DPS와 최적화된 빌드를 계산해보세요.
             </p>
             <Link href="/damage">
-              <Button variant="outline" className="w-full">준비중</Button>
+              <Button
+                variant="outline"
+                className="w-full">
+                준비중
+              </Button>
             </Link>
           </CardContent>
         </Card>
@@ -88,11 +88,13 @@ export default function Home() {
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              서버별 협동 콘텐츠와 이벤트 스케줄을 확인하세요.
-            </p>
+            <p className="text-sm text-muted-foreground mb-4">협동 콘텐츠 타이머.</p>
             <Link href="/coop-timer">
-              <Button variant="outline" className="w-full">준비중</Button>
+              <Button
+                variant="outline"
+                className="w-full">
+                준비중
+              </Button>
             </Link>
           </CardContent>
         </Card>
