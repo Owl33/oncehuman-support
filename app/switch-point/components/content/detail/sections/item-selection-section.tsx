@@ -42,6 +42,7 @@ export const ItemSelectionSection = React.memo(function ItemSelectionSection({
       processing: [],
       functional: [],
       vehicle: [],
+      animal: []
     };
 
     items.forEach((item) => {

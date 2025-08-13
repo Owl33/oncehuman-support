@@ -604,5 +604,180 @@
         "stock": 1
       }
     ]
-  }
+  },{
+  "category": "animal",
+  "id": "deer",
+  "name": "사슴",
+  "requiment": [
+    {
+      "id": "deer",
+      "stock": 1
+    }
+  ]
+},
+{
+  "category": "animal",
+  "id": "wolf",
+  "name": "늑대",
+  "requiment": [
+    {
+      "id": "wolf",
+      "stock": 1
+    }
+  ]
+},
+{
+  "category": "animal",
+  "id": "rabbit",
+  "name": "토끼",
+  "requiment": [
+    {
+      "id": "rabbit",
+      "stock": 1
+    }
+  ]
+},
+{
+  "category": "animal",
+  "id": "sheep",
+  "name": "양",
+  "requiment": [
+    {
+      "id": "sheep",
+      "stock": 1
+    }
+  ]
+},
+{
+  "category": "animal",
+  "id": "boar",
+  "name": "멧돼지",
+  "requiment": [
+    {
+      "id": "boar",
+      "stock": 1
+    }
+  ]
+},
+{
+  "category": "animal",
+  "id": "bear",
+  "name": "곰",
+  "requiment": [
+    {
+      "id": "bear",
+      "stock": 1
+    }
+  ]
+},
+{
+  "category": "animal",
+  "id": "polar-bear",
+  "name": "북극곰",
+  "requiment": [
+    {
+      "id": "polar-bear",
+      "stock": 1
+    }
+  ]
+},
+{
+  "category": "animal",
+  "id": "crocodile",
+  "name": "악어",
+  "requiment": [
+    {
+      "id": "crocodile",
+      "stock": 1
+    }
+  ]
+},
+{
+  "category": "animal",
+  "id": "bison",
+  "name": "들소",
+  "requiment": [
+    {
+      "id": "bison",
+      "stock": 1
+    }
+  ]
+},
+{
+  "category": "animal",
+  "id": "fox",
+  "name": "여우",
+  "requiment": [
+    {
+      "id": "fox",
+      "stock": 1
+    }
+  ]
+},
+{
+  "category": "animal",
+  "id": "arctic-fox",
+  "name": "흰여우",
+  "requiment": [
+    {
+      "id": "arctic-fox",
+      "stock": 1
+    }
+  ]
+},
+{
+  "category": "animal",
+  "id": "flamingo",
+  "name": "플라밍고",
+  "requiment": [
+    {
+      "id": "flamingo",
+      "stock": 1
+    }
+  ]
+},
+{
+  "category": "animal",
+  "id": "leopard",
+  "name": "표범",
+  "requiment": [
+    {
+      "id": "leopard",
+      "stock": 1
+    }
+  ]
+},
+{
+  "category": "animal",
+  "id": "capybara",
+  "name": "카피바라",
+  "requiment": [
+    {
+      "id": "capybara",
+      "stock": 1
+    }
+  ]
+},
+{
+  "category": "animal",
+  "id": "snapping-turtle",
+  "name": "악어거북",
+  "requiment": [
+    {
+      "id": "snapping-turtle",
+      "stock": 1
+    }
+  ]
+},
+{
+  "category": "animal",
+  "id": "sea-turtle",
+  "name": "바다거북",
+  "requiment": [
+    {
+      "id": "sea-turtle",
+      "stock": 1
+    }
+  ]
+}
 ]

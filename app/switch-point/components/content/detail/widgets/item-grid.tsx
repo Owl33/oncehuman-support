@@ -159,7 +159,6 @@ export const ItemGrid = React.memo(function ItemGrid({
                     </Button>
 
                     <Input
-                      type="number"
                       value={quantity}
                       onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                       onKeyDown={(e) => {

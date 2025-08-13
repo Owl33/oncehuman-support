@@ -17,6 +17,7 @@ const CATEGORY_ICONS: Record<ItemCategory, React.ReactNode> = {
   processing: <Cpu className="h-4 w-4" />,
   functional: <Parentheses className="h-4 w-4" />,
   vehicle: <Car className="h-4 w-4" />,
+  animal: <Rabbit className="h-4 w-4"></Rabbit>,
 };
 
 export function CategoryTabs({ selectedCategory, onSelectCategory }: CategoryTabsProps) {

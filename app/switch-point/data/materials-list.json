@@ -342,5 +342,85 @@
     "id": "fish-can",
     "name": "물고기 통조림",
     "point": 400
+  },
+  {
+    "id": "deer",
+    "name": "사슴",
+    "point": 400
+  },
+  {
+    "id": "wolf",
+    "name": "늑대",
+    "point": 400
+  },
+  {
+    "id": "rabbit",
+    "name": "토끼",
+    "point": 400
+  },
+  {
+    "id": "sheep",
+    "name": "양",
+    "point": 400
+  },
+  {
+    "id": "boar",
+    "name": "멧돼지",
+    "point": 400
+  },
+  {
+    "id": "bear",
+    "name": "곰",
+    "point": 400
+  },
+  {
+    "id": "polar-bear",
+    "name": "북극곰",
+    "point": 400
+  },
+  {
+    "id": "crocodile",
+    "name": "악어",
+    "point": 400
+  },
+  {
+    "id": "bison",
+    "name": "들소",
+    "point": 400
+  },
+  {
+    "id": "fox",
+    "name": "여우",
+    "point": 400
+  },
+  {
+    "id": "arctic-fox",
+    "name": "흰여우",
+    "point": 400
+  },
+  {
+    "id": "flamingo",
+    "name": "플라밍고",
+    "point": 400
+  },
+  {
+    "id": "leopard",
+    "name": "표범",
+    "point": 400
+  },
+  {
+    "id": "capybara",
+    "name": "카피바라",
+    "point": 400
+  },
+  {
+    "id": "snapping-turtle",
+    "name": "악어거북",
+    "point": 400
+  },
+  {
+    "id": "sea-turtle",
+    "name": "바다거북",
+    "point": 400
   }
 ]

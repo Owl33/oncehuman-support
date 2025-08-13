@@ -35,7 +35,8 @@ export type ItemCategory =
   | "production"
   | "processing"
   | "functional"
-  | "vehicle";
+  | "vehicle"
+  | "animal";
 
 export const CATEGORY_LABELS: Record<ItemCategory, string> = {
   product: "완제품",
@@ -44,6 +45,7 @@ export const CATEGORY_LABELS: Record<ItemCategory, string> = {
   processing: "가공 시설",
   functional: "기능 시설",
   vehicle: "차량",
+  animal: "동물",
 };
 
 // 재료 인터페이스
