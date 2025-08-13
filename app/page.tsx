@@ -9,7 +9,9 @@ export default function Home() {
     <div className="container mx-auto py-8">
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold mb-4">OnceHuman Support</h1>
-        <p className="text-xl text-muted-foreground mb-8">원스휴먼 게임을 위한 종합 도구 모음</p>
+        <p className="text-xl text-muted-foreground mb-8">
+          원스휴먼에 도움이 되는 각종 계산 구현 예정
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
