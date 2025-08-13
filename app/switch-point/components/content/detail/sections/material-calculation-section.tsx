@@ -100,7 +100,6 @@ export function MaterialCalculationSection({ currentCharacter }: MaterialCalcula
 
       <MaterialCalculator
         materials={calculationResult.materials}
-        totalPoints={calculationResult.totalPoints}
         ownedMaterials={currentCharacter.ownedMaterials || {}}
         onUpdateOwned={updateMaterialOwned}
         onResetClick={handleResetClick}

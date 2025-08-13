@@ -21,7 +21,6 @@ import { cn } from "@/lib/utils";
 
 interface MaterialCalculatorProps {
   materials: CalculatedMaterial[];
-  totalPoints: number;
   ownedMaterials: Record<string, number>;
   onUpdateOwned: (materialId: string, quantity: number) => void;
   onResetClick?: () => void; // 초기화 다이얼로그 호출용
@@ -29,51 +28,17 @@ interface MaterialCalculatorProps {
 
 export function MaterialCalculator({
   materials,
-  totalPoints,
   ownedMaterials,
   onUpdateOwned,
   onResetClick,
 }: MaterialCalculatorProps) {
-  const [editingMaterial, setEditingMaterial] = useState<string | null>(null);
-  const [shouldSort, setShouldSort] = useState(true);
-  const [hasAnyFocus, setHasAnyFocus] = useState(false);
-  const scrollPositionRef = useRef<number>(0);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const sortTimeoutRef = useRef<NodeJS.Timeout>();
+  // 간소화된 상태 관리
+  const [focusedInput, setFocusedInput] = useState<string | null>(null);
+  const [pendingValues, setPendingValues] = useState<Record<string, string>>({});
+  const updateTimeoutRef = useRef<Record<string, NodeJS.Timeout>>({});
 
-  // 지연 정렬 함수
-  const debouncedSort = useCallback(() => {
-    if (sortTimeoutRef.current) {
-      clearTimeout(sortTimeoutRef.current);
-    }
-    sortTimeoutRef.current = setTimeout(() => {
-      setShouldSort(true);
-    }, 300); // 300ms 후에 정렬
-  }, []);
-
-  // Focus 상태 변경 시 정렬 제어
-  useEffect(() => {
-    if (hasAnyFocus) {
-      setShouldSort(false); // Focus 중에는 정렬 비활성화
-    } else {
-      debouncedSort(); // Focus 해제 후 지연 정렬
-    }
-  }, [hasAnyFocus, debouncedSort]);
-
-  // cleanup
-  useEffect(() => {
-    return () => {
-      if (sortTimeoutRef.current) {
-        clearTimeout(sortTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // 정렬된 materials (Focus 중이거나 편집 중일 때는 정렬하지 않음)
+  // 정렬된 materials - focus 상태와 무관하게 완료된 아이템만 하단으로
   const sortedMaterials = useMemo(() => {
-    if (!shouldSort || editingMaterial || hasAnyFocus) {
-      return materials;
-    }
     return [...materials].sort((a, b) => {
       const aOwned = ownedMaterials[a.id] || 0;
       const bOwned = ownedMaterials[b.id] || 0;
@@ -92,20 +57,57 @@ export function MaterialCalculator({
         return bPoints - aPoints;
       }
       
-      // 둘 다 완료되었으면 원래 순서 유지 (안정 정렬)
+      // 둘 다 완료되었으면 원래 순서 유지
       return 0;
     });
-  }, [materials, ownedMaterials, shouldSort, editingMaterial]);
+  }, [materials, ownedMaterials]);
 
-  const handleOwnedChange = (materialId: string, value: string) => {
-    const material = materials.find((m) => m.id === materialId);
-    if (!material) return;
+  // 디바운스된 업데이트 함수
+  const debouncedUpdate = useCallback((materialId: string, value: string) => {
+    // 기존 타이머 취소
+    if (updateTimeoutRef.current[materialId]) {
+      clearTimeout(updateTimeoutRef.current[materialId]);
+    }
 
-    let quantity = parseInt(value) || 0;
-    quantity = Math.max(0, Math.min(quantity, material.required));
+    // 새 타이머 설정 (500ms 후 업데이트)
+    updateTimeoutRef.current[materialId] = setTimeout(() => {
+      const material = materials.find((m) => m.id === materialId);
+      if (!material) return;
 
-    onUpdateOwned(materialId, quantity);
+      let quantity = parseInt(value) || 0;
+      quantity = Math.max(0, Math.min(quantity, material.required));
+
+      onUpdateOwned(materialId, quantity);
+      delete updateTimeoutRef.current[materialId];
+    }, 500);
+  }, [materials, onUpdateOwned]);
+
+  // 즉시 UI 업데이트를 위한 핸들러
+  const handleInputChange = (materialId: string, value: string) => {
+    // 로컬 상태 즉시 업데이트 (UI 반응성)
+    setPendingValues(prev => ({ ...prev, [materialId]: value }));
+    
+    // 디바운스된 실제 업데이트
+    debouncedUpdate(materialId, value);
   };
+
+  // Input value 가져오기 (pending 값 우선)
+  const getInputValue = (materialId: string) => {
+    if (materialId in pendingValues) {
+      return pendingValues[materialId];
+    }
+    return (ownedMaterials[materialId] || 0).toString();
+  };
+
+  // Cleanup - 컴포넌트 언마운트 시 모든 타이머 정리
+  useEffect(() => {
+    const timeouts = updateTimeoutRef.current;
+    return () => {
+      Object.values(timeouts).forEach(timeout => {
+        clearTimeout(timeout);
+      });
+    };
+  }, []);
 
   const handleFillAll = (materialId: string) => {
     const material = materials.find((m) => m.id === materialId);
@@ -121,38 +123,37 @@ export function MaterialCalculator({
     onUpdateOwned(materialId, 0);
   };
 
-  const handleFillAllMaterials = () => {
-    materials.forEach((material) => {
-      onUpdateOwned(material.id, material.required);
-    });
+
+  // Focus 관리 (정렬에 영향 없음)
+  const handleFocus = (materialId: string) => {
+    setFocusedInput(materialId);
   };
 
-  const handleEditStart = (materialId: string) => {
-    if (scrollAreaRef.current) {
-      const scrollElement = scrollAreaRef.current.querySelector(
-        "[data-radix-scroll-area-viewport]"
-      );
-      if (scrollElement) {
-        scrollPositionRef.current = scrollElement.scrollTop;
+  const handleBlur = (materialId: string) => {
+    setFocusedInput(null);
+    
+    // pending 값이 있으면 즉시 적용
+    if (materialId in pendingValues) {
+      const material = materials.find((m) => m.id === materialId);
+      if (material) {
+        let quantity = parseInt(pendingValues[materialId]) || 0;
+        quantity = Math.max(0, Math.min(quantity, material.required));
+        onUpdateOwned(materialId, quantity);
+      }
+      
+      // pending 값 제거
+      setPendingValues(prev => {
+        const newPending = { ...prev };
+        delete newPending[materialId];
+        return newPending;
+      });
+      
+      // 타이머도 취소
+      if (updateTimeoutRef.current[materialId]) {
+        clearTimeout(updateTimeoutRef.current[materialId]);
+        delete updateTimeoutRef.current[materialId];
       }
     }
-    setShouldSort(false);
-    setEditingMaterial(materialId);
-  };
-
-  const handleEditEnd = () => {
-    setEditingMaterial(null);
-    setTimeout(() => {
-      setShouldSort(true);
-      if (scrollAreaRef.current) {
-        const scrollElement = scrollAreaRef.current.querySelector(
-          "[data-radix-scroll-area-viewport]"
-        );
-        if (scrollElement) {
-          scrollElement.scrollTop = scrollPositionRef.current;
-        }
-      }
-    }, 100);
   };
 
   if (materials.length === 0) {
@@ -167,11 +168,6 @@ export function MaterialCalculator({
     );
   }
 
-  const completedCount = sortedMaterials.filter(
-    (m) => (ownedMaterials[m.id] || 0) >= m.required
-  ).length;
-  const completionRate = Math.round((completedCount / sortedMaterials.length) * 100);
-  const isAllComplete = completedCount === sortedMaterials.length;
   const hasAnyOwned = Object.values(ownedMaterials).some((v) => v > 0);
   const actualTotalPoints = sortedMaterials.reduce((sum, m) => {
     const needed = Math.max(0, m.required - (ownedMaterials[m.id] || 0));
@@ -232,16 +228,15 @@ export function MaterialCalculator({
       </div>
 
       {/* Materials List */}
-      <ScrollArea
-        className="h-[56vh]"
-        ref={scrollAreaRef}>
+      <ScrollArea className="h-[56vh]">
         <div className="px-2 pb-2 space-y-1">
-          {sortedMaterials.map((material, index) => {
-            const owned = ownedMaterials[material.id] || 0;
-            const isComplete = owned >= material.required;
-            const progress = Math.min((owned / material.required) * 100, 100);
+          {sortedMaterials.map((material) => {
+            const inputValue = getInputValue(material.id);
+            const actualOwned = ownedMaterials[material.id] || 0;
+            const isComplete = actualOwned >= material.required;
+            const progress = Math.min((actualOwned / material.required) * 100, 100);
             const currentPoints =
-              Math.max(0, material.required - owned) * (material.points / material.required);
+              Math.max(0, material.required - actualOwned) * (material.points / material.required);
 
             return (
               <div
@@ -267,8 +262,10 @@ export function MaterialCalculator({
                       </div>
                       <div className="min-w-0">
                         <p className="font-medium truncate text-sm">{material.name}</p>
-                        {material.needed > 0 && (
-                          <p className="text-xs text-muted-foreground">{material.needed}개 부족</p>
+                        {actualOwned < material.required && (
+                          <p className="text-xs text-muted-foreground">
+                            {material.required - actualOwned}개 부족
+                          </p>
                         )}
                       </div>
                     </div>
@@ -281,24 +278,22 @@ export function MaterialCalculator({
 
                     <div className="col-span-2 flex items-center justify-center gap-1">
                       <Input
-                        value={owned}
-                        onChange={(e) => handleOwnedChange(material.id, e.target.value)}
-                        onFocus={() => {
-                          handleEditStart(material.id);
-                          setHasAnyFocus(true);
-                        }}
-                        onBlur={() => {
-                          handleEditEnd();
-                          setHasAnyFocus(false);
-                        }}
+                        value={inputValue}
+                        onChange={(e) => handleInputChange(material.id, e.target.value)}
+                        onFocus={() => handleFocus(material.id)}
+                        onBlur={() => handleBlur(material.id)}
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
-                            handleEditEnd();
-                            setHasAnyFocus(false);
+                            e.currentTarget.blur();
                           }
                         }}
-                        className="w-full text-center font-mono text-sm"
+                        className={cn(
+                          "w-full text-center font-mono text-sm transition-colors",
+                          focusedInput === material.id && "ring-2 ring-primary"
+                        )}
                         min="0"
+                        max={material.required}
+                        type="number"
                       />
                     </div>
 
