@@ -61,7 +61,7 @@ export const ItemGrid = React.memo(function ItemGrid({
         {/* 선택헤더 */}
         <div className="my-4 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-lg p-3 sticky top-0 z-10 backdrop-blur-sm">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="h-8 flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Box className="w-4 h-4 text-primary" />
                 <span className="">{stats.selectedCount}개 선택</span>
