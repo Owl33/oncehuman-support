@@ -37,6 +37,7 @@ interface DataTableContextValue<TData> {
   isInEditMode: boolean;
   isAddMode: boolean;
   startEdit: () => void;
+  startEditRow: (rowId: string) => void; // 새로 추가된 개별 행 편집 함수
   startAdd: () => void;
   updateCell: (rowId: string, columnId: string, value: any) => void;
   saveChanges: () => { updatedRows: TData[]; newRow: TData | null };
@@ -152,6 +153,35 @@ export const DataTableProvider = <TData,>({
       tempRowId,
     });
   }, [table, getSelectedRowIds, tempRowId]);
+
+  const startEditRow = useCallback((rowId: string) => {
+    // 이미 편집 모드인 경우 무시
+    if (isInEditMode) return;
+
+    // 해당 행 찾기
+    const row = table.getRowModel().rows.find((r) => r.id === rowId);
+    if (!row) return;
+
+    // 선택 상태 설정 (floating action bar를 위해)
+    const newSelection: Record<string, boolean> = {};
+    newSelection[rowId] = true;
+    table.setRowSelection(newSelection);
+
+    // 편집 데이터 준비
+    const newEditingData: Record<string, any> = {};
+    const newOriginalData: Record<string, any> = {};
+    
+    newEditingData[rowId] = { ...row.original };
+    newOriginalData[rowId] = { ...row.original };
+
+    // 편집 모드 시작
+    setEditState({
+      editMode: "edit",
+      editingData: newEditingData,
+      originalData: newOriginalData,
+      tempRowId,
+    });
+  }, [table, isInEditMode, tempRowId]);
 
   const startAdd = useCallback(() => {
     if (isInEditMode) return;
@@ -318,6 +348,7 @@ export const DataTableProvider = <TData,>({
       isInEditMode,
       isAddMode,
       startEdit,
+      startEditRow,
       startAdd,
       updateCell,
       saveChanges,
@@ -344,6 +375,7 @@ export const DataTableProvider = <TData,>({
       isInEditMode,
       isAddMode,
       startEdit,
+      startEditRow,
       startAdd,
       updateCell,
       saveChanges,

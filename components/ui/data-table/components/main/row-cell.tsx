@@ -3,19 +3,10 @@
 import React from "react";
 import { Column, Table, flexRender } from "@tanstack/react-table";
 import { TableCell } from "@/components/base/table";
-import { Input } from "@/components/base/input";
-import { Textarea } from "@/components/base/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/base/select";
-import { Badge } from "@/components/base/badge";
 import { useDataTableContext } from "@/components/ui/data-table/contexts/data-table-context";
-import { SmartTooltipCell } from "./smart-tooltip-cell";
+import { useMobileDetection } from "@/components/ui/data-table/hooks/use-mobile-detection";
 import { analyzeColumn } from "@/components/ui/data-table/utils/column-utils";
+import { TableCellRendererFactory } from "@/components/ui/data-table/utils/table-cell-renderer-factory";
 import { cn } from "@/lib/utils";
 import { SYSTEM_COLUMN_IDS, EDITABLE_CELL_HEIGHT } from "@/components/ui/data-table/constants";
 
@@ -33,144 +24,11 @@ interface TableDataCellProps<TData> {
   table: Table<TData>;
 }
 
-// Helper function for rendering custom cell content
-const renderCustomContent = (column: any, row: any, value: any, table: any) => {
-  if (!column.columnDef.cell) {
-    return value || <span className="text-muted-foreground">-</span>;
-  }
-
-  return flexRender(column.columnDef.cell, {
-    row,
-    column,
-    table,
-    getValue: () => value,
-    renderValue: () => value,
-    cell: { getValue: () => value },
-  });
-};
-
-// Helper function to extract text content for tooltip
-const extractTextContent = (column: any, row: any, value: any, table: any): string => {
-  if (!column.columnDef.cell) {
-    return String(value || '');
-  }
-
-  // 기본 값부터 시도
-  if (typeof value === 'string' || typeof value === 'number') {
-    return String(value);
-  }
-
-  // row.original에서 해당 컬럼 데이터 추출
-  const originalValue = row.original?.[column.id];
-  if (typeof originalValue === 'string' || typeof originalValue === 'number') {
-    return String(originalValue);
-  }
-
-  // 빈 문자열 반환 (복잡한 React 컴포넌트 렌더링 방지)
-  return '';
-};
-
-// Cell renderers object (like dropdown pattern)
-const cellRenderers = {
-  // System column renderer
-  system: ({ column, row, value, table }: any) => {
-    const content = renderCustomContent(column, row, value, table) || "-";
-    const textContent = extractTextContent(column, row, value, table);
-    
-    return (
-      <div className="w-full flex items-center justify-center">
-        <SmartTooltipCell tooltipText={textContent}>
-          {content}
-        </SmartTooltipCell>
-      </div>
-    );
-  },
-
-  // Read-only cell renderer
-  readonly: ({ column, row, value, table }: any) => {
-    const content = renderCustomContent(column, row, value, table);
-    const textContent = extractTextContent(column, row, value, table);
-    
-    return (
-      <div className="px-3 border border-transparent h-[36px] flex items-center w-full">
-        <SmartTooltipCell tooltipText={textContent}>
-          {content}
-        </SmartTooltipCell>
-      </div>
-    );
-  },
-
-  // Text input renderer
-  text: ({ value, placeholder, autoFocus, onChange }: any) => (
-    <Input
-      className=""
-      value={value || ""}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      autoFocus={autoFocus}
-    />
-  ),
-
-  // Number input renderer
-  number: ({ value, placeholder, autoFocus, onChange }: any) => (
-    <Input
-      type="number"
-      value={value || ""}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      autoFocus={autoFocus}
-    />
-  ),
-
-  // Textarea renderer
-  textarea: ({ value, placeholder, autoFocus, onChange }: any) => (
-    <Textarea
-      value={value || ""}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      autoFocus={autoFocus}
-    />
-  ),
-
-  // Select renderer
-  select: ({ value, placeholder, onChange, meta }: any) => {
-    if (!meta.editOptions?.length) {
-      return (
-        <Badge
-          variant="destructive"
-          className="text-xs">
-          No options
-        </Badge>
-      );
-    }
-
-    const selected = meta.editOptions.find((opt: any) => opt.value === value);
-
-    return (
-      <Select
-        value={value || ""}
-        onValueChange={onChange}>
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder={`${placeholder} 선택`}>
-            {selected?.label && <span className="">{selected.label}</span>}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          {meta.editOptions.map((opt: any) => (
-            <SelectItem
-              key={opt.value}
-              value={opt.value}>
-              <span className="">{opt.label}</span>
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    );
-  },
-};
+// Cell rendering logic now handled by TableCellRendererFactory
 
 export function DataTableRowCell<TData>({ cell, row, table }: TableDataCellProps<TData>) {
   const { isRowEditing, editState, updateCell } = useDataTableContext<TData>();
+  const { isMobile, isTablet } = useMobileDetection();
   const { cellClassName, headerStyle } = analyzeColumn(cell.column);
 
   const column = cell.column;
@@ -200,57 +58,23 @@ export function DataTableRowCell<TData>({ cell, row, table }: TableDataCellProps
     [row.id, column.id, updateCell]
   );
 
-  // Determine which renderer to use
-  const getRendererType = () => {
-    if (isSystemColumn) return "system";
-    if (!canEdit) return "readonly";
-    return meta.editType || "text";
-  };
-
-  const rendererType = getRendererType();
-  const renderer = cellRenderers[rendererType as keyof typeof cellRenderers];
-
-  // Prepare props based on renderer type
-  const rendererProps = React.useMemo(() => {
-    if (rendererType === "system" || rendererType === "readonly") {
-      return { column, row, value, table };
-    }
-
-    // Edit mode props
-    return {
-      value: currentValue,
-      placeholder: meta?.displayName || column.id,
-      autoFocus: isFirstEditColumn,
-      onChange: handleChange,
-      meta,
-    };
-  }, [
-    rendererType,
+  // Determine renderer type and render content
+  const rendererType = isSystemColumn ? "system" : (!canEdit ? "readonly" : "editable");
+  
+  const content = TableCellRendererFactory.render(rendererType as any, {
+    // Common props
     column,
     row,
     value,
     table,
+    // Edit props
     currentValue,
+    placeholder: meta?.displayName || column.id,
+    autoFocus: isFirstEditColumn,
+    onChange: handleChange,
     meta,
-    isFirstEditColumn,
-    handleChange,
-  ]);
+  });
 
-  // Render the cell content
-  const content = renderer(rendererProps);
-
-  // Wrap edit mode content if needed
-  // const wrappedContent = canEdit ? (
-  //   <>{content}</>
-  // ) : (
-  //   <div
-  //     className={cn(
-  //       "",
-  //       rendererType === "textarea" && "bg-muted/20 border border-input rounded mx-1 px-3"
-  //     )}>
-  //     {content}
-  //   </div>
-  // );
 
   return (
     <TableCell

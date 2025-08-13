@@ -19,6 +19,9 @@ declare module "@tanstack/react-table" {
     width?: string; // 예: "200px", "20%", "auto"
     minWidth?: string; // 예: "100px", "10%"
     maxWidth?: string; // 예: "400px", "40%"
+    
+    // 반응형 우선순위
+    priority?: "primary" | "secondary" | "system";
   }
 }
 

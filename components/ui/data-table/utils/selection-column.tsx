@@ -16,7 +16,9 @@ export const createSelectionColumn = <TData,>(): ColumnDef<TData> => {
         const isInEditMode = table.options.meta?.isInEditMode || false;
 
         return (
-          <div className="flex h-[44px] items-center justify-center ">
+          <div 
+            className="flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}>
             <Checkbox
               checked={
                 table.getIsAllPageRowsSelected() ||
@@ -39,7 +41,9 @@ export const createSelectionColumn = <TData,>(): ColumnDef<TData> => {
 
         if (row.id === "temp_new_row") {
           return (
-            <div className="flex items-center justify-center ">
+            <div 
+              className="flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}>
               <Checkbox
                 checked={false}
                 disabled
@@ -50,7 +54,9 @@ export const createSelectionColumn = <TData,>(): ColumnDef<TData> => {
         }
 
         return (
-          <div className="flex items-center justify-center ">
+          <div 
+            className="flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}>
             <Checkbox
               checked={row?.getIsSelected() || false}
               onCheckedChange={(value) => row.toggleSelected(!!value)}

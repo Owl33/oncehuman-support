@@ -42,7 +42,8 @@ export const columns: ColumnDef<BaseCharacter>[] = [
       editable: true,
       editType: "select",
       editOptions: scenarioSelectList,
-      className: "w-[15vw]", // Tailwind 고정 크기
+      priority: "secondary", // 접었을 때 숨김
+      className: "w-[15vw] min-w-[120px]", // 모바일에서 최소 너비 보장
     },
   },
   {
@@ -53,7 +54,8 @@ export const columns: ColumnDef<BaseCharacter>[] = [
       displayName: "서버",
       editable: true,
       editType: "text",
-      className: "w-[15vw]", // Tailwind 비율 (예시: 전체의 1/6)
+      priority: "primary", // 중요한 정보이므로 항상 표시
+      className: "w-[15vw] min-w-[100px]", // 모바일에서 최소 너비 보장
     },
   },
   {
@@ -63,7 +65,8 @@ export const columns: ColumnDef<BaseCharacter>[] = [
     meta: {
       editable: true,
       displayName: "캐릭터명",
-      className: "w-[20vw]", // Tailwind 비율 (예시: 전체의 1/6)
+      priority: "primary", // 가장 중요한 정보이므로 항상 표시
+      className: "w-[20vw] min-w-[120px]", // 가장 중요한 필드로 더 넓게
     },
   },
   {
@@ -79,7 +82,8 @@ export const columns: ColumnDef<BaseCharacter>[] = [
       editable: true,
       editType: "select",
       editOptions: jobSelectList,
-      className: "w-[10vw]", // Tailwind 비율 (예시: 전체의 1/6)
+      priority: "secondary", // 접었을 때 숨김
+      className: "w-[10vw] min-w-[100px]", // 모바일에서 최소 너비 보장
     },
   },
   {
@@ -90,6 +94,8 @@ export const columns: ColumnDef<BaseCharacter>[] = [
       displayName: "비고",
       editable: true,
       editType: "text",
+      priority: "secondary", // 접었을 때 숨김
+      className: "min-w-[150px]", // 텍스트 입력을 위한 충분한 공간
     },
   },
 

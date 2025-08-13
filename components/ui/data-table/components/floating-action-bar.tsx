@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/base/button";
 import { useDataTableContext } from "../contexts/data-table-context";
+import { useMobileDetection } from "../hooks/use-mobile-detection";
 import { cn } from "@/lib/utils";
 import { Check, X, Edit2, Trash2, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/base/badge";
@@ -10,6 +11,7 @@ import { Badge } from "@/components/base/badge";
 export function FloatingActionBar() {
   const { table, editState, isInEditMode, startEdit, saveChanges, cancelEdit, onSave, onDelete } =
     useDataTableContext();
+  const { isMobile, isTablet } = useMobileDetection();
 
   // State to force re-renders when table selection changes
   const [, forceUpdate] = useState({});
@@ -84,7 +86,11 @@ export function FloatingActionBar() {
   const canDelete = !isInEditMode && selectedCount > 0;
 
   const containerClasses = cn(
-    "absolute -top-12 left-38 transform -translate-x-1/2 z-50 pointer-events-auto"
+    "absolute z-50 pointer-events-auto",
+    // 모바일에서는 하단 고정, 데스크톱에서는 기존 위치
+    isMobile || isTablet 
+      ? "fixed bottom-4 left-1/2 transform -translate-x-1/2"
+      : "-top-12 left-38 transform -translate-x-1/2"
   );
 
   const barClasses = cn(
@@ -138,10 +144,7 @@ export function FloatingActionBar() {
             <Button
               size="sm"
               onClick={handleSave}
-              className={cn(
-                "gap-1.5 h-8 shadow-sm",
-                "bg-primary hover:bg-primary/90 text-primary-foreground"
-              )}>
+              className="gap-1.5 h-8 shadow-sm bg-primary hover:bg-primary/90 text-primary-foreground">
               <Check className="h-4 w-4" />
               저장
             </Button>
@@ -149,10 +152,7 @@ export function FloatingActionBar() {
               variant="ghost"
               size="sm"
               onClick={cancelEdit}
-              className={cn(
-                "gap-1.5 h-8 transition-colors duration-200",
-                "hover:bg-destructive/10 hover:text-destructive"
-              )}>
+              className="gap-1.5 h-8 transition-colors duration-200 hover:bg-destructive/10 hover:text-destructive">
               <X className="h-4 w-4" />
               취소
             </Button>
@@ -165,11 +165,7 @@ export function FloatingActionBar() {
               variant="ghost"
               size="sm"
               onClick={startEdit}
-              className={cn(
-                "gap-1.5 h-8 transition-colors duration-200",
-                "hover:bg-[var(--selection)] hover:text-[var(--selection-foreground)]",
-                "disabled:opacity-50"
-              )}>
+              className="gap-1.5 h-8 transition-colors duration-200 hover:bg-[var(--selection)] hover:text-[var(--selection-foreground)] disabled:opacity-50">
               <Edit2 className="h-4 w-4" />
               편집
             </Button>
@@ -178,11 +174,7 @@ export function FloatingActionBar() {
               variant="ghost"
               size="sm"
               onClick={handleDelete}
-              className={cn(
-                "gap-1.5 h-8 text-destructive transition-colors duration-200",
-                "hover:bg-destructive/10 hover:text-destructive",
-                "disabled:opacity-50"
-              )}>
+              className="gap-1.5 h-8 text-destructive transition-colors duration-200 hover:bg-destructive/10 hover:text-destructive disabled:opacity-50">
               <Trash2 className="h-4 w-4" />
               삭제
             </Button>

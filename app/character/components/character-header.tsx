@@ -3,6 +3,7 @@
 import React, { useRef } from "react";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/base/button";
+import { useMobileDetection } from "@/components/ui/data-table/hooks/use-mobile-detection";
 import { Plus, Download, Upload, RotateCcw } from "lucide-react";
 
 interface CharacterHeaderProps {
@@ -21,25 +22,48 @@ export function CharacterHeader({
   isEditMode,
 }: CharacterHeaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { isMobile, isTablet } = useMobileDetection();
 
   const actions = (
-    <div className="flex items-center gap-2">
+    <div className={
+      isMobile 
+        ? "flex flex-col gap-2 w-full"
+        : "flex items-center gap-2"
+    }>
       {/* 데이터 관리 버튼들 */}
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={onExport}>
-        <Download className="h-4 w-4 mr-2" />
-        내보내기
-      </Button>
+      <div className={
+        isMobile 
+          ? "flex gap-2 w-full"
+          : "flex items-center gap-2"
+      }>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onExport}
+          className={isMobile ? "flex-1" : ""}>
+          <Download className="h-4 w-4 mr-2" />
+          내보내기
+        </Button>
 
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => fileInputRef.current?.click()}>
-        <Upload className="h-4 w-4 mr-2" />
-        가져오기
-      </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => fileInputRef.current?.click()}
+          className={isMobile ? "flex-1" : ""}>
+          <Upload className="h-4 w-4 mr-2" />
+          가져오기
+        </Button>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onClearAll}
+          className={isMobile ? "flex-1" : ""}>
+          <RotateCcw className="h-4 w-4 mr-2" />
+          초기화
+        </Button>
+      </div>
+
       <input
         ref={fileInputRef}
         type="file"
@@ -48,21 +72,15 @@ export function CharacterHeader({
         className="hidden"
       />
 
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={onClearAll}>
-        <RotateCcw className="h-4 w-4 mr-2" />
-        초기화
-      </Button>
+      {/* 구분선 - 모바일에서는 숨김 */}
+      {!isMobile && <div className="w-px h-6 bg-border mx-2" />}
 
-      <div className="w-px h-6 bg-border mx-2" />
-
-      {/* 캐릭터 추가 버튼 */}
+      {/* 캐릭터 추가 버튼 - 모바일에서는 전체 너비 */}
       <Button
         variant="default"
         onClick={onAddCharacter}
-        disabled={isEditMode}>
+        disabled={isEditMode}
+        className={isMobile ? "w-full" : ""}>
         <Plus className="h-4 w-4 mr-2" />
         캐릭터 추가
       </Button>
