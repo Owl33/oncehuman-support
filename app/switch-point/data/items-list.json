@@ -430,7 +430,7 @@
   {
     "category": "processing",
     "id": "advanced_Stove",
-    "name": "중급 스토브 (전기레인지)",
+    "name": "중급 스토브",
     "requiment": [
       {
         "id": "iron_ingot",
