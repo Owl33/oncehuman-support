@@ -45,20 +45,23 @@ export function MaterialCalculationSection({ currentCharacter }: MaterialCalcula
   }, [currentCharacter, items, materials]);
 
   // 재료 보유량 업데이트 로직 (리렌더링 최소화)
-  const updateMaterialOwned = useCallback(async (materialId: string, quantity: number) => {
-    try {
-      const updatedMaterials = {
-        ...currentCharacter.ownedMaterials,
-        [materialId]: Math.max(0, quantity),
-      };
+  const updateMaterialOwned = useCallback(
+    async (materialId: string, quantity: number) => {
+      try {
+        const updatedMaterials = {
+          ...currentCharacter.ownedMaterials,
+          [materialId]: Math.max(0, quantity),
+        };
 
-      // Context를 통해 직접 상태 업데이트 (reloadCharacters 제거)
-      await updateCharacterMaterials(currentCharacter.id, updatedMaterials);
-    } catch (error) {
-      console.error("Failed to update material quantity:", error);
-      toast.error("재료 수량 업데이트에 실패했습니다.");
-    }
-  }, [currentCharacter.id, currentCharacter.ownedMaterials, updateCharacterMaterials]);
+        // Context를 통해 직접 상태 업데이트 (reloadCharacters 제거)
+        await updateCharacterMaterials(currentCharacter.id, updatedMaterials);
+      } catch (error) {
+        console.error("Failed to update material quantity:", error);
+        toast.error("재료 수량 업데이트에 실패했습니다.");
+      }
+    },
+    [currentCharacter.id, currentCharacter.ownedMaterials, updateCharacterMaterials]
+  );
 
   // 모든 재료 초기화 (리렌더링 최소화)
   const resetAllMaterials = useCallback(async () => {
@@ -96,8 +99,7 @@ export function MaterialCalculationSection({ currentCharacter }: MaterialCalcula
       {/* 재료 초기화 확인 다이얼로그 */}
       <AlertDialog
         open={showResetDialog}
-        onOpenChange={setShowResetDialog}
-      >
+        onOpenChange={setShowResetDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>모든 보유 재료를 초기화하시겠습니까?</AlertDialogTitle>
@@ -109,8 +111,7 @@ export function MaterialCalculationSection({ currentCharacter }: MaterialCalcula
             <AlertDialogCancel>취소</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmReset}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
+              className="bg-destructive  hover:bg-destructive/90">
               초기화
             </AlertDialogAction>
           </AlertDialogFooter>
