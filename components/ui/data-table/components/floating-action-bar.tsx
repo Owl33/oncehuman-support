@@ -11,12 +11,13 @@ export function FloatingActionBar() {
   const { table, editState, isInEditMode, startEdit, saveChanges, cancelEdit, onSave, onDelete } =
     useDataTableContext();
 
-  if (!table) return null;
+  const selectedRowIds = useMemo(() => {
+    if (!table) return [];
+    const rowSelection = table.getState().rowSelection;
+    return Object.keys(rowSelection);
+  }, [table]);
 
-  const selectedRowIds = useMemo(
-    () => Object.keys(table.getState().rowSelection),
-    [table.getState().rowSelection]
-  );
+  if (!table) return null;
 
   const selectedCount = selectedRowIds.length;
 

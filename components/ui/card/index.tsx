@@ -20,7 +20,7 @@ interface CardProps {
   };
 }
 
-export const Card = ({ title, description, content, slots, ...props }: CardProps) => {
+export const Card = ({ title, content, slots, ...props }: CardProps) => {
   return (
     <UiCard
       className="w-full max-w-sm"

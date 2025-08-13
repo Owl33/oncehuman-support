@@ -1,14 +1,13 @@
 // components/ui/data-table/components/data-table-filter.tsx
 "use client";
 import { Input } from "@/components/base/input";
-import { Filter, X, Settings2, Search, Eye, EyeClosed, SearchCheck, SearchX } from "lucide-react";
+import { X, Settings2, Search, Eye, EyeClosed, SearchCheck, SearchX } from "lucide-react";
 import { Button } from "@/components/base/button";
 import { Badge } from "@/components/base/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/base/popover";
 import { Switch } from "@/components/base/switch";
 import { Label } from "@/components/base/label";
 import { Separator } from "@/components/base/separator";
-import { Checkbox } from "@/components/base/checkbox";
 import { useDataTableContext } from "@/components/ui/data-table/contexts/data-table-context";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -27,14 +26,13 @@ export function DataTableFilter() {
     getColumnDisplayName,
   } = useDataTableContext();
 
-  if (!table) return null;
-
   const { activeColumns, mode, values } = filterState;
   const isMultipleFilter = mode === "individual";
   const globalFilter = values.global || "";
 
   // Apply filters based on mode
   useEffect(() => {
+    if (!table) return;
     if (isMultipleFilter) {
       activeColumns.forEach((column) => {
         const value = values[column] || "";
@@ -48,6 +46,8 @@ export function DataTableFilter() {
       });
     }
   }, [isMultipleFilter, activeColumns, values, globalFilter, table]);
+
+  if (!table) return null;
 
   // Get filterable and hideable columns
   const filterableColumns = table.getAllColumns().filter((column) => column.getCanFilter());
