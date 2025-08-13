@@ -111,7 +111,7 @@ export function MaterialCalculationSection({ currentCharacter }: MaterialCalcula
             <AlertDialogCancel>취소</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmReset}
-              className="bg-destructive  hover:bg-destructive/90">
+              className="bg-destructive  hover:bg-destructive/90 cursor-pointer">
               초기화
             </AlertDialogAction>
           </AlertDialogFooter>

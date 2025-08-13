@@ -30,22 +30,20 @@ export type UpdateCharacterInput = Partial<Character> & {
 
 // SwitchPoint 관련 타입들 (기존 switchpoint-types.ts에서 이동)
 export type ItemCategory =
+  | "product"
   | "storage"
   | "production"
   | "processing"
   | "functional"
-  | "vehicle"
-  | "weapons"
-  | "infections";
+  | "vehicle";
 
 export const CATEGORY_LABELS: Record<ItemCategory, string> = {
+  product: "완제품",
   storage: "저장 시설",
   production: "생산 시설",
   processing: "가공 시설",
   functional: "기능 시설",
   vehicle: "차량",
-  weapons: "무기",
-  infections: "감염물",
 };
 
 // 재료 인터페이스

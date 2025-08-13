@@ -130,7 +130,6 @@ export default function Home() {
                 <Mail className="h-8 w-8 text-blue-600 dark:text-blue-400" />
                 <div>
                   <CardTitle>이메일 문의</CardTitle>
-                  <CardDescription>이메일로 내용을 보내주세요</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -152,7 +151,6 @@ export default function Home() {
                 <MessageCircle className="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
                 <div>
                   <CardTitle>카카오톡 오픈채팅</CardTitle>
-                  <CardDescription> 확인 후 답장 드리겠습니다.</CardDescription>
                 </div>
               </div>
             </CardHeader>

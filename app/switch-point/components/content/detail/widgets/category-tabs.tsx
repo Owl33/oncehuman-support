@@ -11,13 +11,12 @@ interface CategoryTabsProps {
 }
 
 const CATEGORY_ICONS: Record<ItemCategory, React.ReactNode> = {
+  product: <Swords className="h-4 w-4" />,
   storage: <Import className="h-4 w-4" />,
   production: <Pickaxe className="h-4 w-4" />,
   processing: <Cpu className="h-4 w-4" />,
   functional: <Parentheses className="h-4 w-4" />,
   vehicle: <Car className="h-4 w-4" />,
-  weapons: <Swords className="h-4 w-4" />,
-  infections: <Rabbit className="h-4 w-4" />,
 };
 
 export function CategoryTabs({ selectedCategory, onSelectCategory }: CategoryTabsProps) {

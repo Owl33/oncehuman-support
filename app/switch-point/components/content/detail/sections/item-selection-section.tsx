@@ -22,7 +22,9 @@ interface ItemSelectionSectionProps {
   currentCharacter: Character;
 }
 
-export const ItemSelectionSection = React.memo(function ItemSelectionSection({ currentCharacter }: ItemSelectionSectionProps) {
+export const ItemSelectionSection = React.memo(function ItemSelectionSection({
+  currentCharacter,
+}: ItemSelectionSectionProps) {
   // Context에서 필요한 것만 가져오기
   const { updateCharacterItems } = useSwitchPointContext();
   const { items, materials } = useGameData();
@@ -34,13 +36,12 @@ export const ItemSelectionSection = React.memo(function ItemSelectionSection({ c
   // 카테고리별 아이템 필터링
   const itemsByCategory = useMemo(() => {
     const categorized: Record<ItemCategory, Item[]> = {
+      product: [],
       storage: [],
       production: [],
       processing: [],
       functional: [],
       vehicle: [],
-      weapons: [],
-      infections: [],
     };
 
     items.forEach((item) => {
@@ -132,7 +133,7 @@ export const ItemSelectionSection = React.memo(function ItemSelectionSection({ c
             <AlertDialogCancel>취소</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmReset}
-              className="bg-destructive font-bold hover:bg-destructive/90">
+              className="bg-destructive font-bold hover:bg-destructive/90 cursor-pointer">
               초기화
             </AlertDialogAction>
           </AlertDialogFooter>

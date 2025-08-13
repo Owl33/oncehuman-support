@@ -120,7 +120,7 @@ function AlertDialogAction({
 }: React.ComponentProps<typeof AlertDialogPrimitive.Action>) {
   return (
     <AlertDialogPrimitive.Action
-      className={(cn(buttonVariants(), className), "cursor-pointer")}
+      className={cn(buttonVariants(), className)}
       {...props}
     />
   );

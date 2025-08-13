@@ -537,8 +537,32 @@
       }
     ]
   },
+
   {
-    "category": "weapon",
+    "category": "product",
+    "id": "drill",
+    "name": "고급 채광 드릴",
+    "requiment": [
+      {
+        "id": "drill",
+        "stock": 1
+      }
+    ]
+  },
+  {
+    "category": "product",
+    "id": "lumber-saw",
+    "name": "고급 벌목톱",
+    "requiment": [
+      {
+        "id": "weapon",
+        "stock": 1
+      }
+    ]
+  },
+
+  {
+    "category": "product",
     "id": "weapon",
     "name": "5티어 무기",
     "requiment": [
@@ -549,23 +573,23 @@
     ]
   },
   {
-    "category": "weapons",
-    "id": "weapons",
-    "name": "5티어 무기",
+    "category": "product",
+    "id": "infection",
+    "name": "감염물",
     "requiment": [
       {
-        "id": "weapon",
+        "id": "infection",
         "stock": 1
       }
     ]
   },
   {
-    "category": "infections",
-    "id": "infections",
-    "name": "감염물",
+    "category": "product",
+    "id": "fish-can",
+    "name": "물고기 통조림",
     "requiment": [
       {
-        "id": "infection",
+        "id": "fish-can",
         "stock": 1
       }
     ]
