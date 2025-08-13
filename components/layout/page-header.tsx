@@ -28,7 +28,7 @@ export function PageHeader({ title, description, actions, className }: PageHeade
 
         {actions && <div className="flex items-center gap-2 flex-shrink-0">{actions}</div>}
       </div>
-      <Separator className="mt-4 w-full " />
+      <Separator className="my-4 w-full " />
     </div>
   );
 }

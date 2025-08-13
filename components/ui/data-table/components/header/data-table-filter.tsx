@@ -205,7 +205,7 @@ export function DataTableFilter() {
           variant="ghost"
           size="sm"
           onClick={clearAllFilters}
-          className="gap-2 text-muted-foreground hover:text-foreground">
+          className="gap-2  hover:text-foreground">
           <X className="h-4 w-4" />
           초기화
           <Badge

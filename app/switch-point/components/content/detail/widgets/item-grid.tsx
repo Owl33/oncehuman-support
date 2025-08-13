@@ -27,7 +27,6 @@ export const ItemGrid = React.memo(function ItemGrid({
   onUpdateQuantity,
   onResetClick,
 }: ItemGridProps) {
-
   // Material id -> name 매핑 (성능 최적화)
   const materialMap = useMemo(() => {
     if (!materials || !Array.isArray(materials)) {
@@ -57,7 +56,7 @@ export const ItemGrid = React.memo(function ItemGrid({
 
   // 전체 컨테이너에 스크롤 적용
   return (
-    <ScrollArea className="h-[56vh]">
+    <ScrollArea className="h-[64vh]">
       <div className="pr-4">
         {/* 선택헤더 */}
         <div className="my-4 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-lg p-3 sticky top-0 z-10 backdrop-blur-sm">
@@ -65,7 +64,7 @@ export const ItemGrid = React.memo(function ItemGrid({
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Box className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium">{stats.selectedCount}개 선택</span>
+                <span className="">{stats.selectedCount}개 선택</span>
               </div>
               <Separator
                 orientation="vertical"
@@ -73,7 +72,7 @@ export const ItemGrid = React.memo(function ItemGrid({
               />
               <div className="flex items-center gap-2">
                 <Boxes className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium">총 {stats.totalQuantity}개</span>
+                <span className="">총 {stats.totalQuantity}개</span>
               </div>
             </div>
             {stats.selectedCount > 0 && onResetClick && (
@@ -96,7 +95,7 @@ export const ItemGrid = React.memo(function ItemGrid({
               <div className="rounded-full bg-muted/50 p-4 mb-4 mx-auto w-fit">
                 <Package className="w-8 h-8 text-muted-foreground/50" />
               </div>
-              <p className="text-sm text-muted-foreground">이 카테고리에는 아이템이 없습니다</p>
+              <p className=" text-muted-foreground">이 카테고리에는 아이템이 없습니다</p>
             </div>
           </div>
         ) : (
@@ -123,15 +122,13 @@ export const ItemGrid = React.memo(function ItemGrid({
                   {isSelected && (
                     <div className="absolute -top-1 -right-1 z-10">
                       <div className="relative bg-primary rounded-sm border-0 h-6 px-2">
-                        <span className="text-primary-foreground text-sm">{quantity}</span>
+                        <span className="text-primary-foreground ">{quantity}</span>
                       </div>
                     </div>
                   )}
 
                   {/* 설비 이름 */}
-                  <h3 className="font-semibold text-lg py-2 line-clamp-2 min-h-[3.5rem]">
-                    {item.name}
-                  </h3>
+                  <h3 className="font-semibold text-lg py-2  ">{item.name}</h3>
 
                   {/* 필요 재료 나열 */}
                   <div className="py-2 min-h-[4rem]">
@@ -168,7 +165,7 @@ export const ItemGrid = React.memo(function ItemGrid({
                       onKeyDown={(e) => {
                         if (e.key === "Enter") e.currentTarget.blur();
                       }}
-                      className="flex-1 h-7 text-center text-sm font-medium"
+                      className="flex-1 h-7 text-center "
                       min="0"
                     />
 
