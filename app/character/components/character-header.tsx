@@ -23,7 +23,7 @@ export function CharacterHeader({
 
   return (
     <div className="border-b">
-      <div className="mx-auto py-4">
+      <div className="mx-auto py-2">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">캐릭터 관리</h1>

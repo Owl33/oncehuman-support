@@ -99,13 +99,13 @@ export default function RootLayout({
           <SidebarProvider defaultOpen>
             <AppSidebar />
             <SidebarInset>
-              <SidebarHeader>
+              <SidebarHeader className="px-4">
                 <div className=" flex items-center justify-between">
                   <SidebarTrigger></SidebarTrigger>
                   <ToggleTheme></ToggleTheme>
                 </div>
               </SidebarHeader>
-              <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
+              <main className="flex flex-1 flex-col mx-6">
                 <div className=" flex-1 rounded-xl ">{children}</div>
               </main>
             </SidebarInset>
