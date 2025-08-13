@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
 import localFont from "next/font/local";
-import { Analytics } from "@vercel/analytics/react";
-
+import { Analytics } from "@vercel/analytics/next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { ToggleTheme } from "@/components/toggle-theme";
