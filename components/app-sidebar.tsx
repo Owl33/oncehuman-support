@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, Calculator, ArrowRightLeft, Timer, Settings, Gamepad2 } from "lucide-react";
+import { User, Calculator, ArrowRightLeft, Timer, Settings, Gamepad2, Home } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -20,6 +20,16 @@ import {
 
 // OnceHuman 게임 특화 네비게이션 데이터
 const navigationData = [
+  {
+    title: "메인",
+    items: [
+      {
+        title: "홈",
+        url: "/",
+        icon: Home,
+      },
+    ],
+  },
   {
     title: "메인 기능",
     items: [

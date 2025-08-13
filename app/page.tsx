@@ -1,10 +1,22 @@
 // app/page.tsx
+"use client";
+
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/base/card";
 import { Button } from "@/components/base/button";
-import { User, ArrowRightLeft, Calculator, Timer } from "lucide-react";
+import { User, ArrowRightLeft, Calculator, Timer, Mail, MessageCircle, Copy } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Home() {
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText("ahsxkc@gmail.com");
+      toast.success("이메일 주소가 복사되었습니다!");
+    } catch (err) {
+      toast.error("복사에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
   return (
     <div className="container mx-auto py-8">
       <div className="text-center mb-8">
@@ -100,6 +112,64 @@ export default function Home() {
             </Link>
           </CardContent>
         </Card>
+      </div>
+
+      {/* 건의사항 / 제보 섹션 */}
+      <div className="mt-16 max-w-4xl mx-auto">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold mb-4">건의사항 및 제보</h2>
+          <p className="text-lg text-muted-foreground">
+            버그 신고, 기능 제안, 개선사항 등을 알려주세요
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <Mail className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                <div>
+                  <CardTitle>이메일 문의</CardTitle>
+                  <CardDescription>이메일로 내용을 보내주세요</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Button
+                  className="w-full "
+                  onClick={handleCopyEmail}>
+                  <Copy className="mr-2 h-4 w-4" />
+                  ahsxkc@gmail.com
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <MessageCircle className="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
+                <div>
+                  <CardTitle>카카오톡 오픈채팅</CardTitle>
+                  <CardDescription> 확인 후 답장 드리겠습니다.</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <a
+                href="https://open.kakao.com/o/s1CwNlMh"
+                target="_blank"
+                rel="noopener noreferrer">
+                <Button
+                  variant="outline"
+                  className="w-full">
+                  오픈채팅방 참여하기
+                </Button>
+              </a>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
