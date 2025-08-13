@@ -334,6 +334,11 @@
     "point": 10000
   },
   {
+    "id": "blueprint",
+    "name": "튜닝 설계도",
+    "point": 1000
+  },
+  {
     "id": "fish-can",
     "name": "물고기 통조림",
     "point": 400

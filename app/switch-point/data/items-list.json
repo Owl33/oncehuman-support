@@ -574,6 +574,17 @@
   },
   {
     "category": "product",
+    "id": "blueprint",
+    "name": "튜닝 설계도",
+    "requiment": [
+      {
+        "id": "blueprint",
+        "stock": 1
+      }
+    ]
+  },
+  {
+    "category": "product",
     "id": "infection",
     "name": "감염물",
     "requiment": [
