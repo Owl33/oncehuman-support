@@ -4,7 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/base/card";
 import { Badge } from "@/components/base/badge";
 import { Progress } from "@/components/base/progress";
-import { ArrowRight, Package, AlertCircle, TrendingUp } from "lucide-react";
+import { ArrowRight, Package, TrendingUp } from "lucide-react";
 import { Character } from "@/types/character";
 
 interface CharacterDashboardProps {

@@ -14,13 +14,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-  SidebarTrigger,
-  useSidebar,
   SidebarGroupContent,
   SidebarSeparator,
 } from "@/components/base/sidebar";
-import { ToggleTheme } from "@/components/toggle-theme";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 // OnceHuman 게임 특화 네비게이션 데이터
 const navigationData = [
@@ -68,8 +64,6 @@ const navigationData = [
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
-  const { isMobile } = useSidebar();
-  const isMobileDevice = useIsMobile();
 
   return (
     <Sidebar

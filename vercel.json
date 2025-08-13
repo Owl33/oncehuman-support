@@ -1,0 +1,24 @@
+{
+  "framework": "nextjs",
+  "regions": ["sin1", "icn1"],
+  "headers": [
+    {
+      "source": "/sitemap.xml",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "s-maxage=86400, stale-while-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "s-maxage=86400, stale-while-revalidate"
+        }
+      ]
+    }
+  ]
+}
