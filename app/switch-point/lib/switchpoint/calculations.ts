@@ -45,8 +45,8 @@ export function calculateMaterials(
     totalPoints += points;
   });
   
-  // 3. 포인트 높은 순으로 정렬
-  calculatedMaterials.sort((a, b) => b.points - a.points);
+  // 3. 정렬 제거 - 원래 순서 유지
+  // calculatedMaterials.sort((a, b) => b.points - a.points);
   
   return {
     materials: calculatedMaterials,

@@ -1,7 +1,7 @@
 // app/switchpoint/components/material-calculator.tsx
 "use client";
 
-import { useState, useMemo, useRef, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { CalculatedMaterial } from "@/types/character";
 import { Input } from "@/components/base/input";
 import { Badge } from "@/components/base/badge";
@@ -32,63 +32,30 @@ export function MaterialCalculator({
   onUpdateOwned,
   onResetClick,
 }: MaterialCalculatorProps) {
-  // 간소화된 상태 관리
+  // 최소한의 상태 관리
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const [pendingValues, setPendingValues] = useState<Record<string, string>>({});
-  const updateTimeoutRef = useRef<Record<string, NodeJS.Timeout>>({});
+  const [materialOrder, setMaterialOrder] = useState<CalculatedMaterial[]>(() => materials);
 
-  // 정렬된 materials - focus 상태와 무관하게 완료된 아이템만 하단으로
-  const sortedMaterials = useMemo(() => {
-    return [...materials].sort((a, b) => {
-      const aOwned = ownedMaterials[a.id] || 0;
-      const bOwned = ownedMaterials[b.id] || 0;
-      const aComplete = aOwned >= a.required;
-      const bComplete = bOwned >= b.required;
+  // materials가 변경되면 순서 업데이트 (완료된 아이템 위치 유지)
+  useEffect(() => {
+    setMaterialOrder(prevOrder => {
+      // 기존 순서가 있으면 유지, 새로운 항목만 추가
+      const existingIds = new Set(prevOrder.map(m => m.id));
+      const newMaterials = materials.filter(m => !existingIds.has(m.id));
+      const updatedExisting = prevOrder.filter(m => materials.some(mat => mat.id === m.id))
+        .map(oldMaterial => materials.find(m => m.id === oldMaterial.id) || oldMaterial);
       
-      // 완료 상태가 다르면 완료된 것을 뒤로
-      if (aComplete !== bComplete) {
-        return aComplete ? 1 : -1;
-      }
-      
-      // 둘 다 완료되지 않았으면 필요 포인트 순으로 정렬 (높은 순)
-      if (!aComplete && !bComplete) {
-        const aPoints = Math.max(0, a.required - aOwned) * (a.points / a.required);
-        const bPoints = Math.max(0, b.required - bOwned) * (b.points / b.required);
-        return bPoints - aPoints;
-      }
-      
-      // 둘 다 완료되었으면 원래 순서 유지
-      return 0;
+      return [...updatedExisting, ...newMaterials];
     });
-  }, [materials, ownedMaterials]);
+  }, [materials]);
 
-  // 디바운스된 업데이트 함수
-  const debouncedUpdate = useCallback((materialId: string, value: string) => {
-    // 기존 타이머 취소
-    if (updateTimeoutRef.current[materialId]) {
-      clearTimeout(updateTimeoutRef.current[materialId]);
-    }
+  const displayMaterials = materialOrder;
 
-    // 새 타이머 설정 (500ms 후 업데이트)
-    updateTimeoutRef.current[materialId] = setTimeout(() => {
-      const material = materials.find((m) => m.id === materialId);
-      if (!material) return;
-
-      let quantity = parseInt(value) || 0;
-      quantity = Math.max(0, Math.min(quantity, material.required));
-
-      onUpdateOwned(materialId, quantity);
-      delete updateTimeoutRef.current[materialId];
-    }, 500);
-  }, [materials, onUpdateOwned]);
-
-  // 즉시 UI 업데이트를 위한 핸들러
+  // 즉시 UI 업데이트를 위한 핸들러 (debounce 없음)
   const handleInputChange = (materialId: string, value: string) => {
     // 로컬 상태 즉시 업데이트 (UI 반응성)
     setPendingValues(prev => ({ ...prev, [materialId]: value }));
-    
-    // 디바운스된 실제 업데이트
-    debouncedUpdate(materialId, value);
   };
 
   // Input value 가져오기 (pending 값 우선)
@@ -99,32 +66,36 @@ export function MaterialCalculator({
     return (ownedMaterials[materialId] || 0).toString();
   };
 
-  // Cleanup - 컴포넌트 언마운트 시 모든 타이머 정리
-  useEffect(() => {
-    const timeouts = updateTimeoutRef.current;
-    return () => {
-      Object.values(timeouts).forEach(timeout => {
-        clearTimeout(timeout);
-      });
-    };
-  }, []);
-
   const handleFillAll = (materialId: string) => {
-    const material = materials.find((m) => m.id === materialId);
+    const material = materialOrder.find((m) => m.id === materialId);
     if (!material) return;
 
     onUpdateOwned(materialId, material.required);
+    
+    // 완료되었으므로 맨 아래로 이동
+    setMaterialOrder(prev => {
+      const filtered = prev.filter(m => m.id !== materialId);
+      const completedMaterial = prev.find(m => m.id === materialId);
+      return completedMaterial ? [...filtered, completedMaterial] : prev;
+    });
   };
 
   const handleEmptyAll = (materialId: string) => {
-    const material = materials.find((m) => m.id === materialId);
+    const material = materialOrder.find((m) => m.id === materialId);
     if (!material) return;
 
     onUpdateOwned(materialId, 0);
+    
+    // 미완료 상태가 되었으므로 맨 위로 이동
+    setMaterialOrder(prev => {
+      const filtered = prev.filter(m => m.id !== materialId);
+      const incompleteMaterial = prev.find(m => m.id === materialId);
+      return incompleteMaterial ? [incompleteMaterial, ...filtered] : prev;
+    });
   };
 
 
-  // Focus 관리 (정렬에 영향 없음)
+  // Focus 관리
   const handleFocus = (materialId: string) => {
     setFocusedInput(materialId);
   };
@@ -134,11 +105,22 @@ export function MaterialCalculator({
     
     // pending 값이 있으면 즉시 적용
     if (materialId in pendingValues) {
-      const material = materials.find((m) => m.id === materialId);
+      const material = materialOrder.find((m) => m.id === materialId);
       if (material) {
         let quantity = parseInt(pendingValues[materialId]) || 0;
         quantity = Math.max(0, Math.min(quantity, material.required));
+        
+        // 실제 값 업데이트
         onUpdateOwned(materialId, quantity);
+        
+        // 완료되었다면 맨 아래로 이동
+        if (quantity >= material.required) {
+          setMaterialOrder(prev => {
+            const filtered = prev.filter(m => m.id !== materialId);
+            const completedMaterial = prev.find(m => m.id === materialId);
+            return completedMaterial ? [...filtered, completedMaterial] : prev;
+          });
+        }
       }
       
       // pending 값 제거
@@ -147,12 +129,6 @@ export function MaterialCalculator({
         delete newPending[materialId];
         return newPending;
       });
-      
-      // 타이머도 취소
-      if (updateTimeoutRef.current[materialId]) {
-        clearTimeout(updateTimeoutRef.current[materialId]);
-        delete updateTimeoutRef.current[materialId];
-      }
     }
   };
 
@@ -169,7 +145,7 @@ export function MaterialCalculator({
   }
 
   const hasAnyOwned = Object.values(ownedMaterials).some((v) => v > 0);
-  const actualTotalPoints = sortedMaterials.reduce((sum, m) => {
+  const actualTotalPoints = materialOrder.reduce((sum, m) => {
     const needed = Math.max(0, m.required - (ownedMaterials[m.id] || 0));
     return sum + needed * (m.points / m.required);
   }, 0);
@@ -230,7 +206,7 @@ export function MaterialCalculator({
       {/* Materials List */}
       <ScrollArea className="h-[56vh]">
         <div className="px-2 pb-2 space-y-1">
-          {sortedMaterials.map((material) => {
+          {displayMaterials.map((material) => {
             const inputValue = getInputValue(material.id);
             const actualOwned = ownedMaterials[material.id] || 0;
             const isComplete = actualOwned >= material.required;
