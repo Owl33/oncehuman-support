@@ -8,8 +8,7 @@ import { cn } from "@/lib/utils";
 import { useDataTableContext } from "../../table-state";
 import { useMobileDetection, useRowSwipeActions } from "../../table-features/responsive";
 import { ColumnManager } from "../../table-columns";
-import { SmartTableCell } from "./SmartTableCell";
-import { CellRenderer } from "../renderers/CellRenderer";
+import { DataTableCell } from "./DataTableCell";
 
 interface ResponsiveTableRowProps<TData> {
   row: {
@@ -82,11 +81,12 @@ export function ResponsiveTableRow<TData>({
 
   const visibleColumns = [...systemColumns, ...primaryColumns];
 
-  function renderTableCells() {
-    // 컬럼 선택: 콜랩스 모드면 visibleColumns, 아니면 모든 visible columns
-    const columnsToRender = isCollapseMode ? visibleColumns : 
-      table.getAllColumns().filter((column: any) => column.getIsVisible());
+  // 표시할 컬럼들 결정
+  const columnsToRender = isCollapseMode ? visibleColumns : 
+    table.getAllColumns().filter((column: any) => column.getIsVisible());
 
+  // 셀들 렌더링
+  const renderCells = () => {
     const cells = columnsToRender.map((column: any) => {
       const cell = {
         id: column.id,
@@ -100,7 +100,7 @@ export function ResponsiveTableRow<TData>({
       };
 
       return (
-        <SmartTableCell
+        <DataTableCell
           key={cell.id}
           cell={cell}
           row={row}
@@ -112,9 +112,7 @@ export function ResponsiveTableRow<TData>({
     // 콜랩스 모드일 때 확장 버튼 추가
     if (isCollapseMode && (isMobile || isTablet)) {
       const expandCell = (
-        <TableCell
-          key="expand"
-          className="w-[60px] px-3 py-2">
+        <TableCell key="expand" className="w-[60px] px-3 py-2">
           <div className="flex items-center justify-center">
             <Button
               variant="ghost"
@@ -132,7 +130,7 @@ export function ResponsiveTableRow<TData>({
     }
 
     return cells;
-  }
+  };
 
 
   function renderExpandedContent() {
@@ -175,7 +173,7 @@ export function ResponsiveTableRow<TData>({
                   className="flex flex-col space-y-1">
                   <label className="text-sm font-medium text-muted-foreground">{displayName}</label>
                   <div className="h-9 flex items-center">
-                    <SmartTableCell
+                    <DataTableCell
                       layout="minimal"
                       cell={cell}
                       row={row}
@@ -255,7 +253,7 @@ export function ResponsiveTableRow<TData>({
           isExpanded && isCollapseMode && "border-b-0"
         )}
         {...swipeHandlers}>
-        {renderTableCells()}
+        {renderCells()}
       </TableRow>
       {isCollapseMode && renderExpandedContent()}
     </>

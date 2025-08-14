@@ -62,7 +62,9 @@ export function FloatingActionBar() {
     "flex items-center gap-3 px-4 py-2 bg-background/95 backdrop-blur-sm",
     "border border-border/50 rounded-lg shadow-lg",
     "transition-all duration-200 ease-in-out",
-    "animate-in slide-in-from-bottom-2 fade-in-0 duration-300"
+    "animate-in slide-in-from-bottom-2 fade-in-0 duration-300",
+    // 모바일에서 너비 조정
+    isMobile || isTablet ? "w-[90vw] max-w-md" : "w-auto"
   );
 
   return (

@@ -6,7 +6,7 @@ import { flexRender } from "@tanstack/react-table";
 import { useDataTableContext } from "../table-state";
 import { useMobileDetection } from "../table-features/responsive";
 import { ColumnManager } from "../table-columns";
-import { ResponsiveTableRow, SmartTableCell } from "../table-layout/components";
+import { ResponsiveTableRow } from "../table-layout/components";
 import { cn } from "@/lib/utils";
 
 export const DataTableMain = () => {
