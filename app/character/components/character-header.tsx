@@ -3,7 +3,7 @@
 import React, { useRef } from "react";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/base/button";
-import { useMobileDetection } from "@/components/ui/data-table/hooks/use-mobile-detection";
+import { useMobileDetection } from "@/components/ui/data-table";
 import { Plus, Download, Upload, RotateCcw } from "lucide-react";
 
 interface CharacterHeaderProps {
