@@ -228,7 +228,7 @@ export function MaterialCalculator({
       </div>
 
       {/* Materials List */}
-      <ScrollArea className="h-[64vh]">
+      <ScrollArea className="h-auto sm:h-[64vh]">
         <div className="px-2 pb-2 space-y-1">
           {displayMaterials.map((material) => {
             const inputValue = getInputValue(material.id);
