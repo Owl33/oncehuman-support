@@ -92,7 +92,7 @@ export const columns: ColumnDef<BaseCharacter>[] = [
       displayName: "비고",
       editable: true,
       editType: "text",
-      className: "", // 텍스트 입력을 위한 충분한 공간
+      className: "w-[30vw]", // 텍스트 입력을 위한 충분한 공간
     },
   },
 

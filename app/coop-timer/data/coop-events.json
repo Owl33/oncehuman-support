@@ -1,0 +1,142 @@
+{
+  "events": [
+    {
+      "id": "monolith_easy",
+      "name": "모노리스 (쉬움)",
+      "description": "수중 모노리스 협동 미션",
+      "category": "monolith",
+      "resetConfig": {
+        "type": "hourly",
+        "interval": 3600000
+      },
+      "rewards": ["에테르 결정", "장비 강화석"],
+      "difficulty": "쉬움",
+      "participants": 4,
+      "icon": "🏛️"
+    },
+    {
+      "id": "monolith_hard",
+      "name": "모노리스 (어려움)",
+      "description": "고난도 모노리스 협동 미션",
+      "category": "monolith",
+      "resetConfig": {
+        "type": "hourly",
+        "interval": 3600000
+      },
+      "rewards": ["희귀 에테르 결정", "고급 장비"],
+      "difficulty": "어려움",
+      "participants": 6,
+      "icon": "🏛️"
+    },
+    {
+      "id": "prism_deviation",
+      "name": "프리즘 편차",
+      "description": "프리즘 편차 지역 정화",
+      "category": "prism",
+      "resetConfig": {
+        "type": "hourly",
+        "interval": 3600000
+      },
+      "rewards": ["프리즘 코어", "스태시 확장권"],
+      "difficulty": "보통",
+      "participants": 8,
+      "icon": "🔮"
+    },
+    {
+      "id": "territory_purification",
+      "name": "영토 정화",
+      "description": "오염된 영토 정화 작업",
+      "category": "territory",
+      "resetConfig": {
+        "type": "hourly",
+        "interval": 3600000
+      },
+      "rewards": ["정화 시약", "건설 자재"],
+      "difficulty": "쉬움",
+      "participants": 6,
+      "icon": "🌿"
+    },
+    {
+      "id": "dark_site",
+      "name": "다크사이트",
+      "description": "어둠에 잠긴 지역 탐험",
+      "category": "daily",
+      "resetConfig": {
+        "type": "daily",
+        "resetHour": 0,
+        "resetMinute": 0
+      },
+      "rewards": ["다크 에너지", "희귀 장비"],
+      "difficulty": "어려움",
+      "participants": 6,
+      "maxCompletions": 1,
+      "icon": "🌑"
+    },
+    {
+      "id": "kairon_operation",
+      "name": "케이론 작전",
+      "description": "케이론 기지 침투 작전",
+      "category": "daily",
+      "resetConfig": {
+        "type": "daily",
+        "resetHour": 0,
+        "resetMinute": 0
+      },
+      "rewards": ["케이론 토큰", "전술 장비"],
+      "difficulty": "보통",
+      "participants": 8,
+      "maxCompletions": 1,
+      "icon": "⚔️"
+    },
+    {
+      "id": "terrible_area",
+      "name": "끔찍한 영역",
+      "description": "고위험 감염 지역 정화",
+      "category": "daily",
+      "resetConfig": {
+        "type": "daily",
+        "resetHour": 0,
+        "resetMinute": 0
+      },
+      "rewards": ["정화 결정", "방어구 재료"],
+      "difficulty": "어려움",
+      "participants": 4,
+      "maxCompletions": 1,
+      "icon": "☢️"
+    },
+    {
+      "id": "monolith_house",
+      "name": "모놀리스의 집",
+      "description": "주간 대형 모놀리스 레이드",
+      "category": "weekly",
+      "resetConfig": {
+        "type": "weekly",
+        "resetDay": 3,
+        "resetHour": 0,
+        "resetMinute": 0
+      },
+      "rewards": ["전설 에테르", "모놀리스 코어", "레어 장비"],
+      "difficulty": "어려움",
+      "participants": 12,
+      "maxCompletions": 1,
+      "icon": "🏰"
+    },
+    {
+      "id": "action_one",
+      "name": "에이션트원",
+      "description": "고대 유적 탐험 레이드",
+      "category": "weekly",
+      "resetConfig": {
+        "type": "weekly",
+        "resetDay": 3,
+        "resetHour": 0,
+        "resetMinute": 0
+      },
+      "rewards": ["고대 유물", "전설 무기", "희귀 자재"],
+      "difficulty": "어려움",
+      "participants": 10,
+      "maxCompletions": 1,
+      "icon": "🗿"
+    }
+  ]
+}
