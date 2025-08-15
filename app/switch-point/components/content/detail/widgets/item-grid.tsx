@@ -63,7 +63,7 @@ export const ItemGrid = React.memo(function ItemGrid({
   // 전체 컨테이너에 스크롤 적용 (모바일은 자연스러운 스크롤)
   return (
     <ScrollArea className="h-auto sm:h-[60vh]">
-      <div className="p-4">
+      <div className="">
         {/* 선택헤더 */}
         <div className="my-4 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-lg p-4 sticky top-0 z-10 backdrop-blur-sm">
           <div className="flex flex-wrap items-center justify-between gap-2">

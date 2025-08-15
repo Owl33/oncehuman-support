@@ -53,11 +53,13 @@ export interface CoopEvent {
 
 // 진행상황
 export interface CoopProgress {
+  lastResetAt?: number; // ms timestamp, unified type
   characterId: string;
   eventId: string;
   completedAt: number;
   isCompleted: boolean;
   completionCount?: number;
+  lastCompletedAt?: number; // 이전 완료시간 (리셋되기 전 마지막 완료시간)
 }
 
 // 이벤트 상태

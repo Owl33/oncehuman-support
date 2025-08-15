@@ -11,9 +11,10 @@ interface EmptyStateProps {
   description: string;
   actionLabel?: string;
   onAction?: () => void;
+  action?: ReactNode;
 }
 
-export function EmptyState({ icon, title, description, actionLabel, onAction }: EmptyStateProps) {
+export function EmptyState({ icon, title, description, actionLabel, onAction, action }: EmptyStateProps) {
   return (
     <div className="container mx-auto py-20">
       <div className="max-w-md mx-auto">
@@ -27,11 +28,11 @@ export function EmptyState({ icon, title, description, actionLabel, onAction }: 
               <p className="text-muted-foreground mb-6">
                 {description}
               </p>
-              {actionLabel && onAction && (
+              {action || (actionLabel && onAction && (
                 <Button onClick={onAction} className="gap-2">
                   {actionLabel}
                 </Button>
-              )}
+              ))}
             </div>
           </CardContent>
         </Card>

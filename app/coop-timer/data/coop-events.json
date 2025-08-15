@@ -1,6 +1,21 @@
 {
   "events": [
     {
+      "id": "test-quick",
+      "name": "빠른 테스트",
+      "description": "30초 간격 테스트용 이벤트",
+      "category": "test",
+      "resetConfig": {
+        "type": "CUSTOM",
+        "interval": 30000
+      },
+      "rewards": ["테스트 보상"],
+      "difficulty": "쉬움",
+      "participants": 1,
+      "maxCompletions": 1,
+      "icon": "🧪"
+    },
+    {
       "id": "monolith_easy",
       "name": "모노리스 (쉬움)",
       "description": "수중 모노리스 협동 미션",
@@ -28,6 +43,7 @@
       "participants": 6,
       "icon": "🏛️"
     },
+
     {
       "id": "prism_deviation",
       "name": "프리즘 편차",
