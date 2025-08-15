@@ -12,6 +12,7 @@ interface EventListCardProps {
   progress: Record<string, CoopProgress>; // 추가
   onEventToggle: (eventId: string, completed: boolean) => void;
   getEventStatus: (characterId: string, eventId: string) => any;
+  title?: string; // 선택적 title prop 추가
 }
 
 export function EventListCard({
@@ -20,6 +21,7 @@ export function EventListCard({
   progress,
   onEventToggle,
   getEventStatus,
+  title = "협동 이벤트", // 기본값 설정
 }: EventListCardProps) {
   const completedCount = events.filter(e => 
     getEventStatus(character.id, e.id).completed
@@ -34,7 +36,7 @@ export function EventListCard({
           </div>
           <div>
             <h3 className="font-bold text-xl text-gray-800">
-              {character.name}의 협동 이벤트
+              {character.name}의 {title}
             </h3>
             <p className="text-sm text-gray-600 flex items-center space-x-1">
               <Server className="h-4 w-4" />

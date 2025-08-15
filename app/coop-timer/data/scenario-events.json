@@ -1,0 +1,551 @@
+{
+  "scenarios": {
+    "manibus": {
+      "name": "터치오브 스카이",
+      "weeklyQuests": [
+        {
+          "id": "darkhill_nightmare",
+          "name": "다크헬 악몽",
+          "description": "다크헬 지역의 악몽 던전",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["전설 장비", "악몽 결정"],
+          "difficulty": "어려움",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "🌙"
+        },
+        {
+          "id": "silo_nightmare",
+          "name": "사일로 악몽",
+          "description": "사일로 지역의 악몽 던전",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["희귀 무기", "사일로 코어"],
+          "difficulty": "보통",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "🏭"
+        },
+        {
+          "id": "fay_nightmare",
+          "name": "페이 악몽",
+          "description": "페이 지역의 악몽 던전",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["정신력 회복제", "페이 에센스"],
+          "difficulty": "보통",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "🧚"
+        },
+        {
+          "id": "west_tower_nightmare",
+          "name": "서쪽탑 악몽",
+          "description": "서쪽 타워의 악몽 던전",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["타워 키", "고급 장비"],
+          "difficulty": "어려움",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "🗼"
+        }
+      ],
+      "coopEvents": [
+        {
+          "id": "kairon_operation",
+          "name": "케이론 작전",
+          "description": "케이론 기지 침투 작전",
+          "category": "daily",
+          "type": "coop_event",
+          "resetConfig": {
+            "type": "daily",
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["케이론 토큰", "전술 장비"],
+          "difficulty": "보통",
+          "participants": 8,
+          "maxCompletions": 1,
+          "icon": "⚔️"
+        },
+        {
+          "id": "dark_site",
+          "name": "다크사이트",
+          "description": "어둠에 잠긴 지역 탐험",
+          "category": "daily",
+          "type": "coop_event",
+          "resetConfig": {
+            "type": "daily",
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["다크 에너지", "희귀 장비"],
+          "difficulty": "어려움",
+          "participants": 6,
+          "maxCompletions": 1,
+          "icon": "🌑"
+        },
+        {
+          "id": "fallen_paradise",
+          "name": "타락한 낙원",
+          "description": "타락한 낙원 지역 정화",
+          "category": "daily",
+          "type": "coop_event",
+          "resetConfig": {
+            "type": "daily",
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["낙원 결정", "정화 아이템"],
+          "difficulty": "어려움",
+          "participants": 6,
+          "maxCompletions": 1,
+          "icon": "🏖️"
+        },
+        {
+          "id": "disco_pangpang",
+          "name": "디스코 팡팡",
+          "description": "디스코 팡팡 이벤트 미션",
+          "category": "daily",
+          "type": "coop_event",
+          "resetConfig": {
+            "type": "daily",
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["파티 토큰", "음악 장비"],
+          "difficulty": "쉬움",
+          "participants": 4,
+          "maxCompletions": 1,
+          "icon": "🕺"
+        },
+        {
+          "id": "path_to_hell",
+          "name": "지옥으로 통하는 길",
+          "description": "지옥문 통로 탐험",
+          "category": "daily",
+          "type": "coop_event",
+          "resetConfig": {
+            "type": "daily",
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["지옥석", "악마 장비"],
+          "difficulty": "어려움",
+          "participants": 8,
+          "maxCompletions": 1,
+          "icon": "🔥"
+        }
+      ]
+    },
+    "way-of-winter": {
+      "name": "혹독한 설산",
+      "weeklyQuests": [
+        {
+          "id": "silo_delta",
+          "name": "사일로 델타",
+          "description": "사일로 델타 지역 탐험",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["델타 코어", "고급 장비"],
+          "difficulty": "보통",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "🏭"
+        },
+        {
+          "id": "darkhill_winter_nightmare",
+          "name": "다크헬 설산 악몽",
+          "description": "설산의 다크헬 악몽 던전",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["빙결 에너지", "설산 장비"],
+          "difficulty": "어려움",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "❄️"
+        },
+        {
+          "id": "tau_nightmare",
+          "name": "타우 악몽",
+          "description": "타우 지역의 악몽 던전",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["타우 에센스", "특수 무기"],
+          "difficulty": "어려움",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "🌟"
+        },
+        {
+          "id": "tundra_monolith_nightmare",
+          "name": "툰드라 모노리스 악몽",
+          "description": "툰드라의 모노리스 악몽 던전",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["툰드라 결정", "모노리스 파편"],
+          "difficulty": "어려움",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "🗿"
+        }
+      ],
+      "coopEvents": [
+        {
+          "id": "deadly_signal",
+          "name": "치명적 신호",
+          "description": "위험한 신호 발생 지역 조사",
+          "category": "daily",
+          "type": "coop_event",
+          "resetConfig": {
+            "type": "daily",
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["신호 분석기", "탐지 장비"],
+          "difficulty": "어려움",
+          "participants": 6,
+          "maxCompletions": 1,
+          "icon": "📡"
+        },
+        {
+          "id": "dark_site_winter",
+          "name": "다크사이트-설산",
+          "description": "설산 지역의 다크사이트",
+          "category": "daily",
+          "type": "coop_event",
+          "resetConfig": {
+            "type": "daily",
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["설한 에너지", "빙결 장비"],
+          "difficulty": "어려움",
+          "participants": 6,
+          "maxCompletions": 1,
+          "icon": "🌨️"
+        }
+      ]
+    },
+    "endless-dream": {
+      "name": "끝없는 꿈",
+      "weeklyQuests": [
+        {
+          "id": "darkhill_nightmare",
+          "name": "다크헬 악몽",
+          "description": "다크헬 지역의 악몽 던전",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["전설 장비", "악몽 결정"],
+          "difficulty": "어려움",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "🌙"
+        },
+        {
+          "id": "silo_nightmare",
+          "name": "사일로 악몽",
+          "description": "사일로 지역의 악몽 던전",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["희귀 무기", "사일로 코어"],
+          "difficulty": "보통",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "🏭"
+        },
+        {
+          "id": "fay_nightmare",
+          "name": "페이 악몽",
+          "description": "페이 지역의 악몽 던전",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["정신력 회복제", "페이 에센스"],
+          "difficulty": "보통",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "🧚"
+        },
+        {
+          "id": "west_tower_nightmare",
+          "name": "서쪽탑 악몽",
+          "description": "서쪽 타워의 악몽 던전",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["타워 키", "고급 장비"],
+          "difficulty": "어려움",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "🗼"
+        },
+        {
+          "id": "silo_delta",
+          "name": "사일로 델타",
+          "description": "사일로 델타 지역 탐험",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["델타 코어", "고급 장비"],
+          "difficulty": "보통",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "🏭"
+        },
+        {
+          "id": "darkhill_winter_nightmare",
+          "name": "다크헬 설산 악몽",
+          "description": "설산의 다크헬 악몽 던전",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["빙결 에너지", "설산 장비"],
+          "difficulty": "어려움",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "❄️"
+        },
+        {
+          "id": "tau_nightmare",
+          "name": "타우 악몽",
+          "description": "타우 지역의 악몽 던전",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["타우 에센스", "특수 무기"],
+          "difficulty": "어려움",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "🌟"
+        },
+        {
+          "id": "tundra_monolith_nightmare",
+          "name": "툰드라 모노리스 악몽",
+          "description": "툰드라의 모노리스 악몽 던전",
+          "category": "weekly",
+          "type": "weekly_quest",
+          "resetConfig": {
+            "type": "weekly",
+            "resetDay": 3,
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["툰드라 결정", "모노리스 파편"],
+          "difficulty": "어려움",
+          "participants": 1,
+          "maxCompletions": 1,
+          "icon": "🗿"
+        }
+      ],
+      "coopEvents": [
+        {
+          "id": "kairon_operation",
+          "name": "케이론 작전",
+          "description": "케이론 기지 침투 작전",
+          "category": "daily",
+          "type": "coop_event",
+          "resetConfig": {
+            "type": "daily",
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["케이론 토큰", "전술 장비"],
+          "difficulty": "보통",
+          "participants": 8,
+          "maxCompletions": 1,
+          "icon": "⚔️"
+        },
+        {
+          "id": "dark_site",
+          "name": "다크사이트",
+          "description": "어둠에 잠긴 지역 탐험",
+          "category": "daily",
+          "type": "coop_event",
+          "resetConfig": {
+            "type": "daily",
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["다크 에너지", "희귀 장비"],
+          "difficulty": "어려움",
+          "participants": 6,
+          "maxCompletions": 1,
+          "icon": "🌑"
+        },
+        {
+          "id": "fallen_paradise",
+          "name": "타락한 낙원",
+          "description": "타락한 낙원 지역 정화",
+          "category": "daily",
+          "type": "coop_event",
+          "resetConfig": {
+            "type": "daily",
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["낙원 결정", "정화 아이템"],
+          "difficulty": "어려움",
+          "participants": 6,
+          "maxCompletions": 1,
+          "icon": "🏖️"
+        },
+        {
+          "id": "disco_pangpang",
+          "name": "디스코 팡팡",
+          "description": "디스코 팡팡 이벤트 미션",
+          "category": "daily",
+          "type": "coop_event",
+          "resetConfig": {
+            "type": "daily",
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["파티 토큰", "음악 장비"],
+          "difficulty": "쉬움",
+          "participants": 4,
+          "maxCompletions": 1,
+          "icon": "🕺"
+        },
+        {
+          "id": "path_to_hell",
+          "name": "지옥으로 통하는 길",
+          "description": "지옥문 통로 탐험",
+          "category": "daily",
+          "type": "coop_event",
+          "resetConfig": {
+            "type": "daily",
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["지옥석", "악마 장비"],
+          "difficulty": "어려움",
+          "participants": 8,
+          "maxCompletions": 1,
+          "icon": "🔥"
+        },
+        {
+          "id": "deadly_signal",
+          "name": "치명적 신호",
+          "description": "위험한 신호 발생 지역 조사",
+          "category": "daily",
+          "type": "coop_event",
+          "resetConfig": {
+            "type": "daily",
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["신호 분석기", "탐지 장비"],
+          "difficulty": "어려움",
+          "participants": 6,
+          "maxCompletions": 1,
+          "icon": "📡"
+        },
+        {
+          "id": "dark_site_winter",
+          "name": "다크사이트-설산",
+          "description": "설산 지역의 다크사이트",
+          "category": "daily",
+          "type": "coop_event",
+          "resetConfig": {
+            "type": "daily",
+            "resetHour": 0,
+            "resetMinute": 0
+          },
+          "rewards": ["설한 에너지", "빙결 장비"],
+          "difficulty": "어려움",
+          "participants": 6,
+          "maxCompletions": 1,
+          "icon": "🌨️"
+        }
+      ]
+    }
+  }
+}

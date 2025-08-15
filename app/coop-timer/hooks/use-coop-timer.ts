@@ -2,12 +2,12 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { CoopEvent, CoopProgress, EventStatus } from "@/types/coop-timer";
+import { CoopEvent, CoopProgress, EventStatus, ScenarioData, ScenarioType, EventGroup, EventType } from "@/types/coop-timer";
 import { ResetCalculator } from "../lib/timer-calculations";
 import { useTimerStorage, COOP_TIMER_STORAGE_KEY } from "./use-timer-storage";
 import { useTimerInterval } from "./use-timer-interval";
 import { useBroadcastSync } from "./use-broadcast-sync";
-import eventsData from "../data/coop-events.json";
+import scenarioData from "../data/scenario-events.json";
 
 /**
  * 폴링 주기 (ms) — 테스트용: 30_000 (30초).
@@ -19,13 +19,50 @@ type ExtendedEventStatus = EventStatus & {
   lastResetAt?: Date | null;
 };
 
-export function useCoopTimer() {
-  const [events] = useState<CoopEvent[]>(eventsData.events as CoopEvent[]);
+export function useCoopTimer(scenario?: ScenarioType) {
+  // 시나리오별 이벤트 로딩
+  const allEvents = useMemo(() => {
+    if (!scenario) return [];
+    
+    const data = scenarioData as ScenarioData;
+    const scenarioInfo = data.scenarios[scenario];
+    
+    if (!scenarioInfo) return [];
+    
+    return [...scenarioInfo.weeklyQuests, ...scenarioInfo.coopEvents];
+  }, [scenario]);
+
+  // events는 allEvents를 직접 사용
+  const events = allEvents;
+  
   const eventsById = useMemo(() => {
     const m = new Map<string, CoopEvent>();
     events.forEach((e) => m.set(e.id, e));
     return m;
   }, [events]);
+
+  // 이벤트 그룹핑 (주간퀘스트와 협동이벤트 분리)
+  const eventGroups = useMemo((): EventGroup[] => {
+    if (!scenario) return [];
+    
+    const data = scenarioData as ScenarioData;
+    const scenarioInfo = data.scenarios[scenario];
+    
+    if (!scenarioInfo) return [];
+    
+    return [
+      {
+        title: "주간 퀘스트",
+        type: EventType.WEEKLY_QUEST,
+        events: scenarioInfo.weeklyQuests
+      },
+      {
+        title: "협동 이벤트", 
+        type: EventType.COOP_EVENT,
+        events: scenarioInfo.coopEvents
+      }
+    ];
+  }, [scenario]);
 
   const [progress, setProgress] = useState<Record<string, CoopProgress>>({});
   const progressRef = useRef<Record<string, CoopProgress>>(progress);
@@ -104,7 +141,7 @@ export function useCoopTimer() {
     }
   });
 
-  // Storage events and beforeunload
+  // Storage events for cross-tab synchronization
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       if (!e.key || e.key === COOP_TIMER_STORAGE_KEY) {
@@ -113,20 +150,10 @@ export function useCoopTimer() {
     };
     window.addEventListener("storage", onStorage);
 
-    const onBeforeUnload = () => {
-      try {
-        saveProgress(progressRef.current);
-      } catch (error) {
-        console.warn("Failed to save progress on beforeunload:", error);
-      }
-    };
-    window.addEventListener("beforeunload", onBeforeUnload);
-
     return () => {
       window.removeEventListener("storage", onStorage);
-      window.removeEventListener("beforeunload", onBeforeUnload);
     };
-  }, [runResetCheck, saveProgress]);
+  }, [runResetCheck]);
 
   // complete event
   const completeEvent = useCallback((characterId: string, eventId: string) => {
@@ -284,6 +311,7 @@ export function useCoopTimer() {
 
   return {
     events,
+    eventGroups,
     progress,
     selectedCharacters,
     eventsByCategory,

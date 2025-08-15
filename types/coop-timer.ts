@@ -19,13 +19,27 @@ export enum WeekDay {
   SATURDAY = 6
 }
 
-// 이벤트 카테고리
+// 이벤트 타입
+export enum EventType {
+  WEEKLY_QUEST = "weekly_quest",
+  COOP_EVENT = "coop_event"
+}
+
+// 시나리오 타입
+export enum ScenarioType {
+  MANIBUS = "manibus",
+  WAY_OF_WINTER = "way-of-winter", 
+  ENDLESS_DREAM = "endless-dream"
+}
+
+// 이벤트 카테고리 (기존 유지하되 확장)
 export enum CoopEventCategory {
   MONOLITH = "monolith",
   PRISM_DEVIATION = "prism",
   TERRITORY_PURIFICATION = "territory",
   DAILY_MISSION = "daily",
-  WEEKLY_RAID = "weekly"
+  WEEKLY_RAID = "weekly",
+  TEST = "test"
 }
 
 // 리셋 설정
@@ -43,6 +57,7 @@ export interface CoopEvent {
   name: string;
   description: string;
   category: CoopEventCategory;
+  type: EventType;
   resetConfig: ResetConfig;
   rewards: string[];
   difficulty?: "쉬움" | "보통" | "어려움";
@@ -76,4 +91,23 @@ export interface CoopTimerStorage {
   version: string;
   progress: Record<string, CoopProgress>;
   lastUpdated: number;
+}
+
+// 시나리오 정보
+export interface Scenario {
+  name: string;
+  weeklyQuests: CoopEvent[];
+  coopEvents: CoopEvent[];
+}
+
+// 시나리오 데이터 구조
+export interface ScenarioData {
+  scenarios: Record<ScenarioType, Scenario>;
+}
+
+// 이벤트 그룹 (UI에서 사용)
+export interface EventGroup {
+  title: string;
+  type: EventType;
+  events: CoopEvent[];
 }
