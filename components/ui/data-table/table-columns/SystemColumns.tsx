@@ -18,13 +18,12 @@ import type { ActionItem } from "../shared/types";
 export function createSelectionColumn<TData>(): ColumnDef<TData> {
   return {
     id: "select",
-    size: 32,
     enableSorting: false,
     enableHiding: false,
     meta: {
       editable: false,
       priority: "system",
-      className: "w-[32px]",
+      className: "w-[36px]",
     },
     header: ({ table }) => (
       <div className="flex items-center justify-center">
@@ -39,7 +38,7 @@ export function createSelectionColumn<TData>(): ColumnDef<TData> {
       </div>
     ),
     cell: ({ row }) => (
-      <div className="flex items-center justify-center">
+      <div className="flex items-center  justify-center">
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
