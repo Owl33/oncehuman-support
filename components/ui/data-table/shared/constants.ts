@@ -12,12 +12,8 @@ export const BREAKPOINTS = {
   tablet: 1024,
 } as const;
 
-// Column priorities
-export const COLUMN_PRIORITIES = {
-  SYSTEM: "system",
-  PRIMARY: "primary", 
-  SECONDARY: "secondary",
-} as const;
+// Mobile column visibility
+
 
 // Cell renderer types
 export const CELL_RENDERER_TYPES = {
@@ -29,5 +25,4 @@ export const CELL_RENDERER_TYPES = {
 } as const;
 
 export type SystemColumnId = typeof SYSTEM_COLUMN_IDS[number];
-export type ColumnPriority = typeof COLUMN_PRIORITIES[keyof typeof COLUMN_PRIORITIES];
 export type CellRendererType = typeof CELL_RENDERER_TYPES[keyof typeof CELL_RENDERER_TYPES];

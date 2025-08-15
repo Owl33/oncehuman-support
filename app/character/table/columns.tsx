@@ -42,7 +42,7 @@ export const columns: ColumnDef<BaseCharacter>[] = [
       editable: true,
       editType: "select",
       editOptions: scenarioSelectList,
-      priority: "secondary", // 접었을 때 숨김
+      mobileVisibility: "visible",
       className: " ", // 모바일에서 최소 너비 보장
     },
   },
@@ -54,7 +54,6 @@ export const columns: ColumnDef<BaseCharacter>[] = [
       displayName: "서버",
       editable: true,
       editType: "text",
-      priority: "primary", // 중요한 정보이므로 항상 표시
       className: "min-w-[150px]", // 모바일에서 최소 너비 보장
     },
   },
@@ -63,9 +62,9 @@ export const columns: ColumnDef<BaseCharacter>[] = [
     header: "캐릭터명",
     enableResizing: false,
     meta: {
+      mobileVisibility: "visible",
       editable: true,
       displayName: "캐릭터명",
-      priority: "primary", // 가장 중요한 정보이므로 항상 표시
       className: "", // 가장 중요한 필드로 더 넓게
     },
   },
@@ -82,7 +81,6 @@ export const columns: ColumnDef<BaseCharacter>[] = [
       editable: true,
       editType: "select",
       editOptions: jobSelectList,
-      priority: "secondary", // 접었을 때 숨김
       className: " ", // 모바일에서 최소 너비 보장
     },
   },
@@ -94,7 +92,6 @@ export const columns: ColumnDef<BaseCharacter>[] = [
       displayName: "비고",
       editable: true,
       editType: "text",
-      priority: "secondary", // 접었을 때 숨김
       className: "", // 텍스트 입력을 위한 충분한 공간
     },
   },

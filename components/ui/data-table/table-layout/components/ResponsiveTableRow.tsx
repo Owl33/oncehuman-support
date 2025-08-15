@@ -76,10 +76,10 @@ export function ResponsiveTableRow<TData>({
 
   // 모든 모드 통합: 단일 구조로 처리
   const allColumns = table?.getAllColumns() || [];
-  const { primaryColumns, secondaryColumns, systemColumns } =
-    ColumnManager.categorizeByPriority(allColumns);
+  const { visibleColumns: mainVisibleColumns, hiddenColumns, systemColumns } =
+    ColumnManager.categorizeByMobileBehavior(allColumns);
 
-  const visibleColumns = [...systemColumns, ...primaryColumns];
+  const visibleColumns = [...systemColumns, ...mainVisibleColumns];
 
   // 표시할 컬럼들 결정
   const columnsToRender = isCollapseMode ? visibleColumns : 
@@ -136,7 +136,7 @@ export function ResponsiveTableRow<TData>({
 
   function renderExpandedContent() {
     // 모바일에서는 모든 컬럼을 보여주기 때문에 항상 콘텐츠가 있음
-    if (!isMobile && secondaryColumns.length === 0) return null;
+    if (!isMobile && hiddenColumns.length === 0) return null;
 
     const totalColumns = visibleColumns.length + (isCollapseMode && (isMobile || isTablet) ? 1 : 0);
 
@@ -156,7 +156,7 @@ export function ResponsiveTableRow<TData>({
               isExpanded ? "opacity-100 transform-none" : "opacity-0 -translate-y-2"
             )}>
             {/* 모바일에서는 모든 컬럼 데이터 표시 (visible + secondary, checkbox 제외) */}
-            {(isMobile ? [...visibleColumns, ...secondaryColumns] : secondaryColumns)
+            {(isMobile ? [...visibleColumns, ...hiddenColumns] : hiddenColumns)
               .filter((column: any) => column.id !== 'select') // checkbox 컬럼 제외
               .map((column: any) => {
               const cell = {

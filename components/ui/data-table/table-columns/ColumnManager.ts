@@ -1,11 +1,11 @@
 // components/ui/data-table/table-columns/ColumnManager.ts
-import { COLUMN_PRIORITIES, BREAKPOINTS } from "../shared/constants";
-import type { ColumnPriority, ColumnAnalysis } from "../shared/types";
+import {  BREAKPOINTS } from "../shared/constants";
+import type { MobileVisibility, ColumnAnalysis } from "../shared/types";
 import { isSystemColumn, analyzeColumns } from "../shared/helpers";
 
-export interface ColumnPriorityConfig {
+export interface MobileColumnConfig {
   id: string;
-  priority: ColumnPriority;
+  mobileVisibility: MobileVisibility;
   mobileOrder?: number;
   collapsedWidth?: string;
 }
@@ -16,8 +16,8 @@ export interface ResponsiveColumnConfig {
 }
 
 export interface ColumnCategories {
-  primaryColumns: any[];
-  secondaryColumns: any[];
+  visibleColumns: any[];
+  hiddenColumns: any[];
   systemColumns: any[];
   hasCollapsibleContent: boolean;
 }
@@ -28,30 +28,42 @@ export interface ColumnCategories {
 export class ColumnManager {
   
   /**
-   * 컬럼을 우선순위별로 분류
+   * 컬럼을 모바일 동작별로 분류
    */
-  static categorizeByPriority(columns: any[]): ColumnCategories {
-    const primaryColumns: any[] = [];
-    const secondaryColumns: any[] = [];
+  static categorizeByMobileBehavior(columns: any[]): ColumnCategories {
+    const visibleColumns: any[] = [];
+    const hiddenColumns: any[] = [];
     const systemColumns: any[] = [];
 
-    columns.forEach(column => {
-      const priority = column.columnDef?.meta?.priority || COLUMN_PRIORITIES.SECONDARY;
+    // 먼저 시스템 컬럼과 일반 컬럼을 분리
+    const normalColumns = columns.filter(column => !isSystemColumn(column.id));
+    const systemCols = columns.filter(column => isSystemColumn(column.id));
+
+    // 일반 컬럼들에 대해서만 인덱스 기반 자동 판단
+    normalColumns.forEach((column, index) => {
+      // meta.mobileVisibility가 명시적으로 설정되어 있으면 그것을 사용
+      let visibility = column.columnDef?.meta?.mobileVisibility;
       
-      if (isSystemColumn(column.id)) {
-        systemColumns.push(column);
-      } else if (priority === COLUMN_PRIORITIES.PRIMARY) {
-        primaryColumns.push(column);
+      // 설정되지 않았으면 자동 판단 (시스템 컬럼 제외한 인덱스 사용)
+      if (!visibility) {
+        const shouldBeVisible = this.shouldColumnBeVisibleOnMobile(column, index);
+        visibility = shouldBeVisible ? "visible" : "hidden";
+      }
+      
+      if (visibility === "visible") {
+        visibleColumns.push(column);
       } else {
-        secondaryColumns.push(column);
+        hiddenColumns.push(column);
       }
     });
 
+    systemColumns.push(...systemCols);
+
     return {
-      primaryColumns,
-      secondaryColumns,
+      visibleColumns,
+      hiddenColumns,
       systemColumns,
-      hasCollapsibleContent: secondaryColumns.length > 0
+      hasCollapsibleContent: hiddenColumns.length > 0
     };
   }
 
@@ -72,19 +84,19 @@ export class ColumnManager {
     allColumns: any[],
     isCollapseMode: boolean
   ): ResponsiveColumnConfig {
-    const { primaryColumns, secondaryColumns, systemColumns } = 
-      this.categorizeByPriority(allColumns);
+    const { visibleColumns, hiddenColumns, systemColumns } = 
+      this.categorizeByMobileBehavior(allColumns);
 
     if (!isCollapseMode) {
       return {
-        visibleColumns: [...systemColumns, ...primaryColumns, ...secondaryColumns],
+        visibleColumns: [...systemColumns, ...visibleColumns, ...hiddenColumns],
         hiddenColumns: []
       };
     }
 
     return {
-      visibleColumns: [...systemColumns, ...primaryColumns],
-      hiddenColumns: secondaryColumns
+      visibleColumns: [...systemColumns, ...visibleColumns],
+      hiddenColumns: hiddenColumns
     };
   }
 
@@ -137,18 +149,23 @@ export class ColumnManager {
     });
   }
 
+  
   /**
-   * 기본 우선순위 설정들
+   * 컬럼이 모바일에서 보여져야 하는지 자동 판단 (순수한 메타데이터 기반)
    */
-  static getDefaultPriorityConfigs() {
-    return {
-      character: [
-        { id: 'name', priority: COLUMN_PRIORITIES.PRIMARY, mobileOrder: 1 },
-        { id: 'server', priority: COLUMN_PRIORITIES.PRIMARY, mobileOrder: 2 },
-        { id: 'scenario', priority: COLUMN_PRIORITIES.SECONDARY },
-        { id: 'job', priority: COLUMN_PRIORITIES.SECONDARY },
-        { id: 'desc', priority: COLUMN_PRIORITIES.SECONDARY },
-      ]
-    };
+  private static shouldColumnBeVisibleOnMobile(column: any, index: number): boolean {
+    const meta = column.columnDef?.meta;
+    
+    // 1. 명시적 mobileVisibility 설정이 있으면 그것을 사용
+    if (meta?.mobileVisibility === "visible") {
+      return true;
+    }
+    if (meta?.mobileVisibility === "hidden") {
+      return false;
+    }
+    
+    // 기본값: hidden (개발자가 mobileVisibility를 명시적으로 설정해야 함)
+    // 라이브러리의 일관성을 위해 자동 추론 로직을 제거하고 명시적 설정을 권장
+    return false;
   }
 }

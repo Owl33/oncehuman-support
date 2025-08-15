@@ -38,7 +38,7 @@ export const DataTableMain = () => {
 
   // Analyze columns for collapse mode
   const allColumns = table.getAllColumns() || [];
-  const { hasCollapsibleContent } = ColumnManager.categorizeByPriority(allColumns);
+  const { hasCollapsibleContent } = ColumnManager.categorizeByMobileBehavior(allColumns);
   const isCollapseMode = ColumnManager.shouldUseCollapseMode(screenWidth, hasCollapsibleContent);
 
   // Get responsive column configuration
@@ -88,7 +88,6 @@ export const DataTableMain = () => {
             })
             .map((header) => {
               const meta = header.column.columnDef.meta;
-              console.log(meta);
               return (
                 <th
                   key={header.id}

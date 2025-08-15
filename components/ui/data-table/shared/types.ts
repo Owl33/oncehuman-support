@@ -4,7 +4,10 @@ import { ReactNode } from "react";
 import type { CellRendererType } from "./constants";
 
 // Re-export for convenience
-export type { ColumnPriority, CellRendererType } from "./constants";
+export type { CellRendererType } from "./constants";
+
+// Mobile visibility type
+export type MobileVisibility = "visible" | "hidden";
 
 // TanStack Table 확장
 declare module "@tanstack/react-table" {
@@ -25,8 +28,11 @@ declare module "@tanstack/react-table" {
     minWidth?: string;
     maxWidth?: string;
     
-    // 반응형 우선순위
-    priority?: import("./constants").ColumnPriority;
+    // 모바일 가시성 설정
+    mobileVisibility?: MobileVisibility;
+    
+    // 시스템 컬럼 우선순위 (시스템 컬럼용)
+    priority?: "system";
   }
 }
 
