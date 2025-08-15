@@ -27,12 +27,12 @@ export function CategoryTabs({ selectedCategory, onSelectCategory }: CategoryTab
     <Tabs
       value={selectedCategory}
       onValueChange={(value) => onSelectCategory(value as ItemCategory)}>
-      <TabsList className="flex h-11 w-full overflow-x-auto">
+      <TabsList className="flex h-11 w-full overflow-x-auto scrollbar-none">
         {categories.map((category) => (
           <TabsTrigger
             key={category}
             value={category}
-            className="cursor-pointer flex-shrink-0 min-w-fit"
+            className="cursor-pointer flex-shrink-0 min-w-fit px-2 sm:px-3"
             title={CATEGORY_LABELS[category]}>
             {CATEGORY_ICONS[category]}
             <span className="hidden sm:inline ml-2">{CATEGORY_LABELS[category]}</span>

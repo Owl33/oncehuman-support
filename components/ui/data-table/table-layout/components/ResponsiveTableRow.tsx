@@ -105,6 +105,7 @@ export function ResponsiveTableRow<TData>({
           cell={cell}
           row={row}
           table={table}
+          forceReadonly={true} // 메인 row는 항상 readonly
         />
       );
     });
@@ -134,7 +135,8 @@ export function ResponsiveTableRow<TData>({
 
 
   function renderExpandedContent() {
-    if (secondaryColumns.length === 0) return null;
+    // 모바일에서는 모든 컬럼을 보여주기 때문에 항상 콘텐츠가 있음
+    if (!isMobile && secondaryColumns.length === 0) return null;
 
     const totalColumns = visibleColumns.length + (isCollapseMode && (isMobile || isTablet) ? 1 : 0);
 
@@ -153,8 +155,10 @@ export function ResponsiveTableRow<TData>({
               "space-y-3 transition-all duration-300 ease-in-out",
               isExpanded ? "opacity-100 transform-none" : "opacity-0 -translate-y-2"
             )}>
-            {/* 보조 컬럼들 */}
-            {secondaryColumns.map((column: any) => {
+            {/* 모바일에서는 모든 컬럼 데이터 표시 (visible + secondary, checkbox 제외) */}
+            {(isMobile ? [...visibleColumns, ...secondaryColumns] : secondaryColumns)
+              .filter((column: any) => column.id !== 'select') // checkbox 컬럼 제외
+              .map((column: any) => {
               const cell = {
                 id: column.id,
                 column,
@@ -184,18 +188,24 @@ export function ResponsiveTableRow<TData>({
               );
             })}
 
-            {/* 모바일 액션 버튼들 */}
+            {/* 모바일/태블릿 액션 버튼들 */}
             {!isNewRow && (isMobile || isTablet) && (
               <div className="flex flex-col gap-2 mt-4 pt-3 border-t w-full">
                 {isEditing ? (
-                  <div className="flex gap-2 w-full">
+                  <div className={cn(
+                    "gap-2 w-full",
+                    isTablet ? "flex" : "flex flex-col"
+                  )}>
                     <Button
                       size="sm"
                       onClick={() => {
                         const result = saveChanges();
                         onSave?.(result);
                       }}
-                      className="flex-1 gap-1.5 h-10 bg-primary hover:bg-primary/90 text-primary-foreground touch-manipulation">
+                      className={cn(
+                        "gap-1.5 h-10 bg-primary hover:bg-primary/90 text-primary-foreground touch-manipulation",
+                        isTablet ? "flex-1" : "w-full"
+                      )}>
                       <Check className="h-4 w-4" />
                       완료
                     </Button>
@@ -203,18 +213,27 @@ export function ResponsiveTableRow<TData>({
                       size="sm"
                       variant="outline"
                       onClick={cancelEdit}
-                      className="flex-1 gap-1.5 h-10 touch-manipulation">
+                      className={cn(
+                        "gap-1.5 h-10 touch-manipulation",
+                        isTablet ? "flex-1" : "w-full"
+                      )}>
                       <X className="h-4 w-4" />
                       취소
                     </Button>
                   </div>
                 ) : (
-                  <div className="flex gap-2 w-full">
+                  <div className={cn(
+                    "gap-2 w-full",
+                    isTablet ? "flex" : "flex flex-col"
+                  )}>
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => startEditRow(row.id)}
-                      className="flex-1 gap-1.5 h-10 touch-manipulation">
+                      className={cn(
+                        "gap-1.5 h-10 touch-manipulation",
+                        isTablet ? "flex-1" : "w-full"
+                      )}>
                       <Edit2 className="h-4 w-4" />
                       수정
                     </Button>
@@ -226,7 +245,10 @@ export function ResponsiveTableRow<TData>({
                           onDelete([row.original]);
                         }
                       }}
-                      className="flex-1 gap-1.5 h-10 text-destructive hover:bg-destructive/10 hover:text-destructive touch-manipulation">
+                      className={cn(
+                        "gap-1.5 h-10 text-destructive hover:bg-destructive/10 hover:text-destructive touch-manipulation",
+                        isTablet ? "flex-1" : "w-full"
+                      )}>
                       <Trash2 className="h-4 w-4" />
                       삭제
                     </Button>

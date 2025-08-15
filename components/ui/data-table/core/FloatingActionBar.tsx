@@ -51,11 +51,11 @@ export function FloatingActionBar() {
 
   // 스타일 클래스 최적화
   const containerClasses = cn(
-    "absolute z-50 pointer-events-auto",
-    // 모바일에서는 하단 고정, 데스크톱에서는 기존 위치
+    "z-50 pointer-events-auto",
+    // 모바일에서는 하단 고정, 데스크톱에서는 상단 여백과 함께 배치
     isMobile || isTablet
       ? "fixed bottom-4 left-1/2 transform -translate-x-1/2"
-      : "-top-12 left-1/2 transform -translate-x-1/2"
+      : "relative mb-4 flex justify-center"
   );
 
   const barClasses = cn(

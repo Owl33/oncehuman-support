@@ -180,7 +180,7 @@ export function MaterialCalculator({
       <div className="space-y-4 pb-4">
         {/* Points Display with Action Buttons */}
         <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-lg p-4">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-primary/10 rounded-lg">
                 <TrendingUp className="h-4 w-4 text-primary" />
@@ -196,13 +196,13 @@ export function MaterialCalculator({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-2">
+            <div className="flex justify-end">
               {hasAnyOwned && onResetClick && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={onResetClick}
-                  className=" text-xs hover:bg-destructive/10 hover:text-destructive">
+                  className="text-xs hover:bg-destructive/10 hover:text-destructive whitespace-nowrap">
                   <RotateCcw className="w-3 h-3 mr-1" />
                   보유 재료 초기화
                 </Button>
@@ -217,8 +217,8 @@ export function MaterialCalculator({
           />
         </div>
 
-        {/* Column Headers */}
-        <div className="grid grid-cols-12 gap-2 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        {/* Column Headers - Hidden on mobile */}
+        <div className="hidden sm:grid grid-cols-12 gap-2 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
           <div className="col-span-4">재료</div>
           <div className="col-span-2 text-center">필요</div>
           <div className="col-span-2 text-center">보유</div>
@@ -245,90 +245,184 @@ export function MaterialCalculator({
                   "group relative rounded-lg transition-all duration-200",
                   "hover:bg-muted/50"
                 )}>
-                <div className="px-4 py-3">
-                  {/* Main Content */}
-                  <div className="grid grid-cols-12 gap-2 items-center">
-                    <div className="col-span-4 flex items-center">
-                      <div className="mr-3">
+                <div className="px-3 sm:px-4 py-3">
+                  {/* Main Content - Responsive Layout */}
+                  <div className="sm:grid sm:grid-cols-12 gap-2 items-center">
+                    {/* Mobile Layout */}
+                    <div className="sm:hidden space-y-3">
+                      {/* Material Name & Status */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="mr-3">
+                            {!isComplete ? (
+                              <CircleX className="h-4 w-4 text-destructive" />
+                            ) : (
+                              <CircleCheck className="h-4 w-4 text-green-600 dark:text-green-400" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-sm">{material.name}</p>
+                            {actualOwned < material.required && (
+                              <p className="text-xs text-muted-foreground">
+                                {material.required - actualOwned}개 부족
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {currentPoints > 0 ? (
+                            <Badge
+                              variant="outline"
+                              className="font-mono text-xs border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-700 dark:bg-orange-950 dark:text-orange-300">
+                              {Math.round(currentPoints).toLocaleString()}P
+                            </Badge>
+                          ) : (
+                            <Badge
+                              variant="outline"
+                              className="font-mono text-xs border-green-200 bg-green-50 text-green-700 dark:border-green-700 dark:bg-green-950 dark:text-green-300">
+                              완료
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Quantity Controls */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm text-muted-foreground">
+                            필요: {material.required}
+                          </span>
+                          <span className="text-sm text-muted-foreground">보유:</span>
+                          <Input
+                            value={inputValue}
+                            onChange={(e) => handleInputChange(material.id, e.target.value)}
+                            onFocus={() => handleFocus(material.id)}
+                            onBlur={() => handleBlur(material.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.currentTarget.blur();
+                              }
+                            }}
+                            className={cn(
+                              "w-16 text-center font-mono text-sm",
+                              focusedInput === material.id && "ring-2 ring-primary"
+                            )}
+                            min="0"
+                            max={material.required}
+                            type="number"
+                          />
+                        </div>
+
                         {!isComplete ? (
-                          <CircleX className="h-4 w-4 text-destructive" />
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleFillAll(material.id)}
+                            className="text-green-600 dark:text-green-400"
+                            title="필요 수량만큼 채우기">
+                            <CircleCheckBig className="h-4 w-4 mr-1" />
+                            채우기
+                          </Button>
                         ) : (
-                          <CircleCheck className="h-4 w-4 text-green-600 dark:text-green-400" />
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEmptyAll(material.id)}
+                            className="text-destructive"
+                            title="보유 수량 초기화">
+                            <CircleMinus className="h-4 w-4 mr-1" />
+                            초기화
+                          </Button>
                         )}
                       </div>
-                      <div className="min-w-0">
-                        <p className="font-semibold ">{material.name}</p>
-                        {actualOwned < material.required && (
-                          <p className=" text-muted-foreground">
-                            {material.required - actualOwned}개 부족
-                          </p>
-                        )}
+                    </div>
+
+                    {/* Desktop Layout */}
+                    <div className="hidden sm:contents">
+                      <div className="col-span-4 flex items-center">
+                        <div className="mr-3">
+                          {!isComplete ? (
+                            <CircleX className="h-4 w-4 text-destructive" />
+                          ) : (
+                            <CircleCheck className="h-4 w-4 text-green-600 dark:text-green-400" />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-semibold ">{material.name}</p>
+                          {actualOwned < material.required && (
+                            <p className=" text-muted-foreground">
+                              {material.required - actualOwned}개 부족
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="col-span-2 text-center">
-                      <span className="font-mono  text-muted-foreground">{material.required}</span>
-                    </div>
+                      <div className="col-span-2 text-center">
+                        <span className="font-mono  text-muted-foreground">
+                          {material.required}
+                        </span>
+                      </div>
 
-                    <div className="col-span-2 flex items-center justify-center gap-1">
-                      <Input
-                        value={inputValue}
-                        onChange={(e) => handleInputChange(material.id, e.target.value)}
-                        onFocus={() => handleFocus(material.id)}
-                        onBlur={() => handleBlur(material.id)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.currentTarget.blur();
-                          }
-                        }}
-                        className={cn(
-                          "w-full text-center font-mono  transition-colors",
-                          focusedInput === material.id && "ring-2 ring-primary"
-                        )}
-                        min="0"
-                        max={material.required}
-                        type="number"
-                      />
-                    </div>
-
-                    <div className="col-span-2 text-center">
-                      {currentPoints > 0 ? (
-                        <Badge
-                          variant="outline"
+                      <div className="col-span-2 flex items-center justify-center gap-1">
+                        <Input
+                          value={inputValue}
+                          onChange={(e) => handleInputChange(material.id, e.target.value)}
+                          onFocus={() => handleFocus(material.id)}
+                          onBlur={() => handleBlur(material.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.currentTarget.blur();
+                            }
+                          }}
                           className={cn(
-                            "font-mono text-xs border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-700 dark:bg-orange-950 dark:text-orange-300 min-w-[60px] justify-center"
-                          )}>
-                          {Math.round(currentPoints).toLocaleString()}P
-                        </Badge>
-                      ) : (
-                        <Badge
-                          variant="outline"
-                          className="font-mono text-xs border-green-200 bg-green-50 text-green-700 dark:border-green-700 dark:bg-green-950 dark:text-green-300 min-w-[60px] justify-center">
-                          완료
-                        </Badge>
-                      )}
-                    </div>
+                            "w-full text-center font-mono  transition-colors",
+                            focusedInput === material.id && "ring-2 ring-primary"
+                          )}
+                          min="0"
+                          max={material.required}
+                          type="number"
+                        />
+                      </div>
 
-                    <div className="col-span-2 text-center">
-                      {!isComplete ? (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => handleFillAll(material.id)}
-                          title="필요 수량만큼 채우기">
-                          <CircleCheckBig className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => handleEmptyAll(material.id)}
-                          title="보유 수량 초기화">
-                          <CircleMinus className="h-3.5 w-3.5 text-destructive" />
-                        </Button>
-                      )}
+                      <div className="col-span-2 text-center">
+                        {currentPoints > 0 ? (
+                          <Badge
+                            variant="outline"
+                            className={cn(
+                              "font-mono text-xs border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-700 dark:bg-orange-950 dark:text-orange-300 min-w-[60px] justify-center"
+                            )}>
+                            {Math.round(currentPoints).toLocaleString()}P
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant="outline"
+                            className="font-mono text-xs border-green-200 bg-green-50 text-green-700 dark:border-green-700 dark:bg-green-950 dark:text-green-300 min-w-[60px] justify-center">
+                            완료
+                          </Badge>
+                        )}
+                      </div>
+
+                      <div className="col-span-2 text-center">
+                        {!isComplete ? (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleFillAll(material.id)}
+                            title="필요 수량만큼 채우기">
+                            <CircleCheckBig className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleEmptyAll(material.id)}
+                            title="보유 수량 초기화">
+                            <CircleMinus className="h-3.5 w-3.5 text-destructive" />
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
 

@@ -86,7 +86,7 @@ export function MaterialCalculationSection({ currentCharacter }: MaterialCalcula
   };
 
   return (
-    <div className="sticky top-6">
+    <div className="lg:sticky lg:top-6">
       <h2 className="text-lg font-semibold mb-4">재료 계산</h2>
 
       <MaterialCalculator

@@ -16,15 +16,15 @@ export function DetailLayout({ currentCharacter }: DetailLayoutProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6">
       {/* 왼쪽: 캐릭터 선택 및 아이템 선택 */}
-      <div className="lg:col-span-2 space-y-6">
+      <div className="lg:col-span-2 space-y-6 order-1">
         <CharacterSelectorSection />
         <ItemSelectionSection currentCharacter={currentCharacter} />
       </div>
 
-      {/* 오른쪽: 재료 계산 */}
-      <div className="lg:col-span-1">
+      {/* 오른쪽: 재료 계산 (모바일에서는 위로) */}
+      <div className="lg:col-span-1 order-0 lg:order-1">
         <MaterialCalculationSection currentCharacter={currentCharacter} />
       </div>
     </div>

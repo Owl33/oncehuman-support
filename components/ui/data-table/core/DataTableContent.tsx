@@ -37,13 +37,15 @@ export function DataTableContent<TData, TValue>({
   }, [cancelEdit]);
 
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn("w-full max-w-full overflow-hidden", className)}>
       <DataTableHeader customHeaderContent={customHeaderContent} />
 
       {/* FloatingActionBar positioned above table */}
-      <div className="relative">
+      <div className="relative overflow-x-auto max-w-full">
         <FloatingActionBar />
-        <DataTableMain />
+        <div className="w-full max-w-full overflow-hidden">
+          <DataTableMain />
+        </div>
       </div>
 
       {showPagination && (

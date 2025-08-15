@@ -26,6 +26,7 @@ interface DataTableCellProps<TData> {
   row: any;
   table: any;
   layout?: 'default' | 'minimal';
+  forceReadonly?: boolean;
 }
 
 /**
@@ -65,12 +66,8 @@ const cellRenderers = {
     }
 
     return (
-      <div className={cn(
-        "px-3 py-1 h-9 flex items-center w-full text-base truncate",
-        // 모바일에서는 더 큰 너비 허용
-        isMobile ? "max-w-[280px]" : "max-w-[200px]"
-      )}>
-        <span className="truncate">
+      <div className="px-3 py-1 h-9 flex items-center text-base overflow-hidden" style={{ width: '100%', maxWidth: '100%' }}>
+        <span className="truncate overflow-hidden text-ellipsis whitespace-nowrap" style={{ width: '100%', maxWidth: '100%' }}>
           {content || <span className="text-muted-foreground">-</span>}
         </span>
       </div>
@@ -148,7 +145,7 @@ const cellRenderers = {
 /**
  * 통합 데이터 테이블 셀 컴포넌트
  */
-export function DataTableCell<TData>({ cell, row, table, layout = 'default' }: DataTableCellProps<TData>) {
+export function DataTableCell<TData>({ cell, row, table, layout = 'default', forceReadonly = false }: DataTableCellProps<TData>) {
   const { isRowEditing, editState, updateCell } = useDataTableContext<TData>();
   const { isMobile } = useMobileDetection();
 
@@ -157,7 +154,7 @@ export function DataTableCell<TData>({ cell, row, table, layout = 'default' }: D
   const meta = column.columnDef.meta;
   const isSystemColumn = SYSTEM_COLUMN_IDS.includes(column.id as any);
   const isEditing = isRowEditing(row.id);
-  const canEdit = isEditing && meta?.editable && !isSystemColumn;
+  const canEdit = !forceReadonly && isEditing && meta?.editable && !isSystemColumn;
 
   // 현재 편집 값 가져오기
   const currentValue = canEdit ? editState.editingData[row.id]?.[column.id] ?? value : value;

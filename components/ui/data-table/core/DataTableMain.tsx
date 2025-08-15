@@ -157,12 +157,13 @@ export const DataTableMain = () => {
   return (
     <Table
       className={cn(
-        "w-full rounded-md border bg-background",
+        "w-full rounded-md border bg-background table-fixed",
         isCollapseMode ? "overflow-x-hidden" : "overflow-auto"
       )}
       style={{
-        tableLayout: isCollapseMode ? "auto" : "fixed",
+        tableLayout: "fixed",
         width: "100%",
+        maxWidth: "100vw",
       }}>
       {renderTableHeader()}
       {renderTableBody()}
