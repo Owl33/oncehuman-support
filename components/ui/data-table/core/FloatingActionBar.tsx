@@ -51,11 +51,11 @@ export function FloatingActionBar() {
 
   // 스타일 클래스 최적화
   const containerClasses = cn(
-    "z-50 pointer-events-auto",
+    "z-50 pointer-events-auto fixed",
     // 모바일에서는 하단 고정, 데스크톱에서는 상단 여백과 함께 배치
     isMobile || isTablet
-      ? "fixed bottom-4 left-1/2 transform -translate-x-1/2"
-      : "relative mb-4 flex justify-center"
+      ? " bottom-4 left-1/2 transform -translate-x-1/2"
+      : " mb-4 flex justify-center top-[11vh]"
   );
 
   const barClasses = cn(
@@ -73,7 +73,7 @@ export function FloatingActionBar() {
         {isInEditMode ? (
           // Edit mode
           <>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className=" flex items-center gap-2 text-sm text-muted-foreground">
               {hasErrors && <AlertCircle className="h-4 w-4 text-destructive" />}
               편집 모드
               {editState.editMode === "add" && (
@@ -109,7 +109,7 @@ export function FloatingActionBar() {
               onClick={handleClearSelection}>
               <span>
                 {selectedCount}개 선택됨
-                {selectedCount > 1 && <span className="text-xs ml-1">(편집은 1개씩만 가능)</span>}
+                {/* {selectedCount > 1 && <span className="text-xs ml-1">(편집은 1개씩만 가능)</span>} */}
               </span>
               <X className="h-3 w-3" />
             </Badge>

@@ -92,7 +92,7 @@ export const DataTableMain = () => {
                 <th
                   key={header.id}
                   className={cn(
-                    "h-12 px-3  align-middle font-medium text-muted-foreground",
+                    "h-12 px-3 align-middle font-medium text-muted-foreground",
                     meta?.className
                   )}
                   style={{
@@ -103,8 +103,8 @@ export const DataTableMain = () => {
                   {header.isPlaceholder ? null : (
                     <div
                       className={cn(
-                        meta?.priority == "system" ? "justify-center" : "justify-start",
-                        "flex items-center space-x-2"
+                        meta?.priority == "system" ? "justify-center " : "justify-start px-3",
+                        "flex items-center space-x-2 "
                       )}>
                       {flexRender(header.column.columnDef.header, header.getContext())}
                     </div>

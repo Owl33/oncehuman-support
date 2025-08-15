@@ -13,7 +13,12 @@ import {
   SelectValue,
 } from "@/components/base/select";
 import { TableCell } from "@/components/base/table";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/base/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/base/tooltip";
 import { useDataTableContext } from "../../table-state";
 import { useMobileDetection } from "../../table-features/responsive";
 import { SYSTEM_COLUMN_IDS, CELL_RENDERER_TYPES } from "../../shared/constants";
@@ -25,7 +30,7 @@ interface DataTableCellProps<TData> {
   cell: any;
   row: any;
   table: any;
-  layout?: 'default' | 'minimal';
+  layout?: "default" | "minimal";
   forceReadonly?: boolean;
 }
 
@@ -51,7 +56,7 @@ const cellRenderers = {
   // Read-only cell renderer with Input-matching styles
   readonly: ({ column, row, value, table, isMobile }: any) => {
     let content: ReactNode;
-    
+
     if (column?.columnDef.cell) {
       content = flexRender(column.columnDef.cell, {
         row,
@@ -66,8 +71,12 @@ const cellRenderers = {
     }
 
     return (
-      <div className="px-3 py-1 h-9 flex items-center text-base overflow-hidden" style={{ width: '100%', maxWidth: '100%' }}>
-        <span className="truncate overflow-hidden text-ellipsis whitespace-nowrap" style={{ width: '100%', maxWidth: '100%' }}>
+      <div
+        className="px-3  py-1 h-9 flex items-center text-base overflow-hidden"
+        style={{ width: "100%", maxWidth: "100%" }}>
+        <span
+          className="truncate overflow-hidden text-sm text-ellipsis whitespace-nowrap"
+          style={{ width: "100%", maxWidth: "100%" }}>
           {content || <span className="text-muted-foreground">-</span>}
         </span>
       </div>
@@ -112,7 +121,9 @@ const cellRenderers = {
   select: ({ value, placeholder, onChange, meta }: any) => {
     if (!meta?.editOptions?.length) {
       return (
-        <Badge variant="destructive" className="text-xs">
+        <Badge
+          variant="destructive"
+          className="text-xs">
           No options
         </Badge>
       );
@@ -121,7 +132,9 @@ const cellRenderers = {
     const selected = meta.editOptions.find((opt: any) => opt.value === value);
 
     return (
-      <Select value={value || ""} onValueChange={onChange}>
+      <Select
+        value={value || ""}
+        onValueChange={onChange}>
         <SelectTrigger className="h-9 touch-manipulation">
           <SelectValue placeholder={`${placeholder} 선택`}>
             {selected?.label && <span>{selected.label}</span>}
@@ -145,10 +158,16 @@ const cellRenderers = {
 /**
  * 통합 데이터 테이블 셀 컴포넌트
  */
-export function DataTableCell<TData>({ cell, row, table, layout = 'default', forceReadonly = false }: DataTableCellProps<TData>) {
+export function DataTableCell<TData>({
+  cell,
+  row,
+  table,
+  layout = "default",
+  forceReadonly = false,
+}: DataTableCellProps<TData>) {
   const { isRowEditing, editState, updateCell } = useDataTableContext<TData>();
-  const { isMobile } = useMobileDetection();
-
+  const { isMobile, isTablet } = useMobileDetection();
+  // const { isTablet } = useTabletDe();
   const column = cell.column;
   const value = cell.getValue();
   const meta = column.columnDef.meta;
@@ -164,7 +183,9 @@ export function DataTableCell<TData>({ cell, row, table, layout = 'default', for
     if (!canEdit) return false;
     const firstCol = table
       .getAllColumns()
-      .find((col: any) => col.columnDef.meta?.editable && !SYSTEM_COLUMN_IDS.includes(col.id as any));
+      .find(
+        (col: any) => col.columnDef.meta?.editable && !SYSTEM_COLUMN_IDS.includes(col.id as any)
+      );
     return firstCol?.id === column.id;
   }, [canEdit, column.id, table]);
 
@@ -178,11 +199,11 @@ export function DataTableCell<TData>({ cell, row, table, layout = 'default', for
 
   // 렌더러 타입 결정
   const rendererType = React.useMemo(() => {
-    if (isSystemColumn) return 'system';
+    if (isSystemColumn) return "system";
     if (canEdit) {
       return (meta?.editType || CELL_RENDERER_TYPES.TEXT) as CellRendererType;
     }
-    return 'readonly';
+    return "readonly";
   }, [isSystemColumn, canEdit, meta?.editType]);
 
   // 렌더러 속성 준비
@@ -201,10 +222,22 @@ export function DataTableCell<TData>({ cell, row, table, layout = 'default', for
     }
 
     return baseProps;
-  }, [canEdit, column, row, value, table, isMobile, currentValue, meta, isFirstEditColumn, handleChange]);
+  }, [
+    canEdit,
+    column,
+    row,
+    value,
+    table,
+    isMobile,
+    currentValue,
+    meta,
+    isFirstEditColumn,
+    handleChange,
+  ]);
 
   // 셀 콘텐츠 렌더링
-  const renderer = cellRenderers[rendererType as keyof typeof cellRenderers] || cellRenderers.readonly;
+  const renderer =
+    cellRenderers[rendererType as keyof typeof cellRenderers] || cellRenderers.readonly;
   const content = renderer(rendererProps);
 
   // 툴팁 텍스트 추출
@@ -218,7 +251,9 @@ export function DataTableCell<TData>({ cell, row, table, layout = 'default', for
         <TooltipTrigger asChild>
           <div className="truncate w-full">{content}</div>
         </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-xs">
+        <TooltipContent
+          side="top"
+          className="max-w-xs">
           <p className="text-sm whitespace-pre-wrap">{tooltipText}</p>
         </TooltipContent>
       </Tooltip>
@@ -235,7 +270,7 @@ export function DataTableCell<TData>({ cell, row, table, layout = 'default', for
   );
 
   // layout이 minimal이면 TableCell wrapper 없이 컨텐츠만 반환
-  if (layout === 'minimal') {
+  if (layout === "minimal") {
     return cellWithTooltip;
   }
 
@@ -247,8 +282,7 @@ export function DataTableCell<TData>({ cell, row, table, layout = 'default', for
         width: meta?.width,
         minWidth: meta?.minWidth,
         maxWidth: meta?.maxWidth,
-      }}
-    >
+      }}>
       {cellWithTooltip}
     </TableCell>
   );

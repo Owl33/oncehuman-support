@@ -76,14 +76,18 @@ export function ResponsiveTableRow<TData>({
 
   // 모든 모드 통합: 단일 구조로 처리
   const allColumns = table?.getAllColumns() || [];
-  const { visibleColumns: mainVisibleColumns, hiddenColumns, systemColumns } =
-    ColumnManager.categorizeByMobileBehavior(allColumns);
+  const {
+    visibleColumns: mainVisibleColumns,
+    hiddenColumns,
+    systemColumns,
+  } = ColumnManager.categorizeByMobileBehavior(allColumns);
 
   const visibleColumns = [...systemColumns, ...mainVisibleColumns];
 
   // 표시할 컬럼들 결정
-  const columnsToRender = isCollapseMode ? visibleColumns : 
-    table.getAllColumns().filter((column: any) => column.getIsVisible());
+  const columnsToRender = isCollapseMode
+    ? visibleColumns
+    : table.getAllColumns().filter((column: any) => column.getIsVisible());
 
   // 셀들 렌더링
   const renderCells = () => {
@@ -105,7 +109,7 @@ export function ResponsiveTableRow<TData>({
           cell={cell}
           row={row}
           table={table}
-          forceReadonly={true} // 메인 row는 항상 readonly
+          forceReadonly={isMobile || isTablet ? true : false} // 메인 row는 항상 readonly
         />
       );
     });
@@ -113,7 +117,9 @@ export function ResponsiveTableRow<TData>({
     // 콜랩스 모드일 때 확장 버튼 추가
     if (isCollapseMode && (isMobile || isTablet)) {
       const expandCell = (
-        <TableCell key="expand" className="w-[60px] px-3 py-2">
+        <TableCell
+          key="expand"
+          className="w-[60px] px-3 py-2">
           <div className="flex items-center justify-center">
             <Button
               variant="ghost"
@@ -132,7 +138,6 @@ export function ResponsiveTableRow<TData>({
 
     return cells;
   };
-
 
   function renderExpandedContent() {
     // 모바일에서는 모든 컬럼을 보여주기 때문에 항상 콘텐츠가 있음
@@ -157,45 +162,44 @@ export function ResponsiveTableRow<TData>({
             )}>
             {/* 모바일에서는 모든 컬럼 데이터 표시 (visible + secondary, checkbox 제외) */}
             {(isMobile ? [...visibleColumns, ...hiddenColumns] : hiddenColumns)
-              .filter((column: any) => column.id !== 'select') // checkbox 컬럼 제외
+              .filter((column: any) => column.id !== "select") // checkbox 컬럼 제외
               .map((column: any) => {
-              const cell = {
-                id: column.id,
-                column,
-                getValue: () => {
-                  if (isNewRow) {
-                    return editState.editingData[editState.tempRowId]?.[column.id] || "";
-                  }
-                  return (row.original as any)?.[column.id] || "";
-                },
-              };
+                const cell = {
+                  id: column.id,
+                  column,
+                  getValue: () => {
+                    if (isNewRow) {
+                      return editState.editingData[editState.tempRowId]?.[column.id] || "";
+                    }
+                    return (row.original as any)?.[column.id] || "";
+                  },
+                };
 
-              const displayName = column.columnDef?.meta?.displayName || column.id;
-              return (
-                <div
-                  key={column.id}
-                  className="flex flex-col space-y-1">
-                  <label className="text-sm font-medium text-muted-foreground">{displayName}</label>
-                  <div className="h-9 flex items-center">
-                    <DataTableCell
-                      layout="minimal"
-                      cell={cell}
-                      row={row}
-                      table={table}
-                    />
+                const displayName = column.columnDef?.meta?.displayName || column.id;
+                return (
+                  <div
+                    key={column.id}
+                    className="flex flex-col space-y-1">
+                    <label className="text-sm font-medium text-muted-foreground">
+                      {displayName}
+                    </label>
+                    <div className="h-9 flex items-center">
+                      <DataTableCell
+                        layout="minimal"
+                        cell={cell}
+                        row={row}
+                        table={table}
+                      />
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
 
             {/* 모바일/태블릿 액션 버튼들 */}
             {!isNewRow && (isMobile || isTablet) && (
               <div className="flex flex-col gap-2 mt-4 pt-3 border-t w-full">
                 {isEditing ? (
-                  <div className={cn(
-                    "gap-2 w-full",
-                    isTablet ? "flex" : "flex flex-col"
-                  )}>
+                  <div className={cn("gap-2 w-full", isTablet ? "flex" : "flex flex-col")}>
                     <Button
                       size="sm"
                       onClick={() => {
@@ -222,10 +226,7 @@ export function ResponsiveTableRow<TData>({
                     </Button>
                   </div>
                 ) : (
-                  <div className={cn(
-                    "gap-2 w-full",
-                    isTablet ? "flex" : "flex flex-col"
-                  )}>
+                  <div className={cn("gap-2 w-full", isTablet ? "flex" : "flex flex-col")}>
                     <Button
                       size="sm"
                       variant="outline"
