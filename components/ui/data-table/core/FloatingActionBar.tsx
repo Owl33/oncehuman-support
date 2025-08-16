@@ -64,7 +64,7 @@ export function FloatingActionBar() {
     "transition-all duration-200 ease-in-out",
     "animate-in slide-in-from-bottom-2 fade-in-0 duration-300",
     // 모바일에서 너비 조정
-    isMobile || isTablet ? "w-[90vw] max-w-md" : "w-auto"
+    isMobile ? "sm:w-[90vw] " : "w-auto"
   );
 
   return (
@@ -87,7 +87,7 @@ export function FloatingActionBar() {
             <Button
               size="sm"
               onClick={handleSave}
-              className="gap-1.5 h-8 shadow-sm bg-primary hover:bg-primary/90 text-primary-foreground">
+              className="w-full gap-1.5 h-8 shadow-sm bg-primary hover:bg-primary/90 text-primary-foreground">
               <Check className="h-4 w-4" />
               저장
             </Button>
@@ -95,7 +95,7 @@ export function FloatingActionBar() {
               variant="ghost"
               size="sm"
               onClick={cancelEdit}
-              className="gap-1.5 h-8 transition-colors duration-200 hover:bg-destructive/10 hover:text-destructive">
+              className="w-full gap-1.5 h-8 transition-colors duration-200 hover:bg-destructive/10 hover:text-destructive">
               <X className="h-4 w-4" />
               취소
             </Button>
@@ -105,7 +105,7 @@ export function FloatingActionBar() {
           <>
             <Badge
               variant="secondary"
-              className="text-sm cursor-pointer hover:bg-secondary/80 transition-colors duration-200 flex items-center gap-1.5"
+              className=" text-sm cursor-pointer hover:bg-secondary/80 transition-colors duration-200 flex items-center gap-1.5"
               onClick={handleClearSelection}>
               <span>
                 {selectedCount}개 선택됨
@@ -118,7 +118,7 @@ export function FloatingActionBar() {
               size="sm"
               onClick={startEdit}
               disabled={!canEdit}
-              className="gap-1.5 h-8 transition-colors duration-200 hover:bg-[var(--selection)] hover:text-[var(--selection-foreground)] disabled:opacity-50">
+              className=" gap-1.5 h-8 transition-colors duration-200 hover:bg-[var(--selection)] hover:text-[var(--selection-foreground)] disabled:opacity-50">
               <Edit2 className="h-4 w-4" />
               수정
             </Button>

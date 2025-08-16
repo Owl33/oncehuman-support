@@ -18,16 +18,16 @@ export function PageHeader({ title, description, icon: Icon, actions, className 
     <div className="py-2">
       <div
         className={cn(
-          "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4",
+          "flex flex-col md:flex-row md:items-center md:justify-between gap-4",
           className
         )}>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-3">
             {Icon && <Icon className="h-6 w-6 text-primary" />}
-            <h1 className="text-xl sm:text-2xl font-bold truncate">{title}</h1>
+            <h1 className="text-xl md:text-2xl font-bold truncate">{title}</h1>
           </div>
           {description && (
-            <p className="text-muted-foreground mt-1 text-sm sm:text-base">{description}</p>
+            <p className="text-muted-foreground mt-1 text-sm md:text-base">{description}</p>
           )}
         </div>
 
