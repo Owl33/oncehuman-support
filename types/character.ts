@@ -1,4 +1,5 @@
 // types/character.ts
+import { CoopProgress } from "./coop-timer";
 
 // 기본 캐릭터 정보 (캐릭터 관리 페이지용)
 export interface BaseCharacter {
@@ -15,6 +16,10 @@ export interface Character extends BaseCharacter {
   // SwitchPoint 관련 데이터 (옵셔널로 변경)
   selectedItems?: Record<string, number>; // itemId -> 제작 개수
   ownedMaterials?: Record<string, number>; // materialId -> 보유 개수
+  
+  // Coop Timer 관련 데이터 (통합 데이터 관리)
+  coopTimerData?: Record<string, CoopProgress>; // eventId -> 이벤트 진행상황
+  
   lastUpdated: string;
 }
 

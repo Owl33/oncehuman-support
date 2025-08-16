@@ -4,9 +4,9 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { CoopEvent, CoopProgress, EventStatus, ScenarioType, EventGroup, EventCategory } from "@/types/coop-timer";
 import { ResetCalculator } from "../lib/timer-calculations";
+import { COOP_TIMER_STORAGE_KEY } from "./use-timer-storage";
 import { useTimerInterval } from "./use-timer-interval";
 import { dataLoader } from "../lib/data-loader";
-import { characterStorage } from "@/lib/storage/character-storage";
 
 // 단순화된 폴링 설정
 const SIMPLE_POLLING_INTERVAL = process.env.NODE_ENV === 'development' ? 10_000 : 60_000; // 10초(개발) / 1분(프로덕션)
@@ -18,9 +18,6 @@ type ExtendedEventStatus = EventStatus & {
 export function useCoopTimer(scenario?: ScenarioType) {
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<CoopEvent[]>([]);
-  const [progress, setProgress] = useState<Record<string, CoopProgress>>({});
-  const [selectedCharacters, setSelectedCharacters] = useState<string[]>([]);
-  const [currentTime, setCurrentTime] = useState<number>(Date.now());
 
   // 시나리오별 이벤트 로딩
   useEffect(() => {
@@ -44,38 +41,6 @@ export function useCoopTimer(scenario?: ScenarioType) {
 
     loadScenarioData();
   }, [scenario]);
-
-  // 선택된 캐릭터들의 coop timer 데이터 로드
-  const loadCharacterCoopData = useCallback(async () => {
-    if (selectedCharacters.length === 0) {
-      setProgress({});
-      return;
-    }
-
-    try {
-      const allProgress: Record<string, CoopProgress> = {};
-
-      for (const characterId of selectedCharacters) {
-        const characterCoopData = await characterStorage.getAllCoopTimerData(characterId);
-        
-        // 캐릭터별 데이터를 글로벌 progress 형태로 변환
-        for (const [eventId, progressData] of Object.entries(characterCoopData)) {
-          const globalKey = `${characterId}-${eventId}`;
-          allProgress[globalKey] = progressData;
-        }
-      }
-
-      setProgress(allProgress);
-    } catch (error) {
-      console.error("Failed to load character coop data:", error);
-      setProgress({});
-    }
-  }, [selectedCharacters]);
-
-  // 선택된 캐릭터 변경 시 데이터 리로드
-  useEffect(() => {
-    loadCharacterCoopData();
-  }, [loadCharacterCoopData]);
 
   // 카테고리별 이벤트 분리
   const weeklyQuests = useMemo(() => 
@@ -140,56 +105,66 @@ export function useCoopTimer(scenario?: ScenarioType) {
     return groups;
   }, [events, weeklyQuests]);
 
-  // Reset check logic (통합 스토리지 사용)
-  const runResetCheck = useCallback(async () => {
+  const [progress, setProgress] = useState<Record<string, CoopProgress>>(() => {
+    // 초기 상태를 lazy initialization으로 설정
+    try {
+      const raw = localStorage.getItem(COOP_TIMER_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (error) {
+      console.error("Failed to load coop progress from localStorage", error);
+      return {};
+    }
+  });
+  const [selectedCharacters, setSelectedCharacters] = useState<string[]>([]);
+  const [currentTime, setCurrentTime] = useState<number>(Date.now());
+
+  // auto save when progress changes - 의존성 문제 해결
+  useEffect(() => {
+    try {
+      const raw = JSON.stringify(progress ?? {});
+      localStorage.setItem(COOP_TIMER_STORAGE_KEY, raw);
+    } catch (error) {
+      console.error("Failed to save coop progress to localStorage", error);
+    }
+  }, [progress]); // saveProgress 의존성 제거
+
+  // Reset check logic (순환 의존성 해결)
+  const runResetCheck = useCallback(() => {
     setCurrentTime(Date.now());
 
-    if (selectedCharacters.length === 0) return;
+    setProgress(prev => {
+      let changed = false;
+      const cleaned: Record<string, CoopProgress> = { ...prev };
 
-    try {
-      // 각 캐릭터의 데이터를 개별적으로 처리
-      for (const characterId of selectedCharacters) {
-        const characterCoopData = await characterStorage.getAllCoopTimerData(characterId);
-        let hasChanges = false;
-        const updatedCoopData: Record<string, CoopProgress> = { ...characterCoopData };
+      for (const [key, prog] of Object.entries(prev)) {
+        // key format: `${characterId}-${eventId}`
+        const parts = key.split("-");
+        const eventId = parts[parts.length - 1];
+        const event = eventsById.get(eventId);
+        if (!event) continue;
 
-        for (const [eventId, prog] of Object.entries(characterCoopData)) {
-          const event = eventsById.get(eventId);
-          if (!event) continue;
-
-          if (ResetCalculator.shouldResetProgress(prog, event.resetConfig)) {
-            updatedCoopData[eventId] = {
-              ...prog,
-              isCompleted: false,
-              completedAt: 0,
-              completionCount: 0,
-              lastResetAt: Date.now(),
-              lastCompletedAt: prog.completedAt > 0 ? prog.completedAt : prog.lastCompletedAt,
-            };
-            hasChanges = true;
-          }
-        }
-
-        // 변경사항이 있으면 저장
-        if (hasChanges) {
-          await characterStorage.updateCharacter(characterId, {
-            coopTimerData: updatedCoopData
-          });
+        if (ResetCalculator.shouldResetProgress(prog, event.resetConfig)) {
+          cleaned[key] = {
+            ...prog,
+            isCompleted: false,
+            completedAt: 0,
+            completionCount: 0,
+            lastResetAt: Date.now(),
+            // 이전 완료시간 보존
+            lastCompletedAt: prog.completedAt > 0 ? prog.completedAt : prog.lastCompletedAt,
+          };
+          changed = true;
         }
       }
 
-      // UI 상태 갱신
-      await loadCharacterCoopData();
-      
-    } catch (error) {
-      console.error("Failed to run reset check:", error);
-    }
-  }, [selectedCharacters, eventsById, loadCharacterCoopData]);
+      return changed ? cleaned : prev; // 변경사항이 있을 때만 새 객체 반환
+    });
+  }, [eventsById]); // progress 의존성 제거
 
-  // 단순화된 폴링 간격
+  // 단순화된 폴링 간격 (복잡한 계산 제거)
   const pollingInterval = SIMPLE_POLLING_INTERVAL;
 
-  // Timer interval management
+  // Timer interval management (단순화됨)
   useTimerInterval({
     enabled: true,
     intervalMs: pollingInterval,
@@ -197,78 +172,87 @@ export function useCoopTimer(scenario?: ScenarioType) {
     immediate: true
   });
 
-  // Cross-tab synchronization (character storage 변경 감지)
+  // Storage events for cross-tab synchronization (단순화)
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
-      if (e.key === "character_data") {
-        // Character 데이터 변경 시 coop timer 데이터 리로드
-        loadCharacterCoopData();
-        setCurrentTime(Date.now());
+      if (!e.key || e.key === COOP_TIMER_STORAGE_KEY) {
+        // localStorage 변경 시 즉시 데이터 리로드
+        try {
+          const raw = localStorage.getItem(COOP_TIMER_STORAGE_KEY);
+          const freshProgress = raw ? JSON.parse(raw) : {};
+          setProgress(freshProgress);
+          setCurrentTime(Date.now());
+        } catch (error) {
+          console.error("Failed to load progress from storage event", error);
+        }
       }
     };
-    
     window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, [loadCharacterCoopData]);
 
-  // Complete event (통합 스토리지 사용)
-  const completeEvent = useCallback(async (characterId: string, eventId: string) => {
+    return () => {
+      window.removeEventListener("storage", onStorage);
+    };
+  }, []); // 의존성 제거
+
+  // complete event
+  const completeEvent = useCallback((characterId: string, eventId: string) => {
+    const key = `${characterId}-${eventId}`;
     const event = eventsById.get(eventId);
     if (!event) return;
 
-    try {
-      const existingProgress = await characterStorage.getCoopTimerProgress(characterId, eventId);
-      const completionCount = (existingProgress?.completionCount || 0) + 1;
+    setProgress((current) => {
+      const existing = current[key];
+      const completionCount = (existing?.completionCount || 0) + 1;
 
-      const newProgress: CoopProgress = {
-        characterId,
-        eventId,
-        completedAt: Date.now(),
-        isCompleted: true,
-        completionCount,
-        lastResetAt: existingProgress?.lastResetAt,
-        lastCompletedAt: existingProgress?.lastCompletedAt,
+      const next: Record<string, CoopProgress> = {
+        ...current,
+        [key]: {
+          characterId,
+          eventId,
+          completedAt: Date.now(),
+          isCompleted: true,
+          completionCount,
+          // keep lastResetAt if present
+          lastResetAt: existing?.lastResetAt,
+          // 이전 완료시간은 현재 완료시간으로 업데이트하지 않고 기존 값 유지
+          lastCompletedAt: existing?.lastCompletedAt,
+        },
       };
 
-      await characterStorage.updateCoopTimerData(characterId, eventId, newProgress);
-      
-      // UI 상태 갱신
-      await loadCharacterCoopData();
-      
-    } catch (error) {
-      console.error("Failed to complete event:", error);
-    }
-  }, [eventsById, loadCharacterCoopData]);
+      return next;
+    });
+  }, [eventsById]); // broadcast 의존성 제거
 
-  // Uncomplete event (통합 스토리지 사용)
-  const uncompleteEvent = useCallback(async (characterId: string, eventId: string) => {
-    try {
-      const existingProgress = await characterStorage.getCoopTimerProgress(characterId, eventId);
-      if (!existingProgress) return;
-      
-      const nextCount = Math.max(0, (existingProgress.completionCount || 1) - 1);
+  // uncomplete event
+  const uncompleteEvent = useCallback((characterId: string, eventId: string) => {
+    const key = `${characterId}-${eventId}`;
 
-      const newProgress: CoopProgress = {
-        ...existingProgress,
-        isCompleted: false,
-        completedAt: 0,
-        completionCount: nextCount,
+    setProgress((current) => {
+      const existing = current[key];
+      if (!existing) return current; // 존재하지 않는 항목은 uncomplete 하지 않음
+      
+      const nextCount = Math.max(0, (existing?.completionCount || 1) - 1);
+
+      const next = {
+        ...current,
+        [key]: {
+          ...existing,
+          isCompleted: false,
+          completedAt: 0,
+          completionCount: nextCount,
+        },
       };
 
-      await characterStorage.updateCoopTimerData(characterId, eventId, newProgress);
-      
-      // UI 상태 갱신
-      await loadCharacterCoopData();
-      
-    } catch (error) {
-      console.error("Failed to uncomplete event:", error);
-    }
-  }, [loadCharacterCoopData]);
+      return next;
+    });
+  }, []); // broadcast 의존성 제거
 
-  // getEventStatus (기존 로직 유지)
+  // getEventStatus (returns ExtendedEventStatus with optional lastResetAt)
   const getEventStatus = useCallback((characterId: string, eventId: string): ExtendedEventStatus => {
     const key = `${characterId}-${eventId}`;
-    const prog = progress[key];
+    // 최신 progress 상태를 직접 참조
+    const currentProgress = progress;
+    const prog = currentProgress[key];
     const event = eventsById.get(eventId);
 
     if (!event) {
@@ -317,7 +301,7 @@ export function useCoopTimer(scenario?: ScenarioType) {
     }
 
     const timeLeft = Math.max(0, nextReset.getTime() - Date.now());
-    const canComplete = true;
+    const canComplete = true; // 더 이상 maxCompletions 제한 없음
 
     return {
       completed: true,

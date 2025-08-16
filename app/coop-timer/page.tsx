@@ -8,7 +8,7 @@ import { useCoopTimer } from "./hooks/use-coop-timer";
 import { PageLayout } from "@/components/layout/page-layout";
 import { CoopTimerHeader } from "./components/coop-timer-header";
 import { CharacterHeader } from "./components/character-header";
-import { ResponsiveEventLayout } from "./components/responsive-event-layout";
+import { SimpleEventLayout } from "./components/simple-event-layout";
 import { CharacterEmptyState } from "./components/character-empty-state";
 import { PageLoading } from "@/components/states/page-loading";
 
@@ -41,10 +41,11 @@ export default function CoopTimerPage() {
         const loadedCharacters = await characterStorage.getCharacters();
         setCharacters(loadedCharacters);
         
-        // Auto-select first character
+        // Auto-select first character (한 번만 실행)
         if (loadedCharacters.length > 0 && !selectedCharacter) {
-          setSelectedCharacter(loadedCharacters[0].id);
-          setSelectedCharacters([loadedCharacters[0].id]);
+          const firstCharacter = loadedCharacters[0];
+          setSelectedCharacter(firstCharacter.id);
+          setSelectedCharacters([firstCharacter.id]);
         }
       } catch (error) {
         console.error("Failed to load characters:", error);
@@ -54,7 +55,7 @@ export default function CoopTimerPage() {
     };
     
     loadCharacters();
-  }, [selectedCharacter, setSelectedCharacters]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Character selection handler
   const handleCharacterSelect = (characterId: string) => {
@@ -118,8 +119,8 @@ export default function CoopTimerPage() {
           onCharacterSelect={handleCharacterSelect}
         />
 
-        {/* 반응형 이벤트 레이아웃 */}
-        <ResponsiveEventLayout
+        {/* 단순화된 이벤트 레이아웃 */}
+        <SimpleEventLayout
           character={selectedCharacterData}
           events={events}
           progress={progress}
