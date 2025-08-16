@@ -2,38 +2,148 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { CoopEvent, CoopProgress, EventStatus, ScenarioData, ScenarioType, EventGroup, EventType } from "@/types/coop-timer";
+import { CoopEvent, CoopProgress, EventStatus, ScenarioType, EventGroup, EventCategory } from "@/types/coop-timer";
 import { ResetCalculator } from "../lib/timer-calculations";
 import { useTimerStorage, COOP_TIMER_STORAGE_KEY } from "./use-timer-storage";
 import { useTimerInterval } from "./use-timer-interval";
 import { useBroadcastSync } from "./use-broadcast-sync";
-import scenarioData from "../data/scenario-events.json";
+import { dataLoader } from "../lib/data-loader";
 
 /**
- * 폴링 주기 (ms) — 테스트용: 30_000 (30초).
- * 초단위로 실시간 UI 확인하려면 1_000으로 낮출 수 있지만 배터리/성능 영향 있음.
+ * 스마트 폴링 시스템 - 가장 가까운 리셋까지의 시간에 따라 동적 조정
  */
-const POLL_INTERVAL_MS = 30_000;
+const POLLING_CONFIG = {
+  // 개발 모드: 테스트를 위한 빠른 폴링
+  DEVELOPMENT: {
+    DEFAULT: 5_000,      // 5초 - 테스트용
+    NEAR_RESET: 1_000,   // 1초 - 리셋 1분 전
+    TEST_MODE: 1_000     // 1초 - test 카테고리 이벤트용
+  },
+  
+  // 프로덕션 모드: 효율적인 폴링
+  PRODUCTION: {
+    DEFAULT: 60_000,     // 1분 - 일반적인 경우
+    NEAR_RESET: 10_000,  // 10초 - 리셋 5분 전
+    HOURLY: 30_000,      // 30초 - 시간별 이벤트
+    DAILY: 300_000,      // 5분 - 일간 이벤트  
+    WEEKLY: 600_000,     // 10분 - 주간 이벤트
+    TEST_MODE: 5_000     // 5초 - 테스트 이벤트용
+  }
+} as const;
+
+// 현재 환경 감지
+const isDevelopment = process.env.NODE_ENV === 'development';
+const CURRENT_CONFIG = isDevelopment ? POLLING_CONFIG.DEVELOPMENT : POLLING_CONFIG.PRODUCTION;
 
 type ExtendedEventStatus = EventStatus & {
   lastResetAt?: Date | null;
 };
 
+/**
+ * 스마트 폴링 간격 계산
+ */
+function calculateOptimalPollingInterval(events: CoopEvent[]): number {
+  if (events.length === 0) return CURRENT_CONFIG.DEFAULT;
+  
+  let shortestInterval: number = CURRENT_CONFIG.DEFAULT;
+  let hasTestEvents = false;
+  
+  const now = new Date();
+  
+  for (const event of events) {
+    // 테스트 이벤트가 있으면 테스트 모드 활성화
+    if (event.category === EventCategory.TEST) {
+      hasTestEvents = true;
+      continue;
+    }
+    
+    try {
+      const nextReset = ResetCalculator.getNextResetTime(event.resetConfig);
+      const timeToReset = nextReset.getTime() - now.getTime();
+      
+      // 리셋이 가까우면 더 자주 체크
+      if (timeToReset <= 5 * 60 * 1000) { // 5분 이내
+        shortestInterval = Math.min(shortestInterval, CURRENT_CONFIG.NEAR_RESET);
+      } else {
+        // 카테고리별 최적화된 간격
+        const categoryInterval = getCategoryPollingInterval(event.category);
+        shortestInterval = Math.min(shortestInterval, categoryInterval);
+      }
+    } catch (error) {
+      console.warn(`Failed to calculate reset time for event ${event.id}:`, error);
+    }
+  }
+  
+  // 테스트 이벤트가 있으면 테스트 모드 간격 사용
+  if (hasTestEvents) {
+    return Math.min(shortestInterval, CURRENT_CONFIG.TEST_MODE);
+  }
+  
+  return shortestInterval;
+}
+
+/**
+ * 카테고리별 폴링 간격 반환
+ */
+function getCategoryPollingInterval(category: EventCategory): number {
+  if (isDevelopment) {
+    return CURRENT_CONFIG.DEFAULT; // 개발 모드에서는 모두 동일
+  }
+  
+  // 프로덕션 모드에서만 세분화된 간격 사용
+  const prodConfig = POLLING_CONFIG.PRODUCTION;
+  
+  switch (category) {
+    case EventCategory.HOURLY:
+      return prodConfig.HOURLY;
+    case EventCategory.DAILY:
+      return prodConfig.DAILY;
+    case EventCategory.WEEKLY:
+      return prodConfig.WEEKLY;
+    case EventCategory.TEST:
+      return prodConfig.TEST_MODE;
+    default:
+      return prodConfig.DEFAULT;
+  }
+}
+
 export function useCoopTimer(scenario?: ScenarioType) {
+  const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState<CoopEvent[]>([]);
+
   // 시나리오별 이벤트 로딩
-  const allEvents = useMemo(() => {
-    if (!scenario) return [];
-    
-    const data = scenarioData as ScenarioData;
-    const scenarioInfo = data.scenarios[scenario];
-    
-    if (!scenarioInfo) return [];
-    
-    return [...scenarioInfo.weeklyQuests, ...scenarioInfo.coopEvents];
+  useEffect(() => {
+    if (!scenario) {
+      setLoading(false);
+      return;
+    }
+
+    const loadScenarioData = async () => {
+      try {
+        setLoading(true);
+        const scenarioEvents = await dataLoader.getScenarioEvents(scenario);
+        setEvents(scenarioEvents);
+      } catch (error) {
+        console.error('Failed to load scenario data:', error);
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadScenarioData();
   }, [scenario]);
 
-  // events는 allEvents를 직접 사용
-  const events = allEvents;
+  // 카테고리별 이벤트 분리
+  const weeklyQuests = useMemo(() => 
+    events.filter(e => e.category === EventCategory.WEEKLY), 
+    [events]
+  );
+  
+  const coopEvents = useMemo(() => 
+    events.filter(e => e.category !== EventCategory.WEEKLY), 
+    [events]
+  );
   
   const eventsById = useMemo(() => {
     const m = new Map<string, CoopEvent>();
@@ -41,28 +151,51 @@ export function useCoopTimer(scenario?: ScenarioType) {
     return m;
   }, [events]);
 
-  // 이벤트 그룹핑 (주간퀘스트와 협동이벤트 분리)
+  // 이벤트 그룹핑 (카테고리별)
   const eventGroups = useMemo((): EventGroup[] => {
-    if (!scenario) return [];
+    const groups: EventGroup[] = [];
     
-    const data = scenarioData as ScenarioData;
-    const scenarioInfo = data.scenarios[scenario];
-    
-    if (!scenarioInfo) return [];
-    
-    return [
-      {
+    // 주간 퀘스트
+    if (weeklyQuests.length > 0) {
+      groups.push({
         title: "주간 퀘스트",
-        type: EventType.WEEKLY_QUEST,
-        events: scenarioInfo.weeklyQuests
-      },
-      {
-        title: "협동 이벤트", 
-        type: EventType.COOP_EVENT,
-        events: scenarioInfo.coopEvents
-      }
-    ];
-  }, [scenario]);
+        category: EventCategory.WEEKLY,
+        events: weeklyQuests
+      });
+    }
+    
+    // 시간별 이벤트
+    const hourlyEvents = events.filter(e => e.category === EventCategory.HOURLY);
+    if (hourlyEvents.length > 0) {
+      groups.push({
+        title: "시간별 이벤트",
+        category: EventCategory.HOURLY,
+        events: hourlyEvents
+      });
+    }
+    
+    // 일간 이벤트
+    const dailyEvents = events.filter(e => e.category === EventCategory.DAILY);
+    if (dailyEvents.length > 0) {
+      groups.push({
+        title: "일간 이벤트",
+        category: EventCategory.DAILY,
+        events: dailyEvents
+      });
+    }
+    
+    // 테스트 이벤트
+    const testEvents = events.filter(e => e.category === EventCategory.TEST);
+    if (testEvents.length > 0) {
+      groups.push({
+        title: "테스트 이벤트",
+        category: EventCategory.TEST,
+        events: testEvents
+      });
+    }
+    
+    return groups;
+  }, [events, weeklyQuests]);
 
   const [progress, setProgress] = useState<Record<string, CoopProgress>>({});
   const progressRef = useRef<Record<string, CoopProgress>>(progress);
@@ -124,10 +257,26 @@ export function useCoopTimer(scenario?: ScenarioType) {
     }
   }, [eventsById]);
 
-  // Timer interval management
+  // 동적 폴링 간격 계산
+  const optimalPollingInterval = useMemo(() => {
+    const interval = calculateOptimalPollingInterval(events);
+    
+    // 개발 모드에서 폴링 간격 로깅
+    if (isDevelopment && events.length > 0) {
+      console.log(`[Smart Polling] Calculated interval: ${interval}ms (${interval/1000}s) for ${events.length} events`);
+      const testEvents = events.filter(e => e.category === EventCategory.TEST);
+      if (testEvents.length > 0) {
+        console.log(`[Smart Polling] Test events detected: ${testEvents.map(e => e.name).join(', ')}`);
+      }
+    }
+    
+    return interval;
+  }, [events]);
+
+  // Timer interval management with dynamic polling
   useTimerInterval({
     enabled: true,
-    intervalMs: POLL_INTERVAL_MS,
+    intervalMs: optimalPollingInterval,
     onTick: runResetCheck,
     immediate: true
   });
@@ -136,7 +285,10 @@ export function useCoopTimer(scenario?: ScenarioType) {
   const { broadcast } = useBroadcastSync({
     onMessage: (data) => {
       if (data === "progress-updated") {
-        runResetCheck();
+        // \ub2e4\ub978 \ud0ed\uc5d0\uc11c \uc5c5\ub370\uc774\ud2b8\uac00 \uc788\uc744 \ub54c localStorage\uc5d0\uc11c \ub85c\ub4dc
+        const freshProgress = loadProgress() || {};
+        setProgress(freshProgress);
+        setCurrentTime(Date.now());
       }
     }
   });
@@ -145,7 +297,10 @@ export function useCoopTimer(scenario?: ScenarioType) {
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       if (!e.key || e.key === COOP_TIMER_STORAGE_KEY) {
-        runResetCheck();
+        // localStorage \ubcc0\uacbd \uc2dc \uc989\uc2dc \ub370\uc774\ud130 \ub9ac\ub85c\ub4dc
+        const freshProgress = loadProgress() || {};
+        setProgress(freshProgress);
+        setCurrentTime(Date.now());
       }
     };
     window.addEventListener("storage", onStorage);
@@ -153,7 +308,7 @@ export function useCoopTimer(scenario?: ScenarioType) {
     return () => {
       window.removeEventListener("storage", onStorage);
     };
-  }, [runResetCheck]);
+  }, [loadProgress]);
 
   // complete event
   const completeEvent = useCallback((characterId: string, eventId: string) => {
@@ -197,7 +352,7 @@ export function useCoopTimer(scenario?: ScenarioType) {
       
       const nextCount = Math.max(0, (existing?.completionCount || 1) - 1);
 
-      return {
+      const next = {
         ...current,
         [key]: {
           ...existing,
@@ -206,13 +361,20 @@ export function useCoopTimer(scenario?: ScenarioType) {
           completionCount: nextCount,
         },
       };
+
+      // Broadcast update to other tabs
+      broadcast("progress-updated");
+
+      return next;
     });
-  }, []);
+  }, [broadcast]);
 
   // getEventStatus (returns ExtendedEventStatus with optional lastResetAt)
   const getEventStatus = useCallback((characterId: string, eventId: string): ExtendedEventStatus => {
     const key = `${characterId}-${eventId}`;
-    const prog = progressRef.current[key];
+    // 최신 progress 상태를 직접 참조
+    const currentProgress = progress;
+    const prog = currentProgress[key];
     const event = eventsById.get(eventId);
 
     if (!event) {
@@ -261,7 +423,7 @@ export function useCoopTimer(scenario?: ScenarioType) {
     }
 
     const timeLeft = Math.max(0, nextReset.getTime() - Date.now());
-    const canComplete = event.maxCompletions ? (prog.completionCount || 0) < event.maxCompletions : true;
+    const canComplete = true; // 더 이상 maxCompletions 제한 없음
 
     return {
       completed: true,
@@ -271,7 +433,7 @@ export function useCoopTimer(scenario?: ScenarioType) {
       canComplete,
       lastResetAt: prog?.lastResetAt ? new Date(prog.lastResetAt) : null,
     };
-  }, [eventsById]);
+  }, [progress, eventsById]);
 
   // events grouped by category
   const eventsByCategory = useMemo(() => {
@@ -295,10 +457,9 @@ export function useCoopTimer(scenario?: ScenarioType) {
     const today = new Date(); today.setHours(0, 0, 0, 0);
     const thisWeek = new Date(); thisWeek.setDate(thisWeek.getDate() - thisWeek.getDay()); thisWeek.setHours(0, 0, 0, 0);
 
-    const p = progressRef.current;
     for (const event of events) {
       const key = `${characterId}-${event.id}`;
-      const prog = p[key];
+      const prog = progress[key];
       if (!prog || !prog.isCompleted || !prog.completedAt) continue;
       stats.completedEvents++;
       const last = new Date(prog.completedAt);
@@ -307,10 +468,13 @@ export function useCoopTimer(scenario?: ScenarioType) {
     }
 
     return stats;
-  }, [events]);
+  }, [events, progress]);
 
   return {
+    loading,
     events,
+    weeklyQuests,
+    coopEvents,
     eventGroups,
     progress,
     selectedCharacters,

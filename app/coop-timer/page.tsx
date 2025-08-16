@@ -7,16 +7,15 @@ import { characterStorage } from "@/lib/storage/character-storage";
 import { useCoopTimer } from "./hooks/use-coop-timer";
 import { PageLayout } from "@/components/layout/page-layout";
 import { CoopTimerHeader } from "./components/coop-timer-header";
-import { CharacterSelectorCard } from "./components/character-selector-card";
-import { EventListCard } from "./components/event-list-card";
-import { EmptyCharacterState } from "./components/empty-character-state";
-import { NoCharacterSelected } from "./components/no-character-selected";
-import { DebugProgress } from "./components/debug-progress";
-import { ScrollArea } from "@/components/base/scroll-area";
+import { CharacterHeader } from "./components/character-header";
+import { ResponsiveEventLayout } from "./components/responsive-event-layout";
+import { CharacterEmptyState } from "./components/character-empty-state";
+import { PageLoading } from "@/components/states/page-loading";
 
 export default function CoopTimerPage() {
   const [characters, setCharacters] = useState<BaseCharacter[]>([]);
   const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   
   // 선택된 캐릭터 데이터
   const selectedCharacterData = characters.find(c => c.id === selectedCharacter);
@@ -25,8 +24,8 @@ export default function CoopTimerPage() {
   const selectedScenario = selectedCharacterData?.scenario as ScenarioType | undefined;
   
   const {
+    loading: dataLoading,
     events,
-    eventGroups,
     progress,
     setSelectedCharacters,
     completeEvent,
@@ -38,6 +37,7 @@ export default function CoopTimerPage() {
   useEffect(() => {
     const loadCharacters = async () => {
       try {
+        setLoading(true);
         const loadedCharacters = await characterStorage.getCharacters();
         setCharacters(loadedCharacters);
         
@@ -48,6 +48,8 @@ export default function CoopTimerPage() {
         }
       } catch (error) {
         console.error("Failed to load characters:", error);
+      } finally {
+        setLoading(false);
       }
     };
     
@@ -71,81 +73,61 @@ export default function CoopTimerPage() {
     }
   };
 
-  // Empty state
+  if (loading) {
+    return <PageLoading message="캐릭터 데이터를 불러오는 중..." />;
+  }
+
+  if (dataLoading) {
+    return <PageLoading message="이벤트 데이터를 불러오는 중..." />;
+  }
+
   if (characters.length === 0) {
     return (
       <PageLayout>
         <CoopTimerHeader />
-        <EmptyCharacterState />
+        <CharacterEmptyState type="no-characters" />
       </PageLayout>
     );
   }
 
-
-  return (
-    <PageLayout>
-      <CoopTimerHeader />
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[calc(100vh-12rem)]">
-        {/* Character Selector */}
-        <div className="lg:col-span-1">
-          <CharacterSelectorCard
+  if (!selectedCharacterData) {
+    return (
+      <PageLayout>
+        <CoopTimerHeader />
+        <div className="space-y-4">
+          <CharacterHeader
             characters={characters}
             selectedCharacter={selectedCharacter}
             onCharacterSelect={handleCharacterSelect}
           />
+          <CharacterEmptyState type="no-selection" />
         </div>
+      </PageLayout>
+    );
+  }
 
-        {/* Event Lists */}
-        <div className="lg:col-span-2 flex flex-col gap-6 h-full">
-          {!selectedCharacterData ? (
-            <NoCharacterSelected />
-          ) : eventGroups.length === 0 ? (
-            <div className="text-center text-muted-foreground">
-              선택된 캐릭터의 시나리오에 해당하는 이벤트가 없습니다.
-            </div>
-          ) : (
-            <>
-              {/* 주간 퀘스트 */}
-              {eventGroups.map((group, index) => (
-                <div key={group.type} className={`flex-1 ${index === 1 ? 'min-h-0' : ''}`}>
-                  <div className="h-full">
-                    {index === 1 ? (
-                      /* 협동 이벤트는 ScrollArea 적용 */
-                      <ScrollArea className="h-full">
-                        <EventListCard
-                          character={selectedCharacterData}
-                          events={group.events}
-                          progress={progress}
-                          onEventToggle={handleEventToggle}
-                          getEventStatus={getEventStatus}
-                          title={group.title}
-                        />
-                      </ScrollArea>
-                    ) : (
-                      /* 주간 퀘스트는 일반 표시 */
-                      <EventListCard
-                        character={selectedCharacterData}
-                        events={group.events}
-                        progress={progress}
-                        onEventToggle={handleEventToggle}
-                        getEventStatus={getEventStatus}
-                        title={group.title}
-                      />
-                    )}
-                  </div>
-                </div>
-              ))}
-            </>
-          )}
-        </div>
+  return (
+    <PageLayout>
+      <CoopTimerHeader />
+      
+      <div className="space-y-4">
+        {/* 새로운 캐릭터 헤더 */}
+        <CharacterHeader
+          characters={characters}
+          selectedCharacter={selectedCharacter}
+          onCharacterSelect={handleCharacterSelect}
+        />
+
+        {/* 반응형 이벤트 레이아웃 */}
+        <ResponsiveEventLayout
+          character={selectedCharacterData}
+          events={events}
+          progress={progress}
+          onEventToggle={handleEventToggle}
+          getEventStatus={getEventStatus}
+        />
       </div>
 
-      {/* Debug component */}
-      <DebugProgress 
-        progress={progress} 
-        selectedCharacterId={selectedCharacter || undefined}
-      />
     </PageLayout>
   );
 }

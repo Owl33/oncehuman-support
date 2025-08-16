@@ -1,54 +1,38 @@
 // types/coop-timer.ts
 
-// 리셋 주기 타입
-export enum ResetType {
-  HOURLY = "hourly",
-  DAILY = "daily", 
-  WEEKLY = "weekly",
-  CUSTOM = "custom"
-}
-
-// 요일 열거형
-export enum WeekDay {
-  SUNDAY = 0,
-  MONDAY = 1,
-  TUESDAY = 2,
-  WEDNESDAY = 3,
-  THURSDAY = 4,
-  FRIDAY = 5,
-  SATURDAY = 6
-}
-
-// 이벤트 타입
-export enum EventType {
-  WEEKLY_QUEST = "weekly_quest",
-  COOP_EVENT = "coop_event"
-}
 
 // 시나리오 타입
 export enum ScenarioType {
   MANIBUS = "manibus",
   WAY_OF_WINTER = "way-of-winter", 
-  ENDLESS_DREAM = "endless-dream"
+  ENDLESS_DREAM = "endless-dream",
+  PRISM_WAR = "prism-war",
+  EVOLUTION_CALL = "evolution-call"
 }
 
-// 이벤트 카테고리 (기존 유지하되 확장)
-export enum CoopEventCategory {
-  MONOLITH = "monolith",
-  PRISM_DEVIATION = "prism",
-  TERRITORY_PURIFICATION = "territory",
-  DAILY_MISSION = "daily",
-  WEEKLY_RAID = "weekly",
-  TEST = "test"
+// 이벤트 카테고리 (리셋 주기별 분류)
+export enum EventCategory {
+  HOURLY = "hourly",     // 1시간마다 리셋
+  DAILY = "daily",       // 일 1회 리셋  
+  WEEKLY = "weekly",     // 주 1회 리셋
+  TEST = "test"          // 테스트용
 }
 
-// 리셋 설정
+// 리셋 설정 (단순화된 문자열 패턴)
 export interface ResetConfig {
-  type: ResetType;
-  interval?: number;
-  resetDay?: WeekDay;
-  resetHour?: number;
-  resetMinute?: number;
+  reset: string; // "3600000" | "daily-00:00" | "weekly-wed-06:00" 등
+}
+
+// 이벤트 스코프 (범위)
+export enum EventScope {
+  COMMON = "common",     // 공통 이벤트 (같은 게임모드의 여러 시나리오에서 공유)
+  EXCLUSIVE = "exclusive" // 전용 이벤트 (특정 시나리오에서만)
+}
+
+// 게임 모드
+export enum GameMode {
+  PVE = "pve",  // PvE 시나리오
+  PVP = "pvp"   // PvP 시나리오
 }
 
 // 협동 이벤트
@@ -56,13 +40,12 @@ export interface CoopEvent {
   id: string;
   name: string;
   description: string;
-  category: CoopEventCategory;
-  type: EventType;
+  scenario: ScenarioType;  // 이벤트가 속한 원본 시나리오
+  scope: EventScope;       // 공통/전용 여부
+  gameMode: GameMode;      // PvE/PvP 구분
+  category: EventCategory; // 시간별/일간/주간/테스트
   resetConfig: ResetConfig;
-  rewards: string[];
-  difficulty?: "쉬움" | "보통" | "어려움";
-  participants?: number;
-  maxCompletions?: number;
+  rewards?: string[];
   icon?: string;
 }
 
@@ -93,21 +76,21 @@ export interface CoopTimerStorage {
   lastUpdated: number;
 }
 
-// 시나리오 정보
+// 시나리오 정보 (단순화)
 export interface Scenario {
+  id: ScenarioType;
   name: string;
-  weeklyQuests: CoopEvent[];
-  coopEvents: CoopEvent[];
+  description: string;
 }
 
-// 시나리오 데이터 구조
-export interface ScenarioData {
-  scenarios: Record<ScenarioType, Scenario>;
+// 이벤트 데이터 구조
+export interface EventData {
+  events: Record<string, CoopEvent>;
 }
 
 // 이벤트 그룹 (UI에서 사용)
 export interface EventGroup {
   title: string;
-  type: EventType;
+  category: EventCategory;
   events: CoopEvent[];
 }
