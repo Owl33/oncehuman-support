@@ -62,9 +62,9 @@ export function FloatingActionBar() {
     "flex items-center gap-3 px-4 py-2 bg-background/95 backdrop-blur-sm",
     "border border-border/50 rounded-lg shadow-lg",
     "transition-all duration-200 ease-in-out",
-    "animate-in slide-in-from-bottom-2 fade-in-0 duration-300",
+    "animate-in slide-in-from-bottom-2 fade-in-0 duration-300"
     // 모바일에서 너비 조정
-    isMobile ? "sm:w-[90vw] " : "w-auto"
+    // isMobile ? "w-[60vw] " : "w-auto"
   );
 
   return (
@@ -73,21 +73,23 @@ export function FloatingActionBar() {
         {isInEditMode ? (
           // Edit mode
           <>
-            <div className=" flex items-center gap-2 text-sm text-muted-foreground">
-              {hasErrors && <AlertCircle className="h-4 w-4 text-destructive" />}
-              편집 모드
-              {editState.editMode === "add" && (
-                <Badge
-                  variant="secondary"
-                  className="text-xs">
-                  새 항목
-                </Badge>
-              )}
+            <div className="w-16 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <span>
+                {hasErrors && <AlertCircle className="h-4 w-4 text-destructive" />}
+                편집 모드
+                {editState.editMode === "add" && (
+                  <Badge
+                    variant="secondary"
+                    className="text-xs">
+                    새 항목
+                  </Badge>
+                )}
+              </span>
             </div>
             <Button
               size="sm"
               onClick={handleSave}
-              className="w-full gap-1.5 h-8 shadow-sm bg-primary hover:bg-primary/90 text-primary-foreground">
+              className=" gap-1.5 h-8 shadow-sm bg-primary hover:bg-primary/90 text-primary-foreground">
               <Check className="h-4 w-4" />
               저장
             </Button>
@@ -95,7 +97,7 @@ export function FloatingActionBar() {
               variant="ghost"
               size="sm"
               onClick={cancelEdit}
-              className="w-full gap-1.5 h-8 transition-colors duration-200 hover:bg-destructive/10 hover:text-destructive">
+              className=" gap-1.5 h-8 transition-colors duration-200 hover:bg-destructive/10 hover:text-destructive">
               <X className="h-4 w-4" />
               취소
             </Button>
