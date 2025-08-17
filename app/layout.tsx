@@ -15,7 +15,6 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 
 import "../styles/globals.css";
-
 const pretendard = localFont({
   src: "../public/fonts/PretendardVariable.woff2",
   display: "swap",

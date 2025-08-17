@@ -227,21 +227,10 @@ export class ResetCalculator {
   }
 
   /**
-   * 완료 시간을 포맷팅
+   * 완료 시간을 절대 시간으로 포맷팅
    */
   static formatCompletedTime(completedAt: Date): string {
-    const now = new Date();
-    const diffMs = now.getTime() - completedAt.getTime();
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-    
-    if (diffHours > 24) {
-      return this.formatKoreanDateTime(completedAt);
-    }
-    
-    if (diffHours > 0) return `${diffHours}시간 전`;
-    if (diffMinutes > 0) return `${diffMinutes}분 전`;
-    return "방금 전";
+    return this.formatAbsoluteDateTime(completedAt);
   }
 
   /**
@@ -260,18 +249,23 @@ export class ResetCalculator {
   }
 
   /**
-   * 다음 리셋 시간을 한국어로 포맷팅
+   * 다음 리셋 시간을 절대 시간으로 포맷팅
    */
   static formatNextResetTime(nextReset: Date): string {
-    const now = new Date();
-    const diffMs = nextReset.getTime() - now.getTime();
+    return this.formatAbsoluteDateTime(nextReset);
+  }
+
+  /**
+   * 절대 시간 포맷팅 (YYYY-MM-DD HH:MM:SS)
+   */
+  static formatAbsoluteDateTime(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hour = String(date.getHours()).padStart(2, '0');
+    const minute = String(date.getMinutes()).padStart(2, '0');
+    const second = String(date.getSeconds()).padStart(2, '0');
     
-    // 1시간 이내면 상대시간으로 표시
-    if (diffMs <= 3600000) {
-      return this.formatTimeLeft(diffMs);
-    }
-    
-    // 그 외에는 절대시간으로 표시
-    return this.formatKoreanDateTime(nextReset);
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
   }
 }

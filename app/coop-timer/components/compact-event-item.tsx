@@ -37,7 +37,7 @@ export function CompactEventItem({
   const categoryKey = event.category as keyof typeof categoryColors;
   
   const formatLastCompleted = (timestamp: number) => {
-    return ResetCalculator.formatCompletedTime(new Date(timestamp));
+    return ResetCalculator.formatAbsoluteDateTime(new Date(timestamp));
   };
 
   const getResetDisplayText = (resetPattern: string): string => {
@@ -96,7 +96,7 @@ export function CompactEventItem({
           <div className="text-right">
             <div className="text-xs text-green-700 font-medium">완료</div>
             <div className="text-xs text-gray-500">
-              {ResetCalculator.formatNextResetTime(status.nextReset)} 리셋
+              리셋: {ResetCalculator.formatNextResetTime(status.nextReset)}
             </div>
           </div>
         ) : (
@@ -105,7 +105,7 @@ export function CompactEventItem({
             {progress?.lastCompletedAt && progress.lastCompletedAt > 0 && (
               <div className="flex items-center gap-0.5 text-xs text-gray-400">
                 <History className="h-2 w-2" />
-                <span>전: {formatLastCompleted(progress.lastCompletedAt)}</span>
+                <span>마지막 완료: {formatLastCompleted(progress.lastCompletedAt)}</span>
               </div>
             )}
           </div>
