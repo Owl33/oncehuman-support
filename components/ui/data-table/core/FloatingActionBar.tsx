@@ -73,14 +73,14 @@ export function FloatingActionBar() {
         {isInEditMode ? (
           // Edit mode
           <>
-            <div className="w-16 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+            <div className="min-w-16 flex items-center justify-center gap-2 text-sm text-muted-foreground">
               <span>
                 {hasErrors && <AlertCircle className="h-4 w-4 text-destructive" />}
                 편집 모드
                 {editState.editMode === "add" && (
                   <Badge
                     variant="secondary"
-                    className="text-xs">
+                    className="ml-3 text-xs">
                     새 항목
                   </Badge>
                 )}

@@ -3,6 +3,7 @@
 
 // 시나리오 타입
 export enum ScenarioType {
+  COMMON = "common",
   MANIBUS = "manibus",
   WAY_OF_WINTER = "way-of-winter", 
   ENDLESS_DREAM = "endless-dream",
@@ -83,9 +84,9 @@ export interface Scenario {
   description: string;
 }
 
-// 이벤트 데이터 구조
+// 이벤트 데이터 구조 (배열 형식)
 export interface EventData {
-  events: Record<string, CoopEvent>;
+  events: CoopEvent[];
 }
 
 // 이벤트 그룹 (UI에서 사용)

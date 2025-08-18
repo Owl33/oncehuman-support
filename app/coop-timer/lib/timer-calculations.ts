@@ -3,7 +3,7 @@ import { ResetConfig, CoopProgress } from "@/types/coop-timer";
 
 // 리셋 패턴 정보
 interface ResetInfo {
-  type: 'interval' | 'daily' | 'weekly';
+  type: "interval" | "daily" | "weekly";
   ms?: number;
   hour?: number;
   minute?: number;
@@ -18,33 +18,39 @@ export class ResetCalculator {
   private static parseResetPattern(reset: string): ResetInfo {
     // 숫자만 있으면 interval (ms)
     if (/^\d+$/.test(reset)) {
-      return { type: 'interval', ms: parseInt(reset) };
+      return { type: "interval", ms: parseInt(reset) };
     }
-    
+
     // daily-HH:MM 패턴
     const dailyMatch = reset.match(/^daily-(\d{2}):(\d{2})$/);
     if (dailyMatch) {
-      return { 
-        type: 'daily', 
-        hour: parseInt(dailyMatch[1]), 
-        minute: parseInt(dailyMatch[2]) 
+      return {
+        type: "daily",
+        hour: parseInt(dailyMatch[1]),
+        minute: parseInt(dailyMatch[2]),
       };
     }
-    
+
     // weekly-DAY-HH:MM 패턴
     const weeklyMatch = reset.match(/^weekly-(mon|tue|wed|thu|fri|sat|sun)-(\d{2}):(\d{2})$/);
     if (weeklyMatch) {
-      const dayMap = { 
-        sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 
+      const dayMap = {
+        sun: 0,
+        mon: 1,
+        tue: 2,
+        wed: 3,
+        thu: 4,
+        fri: 5,
+        sat: 6,
       };
       return {
-        type: 'weekly',
+        type: "weekly",
         day: dayMap[weeklyMatch[1] as keyof typeof dayMap],
         hour: parseInt(weeklyMatch[2]),
-        minute: parseInt(weeklyMatch[3])
+        minute: parseInt(weeklyMatch[3]),
       };
     }
-    
+
     throw new Error(`Invalid reset pattern: ${reset}`);
   }
 
@@ -56,15 +62,15 @@ export class ResetCalculator {
     const now = new Date();
 
     switch (info.type) {
-      case 'interval':
+      case "interval":
         return this.getNextIntervalReset(now, info.ms!);
-      
-      case 'daily':
+
+      case "daily":
         return this.getNextDailyReset(now, info.hour!, info.minute!);
-      
-      case 'weekly':
+
+      case "weekly":
         return this.getNextWeeklyReset(now, info.day!, info.hour!, info.minute!);
-      
+
       default:
         throw new Error(`Unsupported reset type: ${info.type}`);
     }
@@ -78,21 +84,21 @@ export class ResetCalculator {
     const completed = new Date(completedAtMs);
 
     switch (info.type) {
-      case 'interval':
+      case "interval":
         // 완료 시점에서 interval만큼 후
         return new Date(completedAtMs + info.ms!);
-      
-      case 'daily':
+
+      case "daily":
         // 완료 다음날 지정 시간
         const nextDay = new Date(completed);
         nextDay.setDate(nextDay.getDate() + 1);
         nextDay.setHours(info.hour!, info.minute!, 0, 0);
         return nextDay;
-      
-      case 'weekly':
+
+      case "weekly":
         // 완료 다음 주 지정 요일/시간
         return this.getNextWeeklyReset(completed, info.day!, info.hour!, info.minute!);
-      
+
       default:
         return this.getNextResetTime(resetConfig);
     }
@@ -107,7 +113,7 @@ export class ResetCalculator {
 
     const completedTime = progress.completedAt;
     const lastResetTime = this.getLastResetTime(resetConfig).getTime();
-    
+
     return completedTime < lastResetTime;
   }
 
@@ -119,18 +125,18 @@ export class ResetCalculator {
     const now = new Date();
 
     switch (info.type) {
-      case 'interval': {
+      case "interval": {
         // Epoch 기준으로 정렬된 마지막 리셋 시간
         const nowMs = now.getTime();
         const lastResetMs = Math.floor(nowMs / info.ms!) * info.ms!;
         return new Date(lastResetMs);
       }
-      
-      case 'daily': {
+
+      case "daily": {
         // 오늘 리셋 시간이 지났으면 오늘, 아니면 어제
         const todayReset = new Date(now);
         todayReset.setHours(info.hour!, info.minute!, 0, 0);
-        
+
         if (now >= todayReset) {
           return todayReset;
         } else {
@@ -139,17 +145,17 @@ export class ResetCalculator {
           return yesterday;
         }
       }
-      
-      case 'weekly': {
+
+      case "weekly": {
         // 이번 주 리셋 시간이 지났으면 이번 주, 아니면 지난 주
         const currentDay = now.getDay();
         const targetDay = info.day!;
         const daysSinceReset = (currentDay - targetDay + 7) % 7;
-        
+
         const thisWeekReset = new Date(now);
         thisWeekReset.setDate(thisWeekReset.getDate() - daysSinceReset);
         thisWeekReset.setHours(info.hour!, info.minute!, 0, 0);
-        
+
         if (now >= thisWeekReset) {
           return thisWeekReset;
         } else {
@@ -158,7 +164,7 @@ export class ResetCalculator {
           return lastWeekReset;
         }
       }
-      
+
       default:
         return new Date(0);
     }
@@ -179,11 +185,11 @@ export class ResetCalculator {
   private static getNextDailyReset(now: Date, hour: number, minute: number): Date {
     const todayReset = new Date(now);
     todayReset.setHours(hour, minute, 0, 0);
-    
+
     if (now < todayReset) {
       return todayReset;
     }
-    
+
     const tomorrow = new Date(todayReset);
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow;
@@ -192,19 +198,24 @@ export class ResetCalculator {
   /**
    * 주간 다음 리셋 시간
    */
-  private static getNextWeeklyReset(now: Date, targetDay: number, hour: number, minute: number): Date {
+  private static getNextWeeklyReset(
+    now: Date,
+    targetDay: number,
+    hour: number,
+    minute: number
+  ): Date {
     const currentDay = now.getDay();
     let daysUntilReset = (targetDay - currentDay + 7) % 7;
-    
+
     const candidate = new Date(now);
     candidate.setDate(candidate.getDate() + daysUntilReset);
     candidate.setHours(hour, minute, 0, 0);
-    
+
     // 오늘이 타겟 요일이고 이미 리셋 시간이 지났다면 다음 주
     if (daysUntilReset === 0 && now >= candidate) {
       candidate.setDate(candidate.getDate() + 7);
     }
-    
+
     return candidate;
   }
 
@@ -213,13 +224,13 @@ export class ResetCalculator {
    */
   static formatTimeLeft(timeLeft: number): string {
     if (timeLeft <= 0) return "초기화됨";
-    
+
     const totalSeconds = Math.floor(timeLeft / 1000);
     const days = Math.floor(totalSeconds / (3600 * 24));
     const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
-    
+
     if (days > 0) return `${days}일 ${hours}시간`;
     if (hours > 0) return `${hours}시간 ${minutes}분`;
     if (minutes > 0) return `${minutes}분 ${seconds}초`;
@@ -237,14 +248,14 @@ export class ResetCalculator {
    * 한국어 날짜/시간 포맷팅 (예: 2025-08-16(월) 02:23)
    */
   static formatKoreanDateTime(date: Date): string {
-    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+    const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     const weekday = weekdays[date.getDay()];
-    const hour = String(date.getHours()).padStart(2, '0');
-    const minute = String(date.getMinutes()).padStart(2, '0');
-    
+    const hour = String(date.getHours()).padStart(2, "0");
+    const minute = String(date.getMinutes()).padStart(2, "0");
+
     return `${year}-${month}-${day}(${weekday}) ${hour}:${minute}`;
   }
 
@@ -260,12 +271,12 @@ export class ResetCalculator {
    */
   static formatAbsoluteDateTime(date: Date): string {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hour = String(date.getHours()).padStart(2, '0');
-    const minute = String(date.getMinutes()).padStart(2, '0');
-    const second = String(date.getSeconds()).padStart(2, '0');
-    
-    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hour = String(date.getHours()).padStart(2, "0");
+    const minute = String(date.getMinutes()).padStart(2, "0");
+    const second = String(date.getSeconds()).padStart(2, "0");
+
+    return `${year}-${month}-${day} ${hour}:${minute}`;
   }
 }

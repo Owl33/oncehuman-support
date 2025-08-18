@@ -67,6 +67,8 @@ export default function CoopTimerPage() {
   const handleEventToggle = (eventId: string, completed: boolean) => {
     if (!selectedCharacter) return;
     
+    console.log('Event toggle:', { eventId, completed, selectedCharacter });
+    
     if (completed) {
       completeEvent(selectedCharacter, eventId);
     } else {

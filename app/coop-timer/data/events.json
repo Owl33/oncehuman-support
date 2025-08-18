@@ -1,6 +1,6 @@
 {
-  "events": {
-    "test_quick": {
+  "events": [
+    {
       "id": "test_quick",
       "name": "빠른 테스트",
       "description": "30초 간격 테스트용 이벤트",
@@ -13,12 +13,11 @@
       },
       "icon": "🧪"
     },
-
-    "merchant_sales": {
+    {
       "id": "merchant_sales",
       "name": "상인 리셋",
       "description": "주간 상인 아이템 판매",
-      "scenario": "manibus",
+      "scenario": "common",
       "scope": "common",
       "gameMode": "pve",
       "category": "weekly",
@@ -27,24 +26,11 @@
       },
       "icon": "🛒"
     },
-    "winter_merchant_sales": {
-      "id": "merchant_sales",
-      "name": "상인 리셋",
-      "description": "주간 상인 아이템 판매",
-      "scenario": "way-of-winter",
-      "scope": "common",
-      "gameMode": "pve",
-      "category": "weekly",
-      "resetConfig": {
-        "reset": "weekly-tue-06:00"
-      },
-      "icon": "🛒"
-    },
-    "commission_quest": {
+    {
       "id": "commission_quest",
       "name": "주간 의뢰",
       "description": "주간 의뢰 퀘스트",
-      "scenario": "manibus",
+      "scenario": "common",
       "scope": "common",
       "gameMode": "pve",
       "category": "weekly",
@@ -53,24 +39,11 @@
       },
       "icon": "📋"
     },
-    "winter_commission_quest": {
-      "id": "commission_quest",
-      "name": "주간 의뢰",
-      "description": "주간 의뢰 퀘스트",
-      "scenario": "way-of-winter",
-      "scope": "common",
-      "gameMode": "pve",
-      "category": "weekly",
-      "resetConfig": {
-        "reset": "weekly-tue-06:00"
-      },
-      "icon": "📋"
-    },
-    "ancient_one": {
+    {
       "id": "ancient_one",
       "name": "에이션트 원의 시련",
       "description": "풍선쏘기",
-      "scenario": "manibus",
+      "scenario": "common",
       "scope": "common",
       "gameMode": "pve",
       "category": "weekly",
@@ -79,12 +52,12 @@
       },
       "icon": "🗿"
     },
-    "stigma_nightmare": {
+    {
       "id": "stigma_nightmare",
       "name": "시그마 - 악몽",
       "description": "시그마 악몽",
       "scenario": "manibus",
-      "scope": "exclusive",
+      "scope": "common",
       "gameMode": "pve",
       "category": "weekly",
       "resetConfig": {
@@ -92,13 +65,12 @@
       },
       "icon": "🏭"
     },
-
-    "phi_nightmare": {
+    {
       "id": "phi_nightmare",
       "name": "페이 - 악몽",
       "description": "페이 악몽",
       "scenario": "manibus",
-      "scope": "exclusive",
+      "scope": "common",
       "gameMode": "pve",
       "category": "weekly",
       "resetConfig": {
@@ -106,12 +78,12 @@
       },
       "icon": "🧚"
     },
-    "darkhell_nightmare": {
+    {
       "id": "darkhell_nightmare",
       "name": "다크헬 - 악몽",
       "description": "다크헬 악몽 던전",
       "scenario": "manibus",
-      "scope": "exclusive",
+      "scope": "common",
       "gameMode": "pve",
       "category": "weekly",
       "resetConfig": {
@@ -119,12 +91,12 @@
       },
       "icon": "🌙"
     },
-    "alpha_nightmare": {
+    {
       "id": "alpha_nightmare",
       "name": "알파 - 악몽",
       "description": "알파 악몽 던전",
       "scenario": "manibus",
-      "scope": "exclusive",
+      "scope": "common",
       "gameMode": "pve",
       "category": "weekly",
       "resetConfig": {
@@ -132,12 +104,12 @@
       },
       "icon": "🌙"
     },
-    "manibus_psi_nightmare": {
+    {
       "id": "psi_nightmare",
       "name": "극한의 설국 - 악몽",
       "description": "극한의 설국 악몽",
       "scenario": "manibus",
-      "scope": "exclusive",
+      "scope": "common",
       "gameMode": "pve",
       "category": "weekly",
       "resetConfig": {
@@ -145,13 +117,12 @@
       },
       "icon": "🌙"
     },
-
-    "west_tower_nightmare": {
+    {
       "id": "west_tower_nightmare",
       "name": "서쪽탑 - 악몽",
       "description": "서쪽 탑 악몽 던전",
       "scenario": "manibus",
-      "scope": "exclusive",
+      "scope": "common",
       "gameMode": "pve",
       "category": "weekly",
       "resetConfig": {
@@ -159,12 +130,12 @@
       },
       "icon": "🗼"
     },
-    "delta_nightmare": {
+    {
       "id": "delta_nightmare",
       "name": "설산 델타 - 악몽",
       "description": "델타 악몽 던전",
       "scenario": "way-of-winter",
-      "scope": "exclusive",
+      "scope": "common",
       "gameMode": "pve",
       "category": "weekly",
       "resetConfig": {
@@ -172,12 +143,12 @@
       },
       "icon": "🗼"
     },
-    "winter_psi_nightmare": {
+    {
       "id": "winter_psi_nightmare",
       "name": "설산 극한의 설국 - 악몽",
       "description": "설산 극한의 설국",
       "scenario": "way-of-winter",
-      "scope": "exclusive",
+      "scope": "common",
       "gameMode": "pve",
       "category": "weekly",
       "resetConfig": {
@@ -185,12 +156,12 @@
       },
       "icon": "🗼"
     },
-    "winter_tau_nightmare": {
+    {
       "id": "winter_tau_nightmare",
       "name": "설산 타우 - 악몽",
       "description": "설산 타우",
       "scenario": "way-of-winter",
-      "scope": "exclusive",
+      "scope": "common",
       "gameMode": "pve",
       "category": "weekly",
       "resetConfig": {
@@ -198,12 +169,12 @@
       },
       "icon": "🗼"
     },
-    "winter_darkhell_nightmare": {
+    {
       "id": "winter_darkhell_nightmare",
       "name": "설산 다크헬 - 악몽",
-      "description": "설산 타우",
+      "description": "설산 다크헬",
       "scenario": "way-of-winter",
-      "scope": "exclusive",
+      "scope": "common",
       "gameMode": "pve",
       "category": "weekly",
       "resetConfig": {
@@ -211,8 +182,7 @@
       },
       "icon": "🗼"
     },
-
-    "depraved_paradise": {
+    {
       "id": "depraved_paradise",
       "name": "타락한 낙원",
       "description": "타락한 낙원",
@@ -225,7 +195,7 @@
       },
       "icon": "🌑"
     },
-    "depraved_paradise_danger": {
+    {
       "id": "depraved_paradise_danger",
       "name": "타락학 낙원 - 위험",
       "description": "타락한 낙원",
@@ -238,7 +208,7 @@
       },
       "icon": "🌑"
     },
-    "dark_site": {
+    {
       "id": "dark_site",
       "name": "다크사이트",
       "description": "어둠에 잠긴 지역 탐험",
@@ -251,8 +221,8 @@
       },
       "icon": "🌑"
     },
-    "dark_site_danger": {
-      "id": "dark_site",
+    {
+      "id": "dark_site_danger",
       "name": "다크사이트 - 위험",
       "description": "어둠에 잠긴 지역 탐험",
       "scenario": "manibus",
@@ -264,8 +234,7 @@
       },
       "icon": "🌑"
     },
-
-    "kairon_operation": {
+    {
       "id": "kairon_operation",
       "name": "케이론 작전",
       "description": "케이론 정화",
@@ -278,8 +247,8 @@
       },
       "icon": "⚔️"
     },
-    "kairon_operation_danger": {
-      "id": "kairon_operation",
+    {
+      "id": "kairon_operation_danger",
       "name": "케이론 작전 - 위험",
       "description": "케이론 정화",
       "scenario": "manibus",
@@ -291,7 +260,7 @@
       },
       "icon": "⚔️"
     },
-    "whereabouts_disco": {
+    {
       "id": "whereabouts_disco",
       "name": "여긴 디스코가 없다",
       "description": "디스코",
@@ -304,7 +273,7 @@
       },
       "icon": "⚔️"
     },
-    "whereabouts_disco_danger": {
+    {
       "id": "whereabouts_disco_danger",
       "name": "디스코의 행방 - 위험",
       "description": "디스코",
@@ -317,7 +286,7 @@
       },
       "icon": "⚔️"
     },
-    "path_to_hell": {
+    {
       "id": "path_to_hell",
       "name": "지옥으로 통하는 길",
       "description": "지통길",
@@ -330,7 +299,7 @@
       },
       "icon": "⚔️"
     },
-    "winter_dark_site": {
+    {
       "id": "winter_dark_site",
       "name": "설산 - 다크사이트",
       "description": "어둠에 잠긴 지역 탐험",
@@ -343,7 +312,7 @@
       },
       "icon": "🌑"
     },
-    "winter_kairon_operation": {
+    {
       "id": "winter_kairon_operation",
       "name": "설산 - 케이론 작전",
       "description": "케이론 정화",
@@ -356,7 +325,7 @@
       },
       "icon": "⚔️"
     },
-    "winter_deadly_signal": {
+    {
       "id": "winter_deadly_signal",
       "name": "설산 - 치명적 신호",
       "description": "치명적 신호",
@@ -369,7 +338,7 @@
       },
       "icon": "⚔️"
     },
-    "winter_red_destroyer": {
+    {
       "id": "winter_red_destroyer",
       "name": "설산 - 붉은 구축함",
       "description": "붉은 구축함",
@@ -382,5 +351,5 @@
       },
       "icon": "⚔️"
     }
-  }
+  ]
 }

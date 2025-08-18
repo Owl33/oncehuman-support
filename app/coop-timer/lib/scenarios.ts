@@ -2,6 +2,11 @@
 import { ScenarioType, Scenario, CoopEvent, GameMode, EventScope } from "@/types/coop-timer";
 
 export const SCENARIOS: Record<ScenarioType, Scenario> = {
+  [ScenarioType.COMMON]: {
+    id: ScenarioType.COMMON,
+    name: "공통",
+    description: "모든 시나리오에서 공유되는 이벤트"
+  },
   [ScenarioType.ENDLESS_DREAM]: {
     id: ScenarioType.ENDLESS_DREAM,
     name: "무한한 꿈",
@@ -37,6 +42,10 @@ interface ScenarioConfig {
 
 // 시나리오 설정 (게임 모드 및 상속 관계)
 const SCENARIO_CONFIG: Record<ScenarioType, ScenarioConfig> = {
+  [ScenarioType.COMMON]: { 
+    gameMode: GameMode.PVE, 
+    inherits: [] 
+  },
   [ScenarioType.MANIBUS]: { 
     gameMode: GameMode.PVE, 
     inherits: [] 
@@ -101,4 +110,14 @@ export function getScenariosByGameMode(gameMode: GameMode): Scenario[] {
   return Object.entries(SCENARIO_CONFIG)
     .filter(([_, config]) => config.gameMode === gameMode)
     .map(([scenarioType]) => SCENARIOS[scenarioType as ScenarioType]);
+}
+
+// 시나리오의 게임모드 반환
+export function getScenarioGameMode(scenarioType: ScenarioType): GameMode {
+  const config = SCENARIO_CONFIG[scenarioType];
+  if (!config) {
+    console.warn(`Unknown scenario: ${scenarioType}, defaulting to PvE`);
+    return GameMode.PVE;
+  }
+  return config.gameMode;
 }
