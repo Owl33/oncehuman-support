@@ -7,8 +7,9 @@ import { characterStorage } from "@/lib/storage/character-storage";
 import { useCoopTimer } from "./hooks/use-coop-timer";
 import { PageLayout } from "@/components/layout/page-layout";
 import { CoopTimerHeader } from "./components/coop-timer-header";
-import { CharacterHeader } from "./components/character-header";
-import { SimpleEventLayout } from "./components/simple-event-layout";
+import { CompactCharacterSelector } from "./components/compact-character-selector";
+import { ModernEventLayout } from "./components/modern-event-layout";
+import { CompactEventLayout } from "./components/compact-event-layout";
 import { CharacterEmptyState } from "./components/character-empty-state";
 import { PageLoading } from "@/components/states/page-loading";
 
@@ -16,6 +17,7 @@ export default function CoopTimerPage() {
   const [characters, setCharacters] = useState<BaseCharacter[]>([]);
   const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<"modern" | "compact">("compact"); // 기본값을 컴팩트로 설정
   
   // 선택된 캐릭터 데이터
   const selectedCharacterData = characters.find(c => c.id === selectedCharacter);
@@ -87,7 +89,10 @@ export default function CoopTimerPage() {
   if (characters.length === 0) {
     return (
       <PageLayout>
-        <CoopTimerHeader />
+        <CoopTimerHeader 
+          viewMode={viewMode} 
+          onViewModeChange={setViewMode} 
+        />
         <CharacterEmptyState type="no-characters" />
       </PageLayout>
     );
@@ -96,9 +101,12 @@ export default function CoopTimerPage() {
   if (!selectedCharacterData) {
     return (
       <PageLayout>
-        <CoopTimerHeader />
-        <div className="space-y-4">
-          <CharacterHeader
+        <CoopTimerHeader 
+          viewMode={viewMode} 
+          onViewModeChange={setViewMode} 
+        />
+        <div className="space-y-6">
+          <CompactCharacterSelector
             characters={characters}
             selectedCharacter={selectedCharacter}
             onCharacterSelect={handleCharacterSelect}
@@ -111,24 +119,37 @@ export default function CoopTimerPage() {
 
   return (
     <PageLayout>
-      <CoopTimerHeader />
+      <CoopTimerHeader 
+        viewMode={viewMode} 
+        onViewModeChange={setViewMode} 
+      />
       
-      <div className="space-y-4">
-        {/* 새로운 캐릭터 헤더 */}
-        <CharacterHeader
+      <div className="space-y-6">
+        {/* 캐릭터 선택 */}
+        <CompactCharacterSelector
           characters={characters}
           selectedCharacter={selectedCharacter}
           onCharacterSelect={handleCharacterSelect}
         />
 
-        {/* 단순화된 이벤트 레이아웃 */}
-        <SimpleEventLayout
-          character={selectedCharacterData}
-          events={events}
-          progress={progress}
-          onEventToggle={handleEventToggle}
-          getEventStatus={getEventStatus}
-        />
+        {/* 선택된 모드에 따른 이벤트 레이아웃 */}
+        {viewMode === "compact" ? (
+          <CompactEventLayout
+            character={selectedCharacterData}
+            events={events}
+            progress={progress}
+            onEventToggle={handleEventToggle}
+            getEventStatus={getEventStatus}
+          />
+        ) : (
+          <ModernEventLayout
+            character={selectedCharacterData}
+            events={events}
+            progress={progress}
+            onEventToggle={handleEventToggle}
+            getEventStatus={getEventStatus}
+          />
+        )}
       </div>
 
     </PageLayout>
