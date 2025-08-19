@@ -30,28 +30,7 @@ export function CoopTimerHeader({ viewMode = "modern", onViewModeChange }: CoopT
   const actions = (
     <div className="flex items-center gap-2">
       {/* View Mode Toggle */}
-      {onViewModeChange && (
-        <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-lg">
-          <Button
-            variant={viewMode === "compact" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => onViewModeChange("compact")}
-            className="h-7 px-2 text-xs gap-1"
-          >
-            <List className="h-3 w-3" />
-            컴팩트
-          </Button>
-          <Button
-            variant={viewMode === "modern" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => onViewModeChange("modern")}
-            className="h-7 px-2 text-xs gap-1"
-          >
-            <Grid3X3 className="h-3 w-3" />
-            상세
-          </Button>
-        </div>
-      )}
+
 
       {/* Dev Actions */}
       {isDev && (

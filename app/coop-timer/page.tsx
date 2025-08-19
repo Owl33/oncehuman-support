@@ -8,7 +8,6 @@ import { useCoopTimer } from "./hooks/use-coop-timer";
 import { PageLayout } from "@/components/layout/page-layout";
 import { CoopTimerHeader } from "./components/coop-timer-header";
 import { CompactCharacterSelector } from "./components/compact-character-selector";
-import { ModernEventLayout } from "./components/modern-event-layout";
 import { CompactEventLayout } from "./components/compact-event-layout";
 import { CharacterEmptyState } from "./components/character-empty-state";
 import { PageLoading } from "@/components/states/page-loading";
@@ -18,13 +17,14 @@ export default function CoopTimerPage() {
   const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"modern" | "compact">("compact"); // 기본값을 컴팩트로 설정
-  
+  const [filterMode, setFilterMode] = useState<"all" | "incomplete" | "completed">("all");
+
   // 선택된 캐릭터 데이터
-  const selectedCharacterData = characters.find(c => c.id === selectedCharacter);
-  
+  const selectedCharacterData = characters.find((c) => c.id === selectedCharacter);
+
   // 선택된 캐릭터의 시나리오
   const selectedScenario = selectedCharacterData?.scenario as ScenarioType | undefined;
-  
+
   const {
     loading: dataLoading,
     events,
@@ -42,7 +42,7 @@ export default function CoopTimerPage() {
         setLoading(true);
         const loadedCharacters = await characterStorage.getCharacters();
         setCharacters(loadedCharacters);
-        
+
         // Auto-select first character (한 번만 실행)
         if (loadedCharacters.length > 0 && !selectedCharacter) {
           const firstCharacter = loadedCharacters[0];
@@ -55,7 +55,7 @@ export default function CoopTimerPage() {
         setLoading(false);
       }
     };
-    
+
     loadCharacters();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -68,9 +68,9 @@ export default function CoopTimerPage() {
   // Event toggle handler
   const handleEventToggle = (eventId: string, completed: boolean) => {
     if (!selectedCharacter) return;
-    
-    console.log('Event toggle:', { eventId, completed, selectedCharacter });
-    
+
+    console.log("Event toggle:", { eventId, completed, selectedCharacter });
+
     if (completed) {
       completeEvent(selectedCharacter, eventId);
     } else {
@@ -89,9 +89,9 @@ export default function CoopTimerPage() {
   if (characters.length === 0) {
     return (
       <PageLayout>
-        <CoopTimerHeader 
-          viewMode={viewMode} 
-          onViewModeChange={setViewMode} 
+        <CoopTimerHeader
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
         />
         <CharacterEmptyState type="no-characters" />
       </PageLayout>
@@ -101,16 +101,11 @@ export default function CoopTimerPage() {
   if (!selectedCharacterData) {
     return (
       <PageLayout>
-        <CoopTimerHeader 
-          viewMode={viewMode} 
-          onViewModeChange={setViewMode} 
+        <CoopTimerHeader
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
         />
         <div className="space-y-6">
-          <CompactCharacterSelector
-            characters={characters}
-            selectedCharacter={selectedCharacter}
-            onCharacterSelect={handleCharacterSelect}
-          />
           <CharacterEmptyState type="no-selection" />
         </div>
       </PageLayout>
@@ -119,39 +114,28 @@ export default function CoopTimerPage() {
 
   return (
     <PageLayout>
-      <CoopTimerHeader 
-        viewMode={viewMode} 
-        onViewModeChange={setViewMode} 
-      />
-      
+      <CoopTimerHeader />
+
       <div className="space-y-6">
         {/* 캐릭터 선택 */}
         <CompactCharacterSelector
           characters={characters}
           selectedCharacter={selectedCharacter}
           onCharacterSelect={handleCharacterSelect}
+          filterMode={filterMode} // 전달
+          setFilterMode={setFilterMode} // 전달
         />
 
         {/* 선택된 모드에 따른 이벤트 레이아웃 */}
-        {viewMode === "compact" ? (
-          <CompactEventLayout
-            character={selectedCharacterData}
-            events={events}
-            progress={progress}
-            onEventToggle={handleEventToggle}
-            getEventStatus={getEventStatus}
-          />
-        ) : (
-          <ModernEventLayout
-            character={selectedCharacterData}
-            events={events}
-            progress={progress}
-            onEventToggle={handleEventToggle}
-            getEventStatus={getEventStatus}
-          />
-        )}
+        <CompactEventLayout
+          character={selectedCharacterData}
+          events={events}
+          progress={progress}
+          onEventToggle={handleEventToggle}
+          filterMode={filterMode} // 전달
+          getEventStatus={getEventStatus}
+        />
       </div>
-
     </PageLayout>
   );
 }

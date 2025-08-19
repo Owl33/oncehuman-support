@@ -2,15 +2,17 @@
 
 import { BaseCharacter } from "@/types/character";
 import { ScenarioType } from "@/types/coop-timer";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/base/select";
-import { Badge } from "@/components/base/badge";
+import { SmartSelect } from "@/components/ui";
 import { Users } from "lucide-react";
-import { cn } from "@/lib/utils";
-
+import { Filter, Clock, Calendar, Crown, Timer, CheckCircle2, Circle, Zap } from "lucide-react";
+import { Button } from "@/components/base/button";
 interface CompactCharacterSelectorProps {
   characters: BaseCharacter[];
   selectedCharacter: string | null;
   onCharacterSelect: (characterId: string) => void;
+  className?: string;
+  filterMode: "all" | "incomplete" | "completed";
+  setFilterMode: (mode: "all" | "incomplete" | "completed") => void;
 }
 
 const SCENARIO_INFO = {
@@ -46,105 +48,85 @@ const SCENARIO_INFO = {
   },
 } as const;
 
+/**
+ * 캐릭터 렌더링 함수
+ */
+const renderCharacter = (character: BaseCharacter) => {
+  const scenarioKey = character.scenario as ScenarioType | undefined;
+  const scenarioInfo = scenarioKey ? SCENARIO_INFO[scenarioKey] : null;
+
+  return (
+    <div className="flex items-center gap-2 min-w-0">
+      <span className="font-medium truncate">{character.name}</span>
+      {scenarioInfo && (
+        <span className="text-xs text-muted-foreground/70 flex-shrink-0">{scenarioInfo.name}</span>
+      )}
+      {character.server && (
+        <span className="text-xs text-muted-foreground truncate">({character.server})</span>
+      )}
+    </div>
+  );
+};
+
 export function CompactCharacterSelector({
   characters,
   selectedCharacter,
   onCharacterSelect,
+  className,
+  filterMode,
+  setFilterMode,
 }: CompactCharacterSelectorProps) {
-  const selectedCharacterData = characters.find((c) => c.id === selectedCharacter);
-  const scenarioKey = selectedCharacterData?.scenario as ScenarioType | undefined;
-  const scenarioInfo = scenarioKey ? SCENARIO_INFO[scenarioKey] : null;
-
-  if (characters.length === 0) {
-    return (
-      <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
-        <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-          <Users className="w-5 h-5 text-gray-400" />
-        </div>
-        <div>
-          <h3 className="font-medium text-gray-700">캐릭터가 없습니다</h3>
-          <p className="text-sm text-gray-500">먼저 캐릭터를 등록해주세요.</p>
-        </div>
-      </div>
-    );
-  }
+  // SmartSelect onChange 타입 호환을 위한 래퍼 함수
+  const handleChange = (value: string | string[]) => {
+    // 단일 선택이므로 string만 처리
+    if (typeof value === "string") {
+      onCharacterSelect(value);
+    }
+  };
 
   return (
-    <div className="space-y-3">
-      {/* Character Selector */}
-      <div className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200">
-        <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-          <Users className="w-4 h-4 text-white" />
-        </div>
-        
-        <div className="flex-1">
-          <label className="text-sm font-medium text-gray-700 mb-2 block">
-            캐릭터 선택
-          </label>
-          <Select value={selectedCharacter || ""} onValueChange={onCharacterSelect}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="캐릭터를 선택하세요" />
-            </SelectTrigger>
-            <SelectContent>
-              {characters.map((character) => {
-                const characterScenario = character.scenario as ScenarioType | undefined;
-                const characterScenarioInfo = characterScenario
-                  ? SCENARIO_INFO[characterScenario]
-                  : null;
+    <div className="flex items-end ">
+      <SmartSelect
+        items={characters}
+        value={selectedCharacter}
+        onChange={handleChange}
+        itemText="name"
+        itemValue="id"
+        renderSelected={renderCharacter}
+        renderOption={renderCharacter}
+        label="캐릭터 선택"
+        placeholder="캐릭터를 선택하세요"
+        prependIcon={Users}
+        className="w-full"
+      />
+      {/* 필터 버튼 그룹 (전체 / 미완료 / 완료) */}
+      <div className="ml-4 flex items-center gap-2">
+        <Button
+          variant={filterMode === "all" ? "default" : "ghost"}
+          size="sm"
+          onClick={() => setFilterMode("all")}
+          className="h-8 px-3 text-xs">
+          전체
+        </Button>
 
-                return (
-                  <SelectItem key={character.id} value={character.id}>
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="font-medium truncate">{character.name}</span>
-                      {characterScenarioInfo && (
-                        <span className="text-xs opacity-70 flex-shrink-0">
-                          {characterScenarioInfo.icon}
-                        </span>
-                      )}
-                      {character.server && (
-                        <span className="text-xs text-gray-500 truncate">
-                          ({character.server})
-                        </span>
-                      )}
-                    </div>
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-        </div>
+        <Button
+          variant={filterMode === "incomplete" ? "default" : "ghost"}
+          size="sm"
+          onClick={() => setFilterMode("incomplete")}
+          className="h-8 px-3 text-xs gap-1">
+          <Circle className="w-3 h-3" />
+          미완료
+        </Button>
 
-        {/* Selected Character Info */}
-        {selectedCharacterData && scenarioInfo && (
-          <div className="flex items-center gap-2">
-            <Badge
-              variant="secondary"
-              className={cn("gap-1 text-xs", scenarioInfo.color)}
-            >
-              <span>{scenarioInfo.icon}</span>
-              <span>{scenarioInfo.name}</span>
-            </Badge>
-          </div>
-        )}
+        <Button
+          variant={filterMode === "completed" ? "default" : "ghost"}
+          size="sm"
+          onClick={() => setFilterMode("completed")}
+          className="h-8 px-3 text-xs gap-1">
+          <CheckCircle2 className="w-3 h-3" />
+          완료
+        </Button>
       </div>
-
-      {/* Selected Character Details (Compact) */}
-      {selectedCharacterData && (
-        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg text-sm text-gray-600">
-          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-            {selectedCharacterData.name.charAt(0)}
-          </div>
-          <div className="flex-1 min-w-0">
-            <span className="font-medium text-gray-900">{selectedCharacterData.name}</span>
-            {selectedCharacterData.server && (
-              <span className="ml-2 text-gray-500">• {selectedCharacterData.server}</span>
-            )}
-            {selectedCharacterData.job && (
-              <span className="ml-2 text-gray-500">• {selectedCharacterData.job}</span>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
