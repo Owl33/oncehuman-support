@@ -1,13 +1,25 @@
-// app/switchpoint/components/material-calculator.tsx
 "use client";
 
-import { useState, useEffect } from "react";
-import { CalculatedMaterial } from "@/types/character";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
+import { Character, CalculatedMaterial, CalculationResult } from "@/types/character";
+import { calculateMaterials } from "../lib/switchpoint/calculations";
+import { useGameData } from "../hooks/use-game-data";
 import { Input } from "@/components/base/input";
 import { Badge } from "@/components/base/badge";
 import { Button } from "@/components/base/button";
 import { Progress } from "@/components/base/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/base/card";
 import { ScrollArea } from "@/components/base/scroll-area";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/base/alert-dialog";
 import {
   CircleCheckBig,
   CircleCheck,
@@ -16,22 +28,28 @@ import {
   Package2,
   CircleX,
   RotateCcw,
+  Calculator,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { motion } from "framer-motion";
 
-interface MaterialCalculatorProps {
-  materials: CalculatedMaterial[];
-  ownedMaterials: Record<string, number>;
-  onUpdateOwned: (materialId: string, quantity: number) => void;
-  onResetClick?: () => void; // 초기화 다이얼로그 호출용
+interface MaterialCalculationProps {
+  currentCharacter: Character;
+  onUpdateMaterials: (characterId: string, ownedMaterials: Record<string, number>) => Promise<void>;
 }
 
-export function MaterialCalculator({
+function MaterialCalculator({
   materials,
   ownedMaterials,
   onUpdateOwned,
   onResetClick,
-}: MaterialCalculatorProps) {
+}: {
+  materials: CalculatedMaterial[];
+  ownedMaterials: Record<string, number>;
+  onUpdateOwned: (materialId: string, quantity: number) => void;
+  onResetClick?: () => void;
+}) {
   // 최소한의 상태 관리
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const [pendingValues, setPendingValues] = useState<Record<string, string>>({});
@@ -228,7 +246,7 @@ export function MaterialCalculator({
       </div>
 
       {/* Materials List */}
-      <ScrollArea className="h-auto sm:h-[64vh]">
+      <ScrollArea className="h-[64vh]">
         <div className="px-2 pb-2 space-y-1">
           {displayMaterials.map((material) => {
             const inputValue = getInputValue(material.id);
@@ -445,5 +463,88 @@ export function MaterialCalculator({
         </div>
       </ScrollArea>
     </div>
+  );
+}
+
+export function MaterialCalculation({ currentCharacter, onUpdateMaterials }: MaterialCalculationProps) {
+  const { items, materials } = useGameData();
+  const [showResetDialog, setShowResetDialog] = useState(false);
+
+  // 계산 결과
+  const calculationResult = useMemo((): CalculationResult => {
+    if (!currentCharacter) {
+      return { materials: [], totalPoints: 0 };
+    }
+
+    return calculateMaterials(
+      currentCharacter.selectedItems || {},
+      currentCharacter.ownedMaterials || {},
+      items,
+      materials
+    );
+  }, [currentCharacter, items, materials]);
+
+  // 재료 보유량 업데이트
+  const updateMaterialOwned = useCallback(
+    async (materialId: string, quantity: number) => {
+      try {
+        const updatedMaterials = {
+          ...currentCharacter.ownedMaterials,
+          [materialId]: Math.max(0, quantity),
+        };
+
+        await onUpdateMaterials(currentCharacter.id, updatedMaterials);
+      } catch (error) {
+        console.error("Failed to update material quantity:", error);
+        toast.error("재료 수량 업데이트에 실패했습니다.");
+      }
+    },
+    [currentCharacter, onUpdateMaterials]
+  );
+
+  // 모든 재료 초기화
+  const resetAllMaterials = useCallback(async () => {
+    try {
+      await onUpdateMaterials(currentCharacter.id, {});
+      toast.success("모든 보유 재료를 초기화했습니다.");
+    } catch (error) {
+      console.error("Failed to reset materials:", error);
+      toast.error("재료 초기화에 실패했습니다.");
+    }
+  }, [currentCharacter, onUpdateMaterials]);
+
+  return (
+    <>
+      <MaterialCalculator
+        materials={calculationResult.materials}
+        ownedMaterials={currentCharacter.ownedMaterials || {}}
+        onUpdateOwned={updateMaterialOwned}
+        onResetClick={() => setShowResetDialog(true)}
+      />
+
+      {/* 초기화 확인 다이얼로그 */}
+      <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>모든 보유 재료를 초기화하시겠습니까?</AlertDialogTitle>
+            <AlertDialogDescription>
+              입력한 모든 보유 재료가 초기화됩니다. 이 작업은 되돌릴 수 없습니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                resetAllMaterials();
+                setShowResetDialog(false);
+              }}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              초기화
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

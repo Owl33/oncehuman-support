@@ -1,5 +1,8 @@
 import { LucideIcon } from "lucide-react";
-import { CategoryVariant } from "./variants";
+import type { CategoryVariant } from "./variants";
+
+// Re-export CategoryVariant for external use
+export type { CategoryVariant };
 
 /**
  * 카테고리 설정 타입

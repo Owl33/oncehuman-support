@@ -141,7 +141,7 @@ export function formatReturnValue<T>(
 ): string | string[] | T | T[] {
   if (returnObject) {
     const objects = selectedItems.map(item => item.item);
-    return multiple ? objects : (objects[0] || null);
+    return multiple ? objects : (objects[0] || objects[0]);
   } else {
     const values = selectedItems.map(item => item.value);
     return multiple ? values : (values[0] || "");
