@@ -246,7 +246,7 @@ function MaterialCalculator({
       </div>
 
       {/* Materials List */}
-      <ScrollArea className="h-[64vh]">
+      <ScrollArea className="h-auto md:h-[59vh]">
         <div className="px-2 pb-2 space-y-1">
           {displayMaterials.map((material) => {
             const inputValue = getInputValue(material.id);
@@ -466,7 +466,10 @@ function MaterialCalculator({
   );
 }
 
-export function MaterialCalculation({ currentCharacter, onUpdateMaterials }: MaterialCalculationProps) {
+export function MaterialCalculation({
+  currentCharacter,
+  onUpdateMaterials,
+}: MaterialCalculationProps) {
   const { items, materials } = useGameData();
   const [showResetDialog, setShowResetDialog] = useState(false);
 
@@ -523,7 +526,9 @@ export function MaterialCalculation({ currentCharacter, onUpdateMaterials }: Mat
       />
 
       {/* 초기화 확인 다이얼로그 */}
-      <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+      <AlertDialog
+        open={showResetDialog}
+        onOpenChange={setShowResetDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>모든 보유 재료를 초기화하시겠습니까?</AlertDialogTitle>
@@ -538,8 +543,7 @@ export function MaterialCalculation({ currentCharacter, onUpdateMaterials }: Mat
                 resetAllMaterials();
                 setShowResetDialog(false);
               }}
-              className="bg-destructive hover:bg-destructive/90"
-            >
+              className="bg-destructive hover:bg-destructive/90">
               초기화
             </AlertDialogAction>
           </AlertDialogFooter>

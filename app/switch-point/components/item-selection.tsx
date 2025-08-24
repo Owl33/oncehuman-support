@@ -152,7 +152,7 @@ export function ItemSelection({ currentCharacter, onUpdateItems }: ItemSelection
 
   return (
     <>
-      <div className="space-y-4">
+      <div className="">
         {/* 카테고리 탭 */}
         <Tabs
           value={selectedCategory}
@@ -172,8 +172,8 @@ export function ItemSelection({ currentCharacter, onUpdateItems }: ItemSelection
         </Tabs>
 
         {/* 아이템 그리드 */}
-        <ScrollArea className="h-auto sm:h-[60vh]">
-          <div className="p-4">
+        <ScrollArea className="h-auto md:h-[68vh]">
+          <div className="p-1">
             {/* 선택헤더 */}
             <div className="my-4 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-lg p-4 sticky top-0 z-10 backdrop-blur-sm">
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -190,7 +190,9 @@ export function ItemSelection({ currentCharacter, onUpdateItems }: ItemSelection
                   />
                   <div className="flex items-center gap-2">
                     <Boxes className="w-4 h-4 text-primary" />
-                    <span className="text-sm md:text-base font-medium">총 {stats.totalQuantity}개</span>
+                    <span className="text-sm md:text-base font-medium">
+                      총 {stats.totalQuantity}개
+                    </span>
                   </div>
                 </div>
 

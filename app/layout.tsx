@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
-import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
@@ -14,6 +13,7 @@ import {
 import { AppSidebar } from "@/components/app-sidebar";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 
+import localFont from "next/font/local";
 import "../styles/globals.css";
 const pretendard = localFont({
   src: "../public/fonts/PretendardVariable.woff2",
